@@ -3,13 +3,14 @@
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { getCongestionLabel, type ScoredCarOption } from "@/lib/optimizer";
-import { Star, ArrowRight } from "lucide-react";
+import { Sparkles, ArrowLeft, Footprints, Users } from "lucide-react";
 
 interface TrainVisualizationProps {
   cars: ScoredCarOption[];
   selectedCar: number | null;
   onSelectCar: (carNumber: number) => void;
   recommendation: ScoredCarOption | null;
+  destinationDirection?: string;
 }
 
 export function TrainVisualization({
@@ -17,127 +18,122 @@ export function TrainVisualization({
   selectedCar,
   onSelectCar,
   recommendation,
+  destinationDirection = "Front of train",
 }: TrainVisualizationProps) {
   if (cars.length === 0) return null;
 
   return (
-    <div className="w-full space-y-4">
-      {/* Direction indicator */}
-      <div className="flex items-center justify-between text-xs text-zinc-500 px-1">
-        <span>← Front</span>
-        <div className="flex items-center gap-1">
-          <ArrowRight className="w-3 h-3" />
-          <span>Direction of travel</span>
+    <div className="w-full space-y-3">
+      {/* Direction Header */}
+      <div className="flex items-center justify-between text-xs text-slate-400 px-1">
+        <div className="flex items-center gap-1.5 font-medium text-slate-300">
+          <ArrowLeft className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+          <span>{destinationDirection}</span>
         </div>
-        <span>Rear →</span>
+        <span className="text-[11px] text-slate-500">Tap a car for details</span>
       </div>
 
-      {/* Train body */}
-      <div className="relative">
-        {/* Track line */}
-        <div className="absolute left-0 right-0 bottom-0 h-1 bg-zinc-800 rounded-full" />
+      {/* Train Container with Track */}
+      <div className="relative pt-3 pb-2">
+        {/* Rail Track Graphic */}
+        <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-1 bg-slate-800/80 rounded-full z-0" />
 
-        {/* Cars */}
-        <div className="flex gap-1.5 pb-3 overflow-x-auto scrollbar-hide">
+        {/* Scrollable Train Car Row */}
+        <div className="flex gap-2.5 overflow-x-auto no-scrollbar py-2 px-1 relative z-10 snap-x">
           {cars.map((car, index) => {
             const congestion = getCongestionLabel(car.congestion);
             const isRecommended = recommendation?.carNumber === car.carNumber;
             const isSelected = selectedCar === car.carNumber;
-            const isPareto = car.isPareto;
 
             return (
               <motion.button
                 key={car.carNumber}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05, duration: 0.3 }}
+                type="button"
+                whileTap={{ scale: 0.96 }}
                 onClick={() => onSelectCar(car.carNumber)}
                 className={cn(
-                  "car-segment relative flex-1 min-w-[52px] rounded-xl p-2.5 pt-3 cursor-pointer transition-all",
-                  "border border-zinc-800/50 hover:border-zinc-700",
-                  isRecommended && "recommended border-green-500/30 bg-green-500/5",
-                  isSelected && !isRecommended && "border-cyan-500/30 bg-cyan-500/5",
-                  !isRecommended && !isSelected && "bg-zinc-900/50"
+                  "relative flex-shrink-0 w-20 rounded-2xl p-3 text-left transition-all duration-200 snap-center cursor-pointer",
+                  "border",
+                  isRecommended
+                    ? "bg-emerald-950/40 border-emerald-500/60 shadow-lg shadow-emerald-900/20 ring-2 ring-emerald-500/30"
+                    : isSelected
+                    ? "bg-slate-800/90 border-slate-500 shadow-md"
+                    : "bg-[#161a26] border-slate-800 hover:border-slate-700"
                 )}
               >
-                {/* Recommended badge */}
+                {/* Recommended Badge on Top */}
                 {isRecommended && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="absolute -top-2 left-1/2 -translate-x-1/2"
-                  >
-                    <div className="bg-green-500 text-zinc-950 text-[9px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
-                      <Star className="w-2.5 h-2.5" fill="currentColor" />
-                      BEST
-                    </div>
-                  </motion.div>
-                )}
-
-                {/* Pareto indicator */}
-                {isPareto && !isRecommended && (
-                  <div className="absolute -top-1.5 left-1/2 -translate-x-1/2">
-                    <div className="w-2 h-2 rounded-full bg-cyan-400/60" />
+                  <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 whitespace-nowrap bg-emerald-500 text-slate-950 text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow-md flex items-center gap-1">
+                    <Sparkles className="w-2.5 h-2.5" />
+                    <span>BEST</span>
                   </div>
                 )}
 
-                {/* Car number */}
-                <div className="text-[10px] text-zinc-500 font-medium mb-1.5">
-                  {car.carNumber}
+                {/* Car Header */}
+                <div className="flex items-center justify-between mb-2">
+                  <span className={cn(
+                    "text-xs font-bold",
+                    isRecommended ? "text-emerald-400" : "text-slate-300"
+                  )}>
+                    Car {car.carNumber}
+                  </span>
+                  {car.isPareto && !isRecommended && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" title="Pareto choice" />
+                  )}
                 </div>
 
-                {/* Congestion bar */}
-                <div className="w-full h-16 bg-zinc-800/50 rounded-lg overflow-hidden relative">
-                  <motion.div
-                    initial={{ height: 0 }}
-                    animate={{ height: `${car.congestion}%` }}
-                    transition={{ delay: index * 0.05 + 0.2, duration: 0.5, ease: "easeOut" }}
-                    className="absolute bottom-0 left-0 right-0 rounded-lg"
-                    style={{ backgroundColor: congestion.color + "40" }}
-                  >
-                    <div
-                      className="absolute inset-0 rounded-lg opacity-60"
-                      style={{
-                        background: `linear-gradient(to top, ${congestion.color}60, transparent)`,
-                      }}
-                    />
-                  </motion.div>
+                {/* Window Graphic / Cutout */}
+                <div className="flex justify-between items-center gap-1 mb-3">
+                  <div className="h-1.5 flex-1 bg-slate-700/60 rounded-full" />
+                  <div className="h-1.5 flex-1 bg-slate-700/60 rounded-full" />
+                </div>
 
-                  {/* Percentage */}
-                  <div className="absolute inset-0 flex items-center justify-center">
+                {/* Crowding Gauge */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="text-slate-400 font-medium">Load</span>
                     <span
-                      className="text-xs font-semibold"
+                      className="font-bold text-xs"
                       style={{ color: congestion.color }}
                     >
                       {car.congestion}%
                     </span>
                   </div>
+                  
+                  {/* Visual Bar */}
+                  <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-300"
+                      style={{
+                        width: `${car.congestion}%`,
+                        backgroundColor: congestion.color,
+                      }}
+                    />
+                  </div>
                 </div>
 
-                {/* Door indicators */}
-                <div className="flex justify-between mt-1.5 px-0.5">
-                  <div className="w-2.5 h-1 rounded-full bg-zinc-700" />
-                  <div className="w-2.5 h-1 rounded-full bg-zinc-700" />
-                </div>
+                {/* Walk Footprint */}
+                {car.walkDistance > 0 && (
+                  <div className="mt-2 pt-1.5 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-400">
+                    <Footprints className="w-3 h-3 text-slate-500" />
+                    <span className="font-medium text-slate-300">{car.walkDistance}m</span>
+                  </div>
+                )}
               </motion.button>
             );
           })}
         </div>
       </div>
 
-      {/* Legend */}
-      <div className="flex items-center justify-center gap-4 text-[10px] text-zinc-500">
-        <div className="flex items-center gap-1">
-          <div className="w-2 h-2 rounded-full bg-green-500" />
-          <span>Best pick</span>
+      {/* Clean Legend */}
+      <div className="flex items-center justify-center gap-4 text-[11px] text-slate-400 pt-0.5">
+        <div className="flex items-center gap-1.5">
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+          <span>Optimal Door</span>
         </div>
-        <div className="flex items-center gap-1">
-          <div className="w-2 h-2 rounded-full bg-cyan-400/60" />
-          <span>Pareto optimal</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <div className="w-3 h-1 rounded-full bg-zinc-700" />
-          <span>Doors</span>
+        <div className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-cyan-400" />
+          <span>Alternative Option</span>
         </div>
       </div>
     </div>
