@@ -5,12 +5,19 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { TrainVisualization } from "@/components/train-visualization";
-import { ComfortSlider } from "@/components/comfort-slider";
+import { PlatformFloorVisual } from "@/components/platform-floor-visual";
+import { TokyoCheatSheet } from "@/components/tokyo-cheat-sheet";
 import { AIAdvisorPanel } from "@/components/ai-advisor-panel";
 import { getCongestionLabel, type ScoredCarOption } from "@/lib/optimizer";
 import type { TransferPoint } from "@/lib/platform-data";
 import type { CommuterContext } from "@/lib/ai-advisor";
 import { useTranslation } from "@/lib/i18n";
+import {
+  TOKYO_LANDMARK_HUBS,
+  TRAVELER_SITUATIONS,
+  type LandmarkHub,
+  type TravelerSituation,
+} from "@/lib/tourist-data";
 import {
   MapPin,
   Train,
@@ -28,6 +35,7 @@ import {
   Check,
   X,
   Bot,
+  Luggage,
 } from "lucide-react";
 
 interface StationOption {
@@ -68,44 +76,6 @@ interface OptimizeResult {
   timestamp: string;
 }
 
-const POPULAR_HUBS = [
-  {
-    name: "Otemachi",
-    nameJa: "大手町",
-    railwayId: "odpt.Railway:TokyoMetro.Marunouchi",
-    stationId: "odpt.Station:TokyoMetro.Marunouchi.Otemachi",
-    color: "#E60012",
-  },
-  {
-    name: "Tokyo",
-    nameJa: "東京",
-    railwayId: "odpt.Railway:TokyoMetro.Marunouchi",
-    stationId: "odpt.Station:TokyoMetro.Marunouchi.Tokyo",
-    color: "#E60012",
-  },
-  {
-    name: "Shibuya",
-    nameJa: "渋谷",
-    railwayId: "odpt.Railway:TokyoMetro.Ginza",
-    stationId: "odpt.Station:TokyoMetro.Ginza.Shibuya",
-    color: "#F39700",
-  },
-  {
-    name: "Shinjuku",
-    nameJa: "新宿",
-    railwayId: "odpt.Railway:TokyoMetro.Marunouchi",
-    stationId: "odpt.Station:TokyoMetro.Marunouchi.Shinjuku",
-    color: "#E60012",
-  },
-  {
-    name: "Ginza",
-    nameJa: "銀座",
-    railwayId: "odpt.Railway:TokyoMetro.Ginza",
-    stationId: "odpt.Station:TokyoMetro.Ginza.Ginza",
-    color: "#F39700",
-  },
-];
-
 export default function TransitAppPage() {
   const { lang, setLang, t } = useTranslation();
 
@@ -120,6 +90,7 @@ export default function TransitAppPage() {
   );
   const [selectedTransfer, setSelectedTransfer] = useState<string>("");
   const [comfortWeight, setComfortWeight] = useState(0.5);
+  const [selectedSituation, setSelectedSituation] = useState<string | null>("calm");
 
   const [result, setResult] = useState<OptimizeResult | null>(null);
   const [selectedCar, setSelectedCar] = useState<number | null>(null);
@@ -127,7 +98,7 @@ export default function TransitAppPage() {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  // Modal / Sheet states for peaceful progressive disclosure
+  // Modals for progressive disclosure
   const [stationModalOpen, setStationModalOpen] = useState(false);
   const [transferModalOpen, setTransferModalOpen] = useState(false);
   const [showAiConcierge, setShowAiConcierge] = useState(false);
@@ -193,7 +164,7 @@ export default function TransitAppPage() {
     fetchOptimization();
   }, [fetchOptimization]);
 
-  // 30s refresh
+  // 30s auto-refresh
   useEffect(() => {
     if (!result) return;
     const interval = setInterval(fetchOptimization, 30000);
@@ -264,42 +235,68 @@ export default function TransitAppPage() {
     ? getCongestionLabel(result.recommendation.congestion)
     : null;
 
+  // Handle situation preset click
+  const handleSelectSituation = (sit: TravelerSituation) => {
+    setSelectedSituation(sit.id);
+    setComfortWeight(sit.comfortWeight);
+
+    // If stroller/elevator chosen, auto-select accessible egress if available
+    if (sit.id === "stroller" && result) {
+      const elevator = result.transferPoints.find((tp) => tp.type === "elevator" || tp.isAccessible);
+      if (elevator) setSelectedTransfer(elevator.id);
+    }
+  };
+
+  // Handle landmark hub quick selection
+  const handleSelectHub = (hub: LandmarkHub) => {
+    setSelectedRailway(hub.railwayId);
+    setSelectedStation(hub.stationId);
+    if (hub.suggestedEgress) {
+      setSelectedTransfer(hub.suggestedEgress);
+    } else {
+      setSelectedTransfer("");
+    }
+    setStationModalOpen(false);
+  };
+
   return (
-    <div className="min-h-dvh flex flex-col bg-[#090b10] text-slate-100 selection:bg-emerald-500/30">
-      {/* 1. Calm, Minimal Navigation Bar */}
-      <header className="sticky top-0 z-40 bg-[#090b10]/95 backdrop-blur-xl border-b border-slate-800/60">
+    <div className="min-h-dvh flex flex-col bg-[#090a0f] text-slate-100 selection:bg-emerald-500/30">
+      {/* 1. Header */}
+      <header className="sticky top-0 z-40 bg-[#090a0f]/95 backdrop-blur-xl border-b border-white/[0.08]">
         <div className="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link
               href="/"
-              className="w-8 h-8 rounded-full bg-slate-800/80 hover:bg-slate-700/80 flex items-center justify-center text-slate-300 transition-colors"
+              className="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] flex items-center justify-center text-slate-300 transition-colors"
               title={t.navBackHome}
             >
               <ArrowLeft className="w-4 h-4" />
             </Link>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-white tracking-tight">Yutori</span>
-              <span className="text-[11px] text-slate-400 font-medium">ゆとり</span>
+              <span className="text-sm font-extrabold text-white tracking-tight">Yutori</span>
+              <span className="text-[10px] text-slate-400 font-mono bg-white/[0.06] px-1.5 py-0.5 rounded">
+                Tokyo 🚃
+              </span>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Bilingual Switcher */}
+            {/* Language Switcher */}
             <button
               type="button"
               onClick={() => setLang(lang === "en" ? "ja" : "en")}
-              className="flex items-center gap-1 text-xs font-semibold bg-slate-800/70 hover:bg-slate-700/70 text-slate-300 px-2.5 py-1 rounded-full border border-slate-700/50 transition-colors"
+              className="flex items-center gap-1 text-xs font-semibold bg-white/[0.06] hover:bg-white/[0.12] text-slate-300 px-3 py-1.5 rounded-full border border-white/10 transition-colors"
             >
-              <Languages className="w-3 h-3 text-emerald-400" />
+              <Languages className="w-3.5 h-3.5 text-emerald-400" />
               <span>{lang === "en" ? "日本語" : "EN"}</span>
             </button>
 
-            {/* Subtle Refresh Indicator */}
+            {/* Refresh */}
             {lastUpdated && (
               <button
                 type="button"
                 onClick={fetchOptimization}
-                className="w-7 h-7 rounded-full bg-slate-800/70 hover:bg-slate-700/70 flex items-center justify-center text-slate-400 hover:text-white transition-colors border border-slate-700/50"
+                className="w-7 h-7 rounded-full bg-white/[0.06] hover:bg-white/[0.12] flex items-center justify-center text-slate-400 hover:text-white transition-colors"
                 title="Refresh live data"
               >
                 <RefreshCw
@@ -311,18 +308,18 @@ export default function TransitAppPage() {
         </div>
       </header>
 
-      {/* 2. Main Content Container */}
+      {/* Main Container */}
       <main className="flex-1 max-w-md mx-auto w-full px-4 py-4 space-y-4">
-        {/* Single Unified Station & Line Bar (Clean, Zen Pill) */}
+        {/* 2. Station & Landmark Bar */}
         <div>
           <button
             type="button"
             onClick={() => setStationModalOpen(true)}
-            className="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-[#121622] hover:bg-[#181d2c] border border-slate-800/80 transition-all text-left shadow-sm group"
+            className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-[#12141c] hover:bg-[#181b26] border border-white/10 transition-all text-left shadow-md group"
           >
             <div className="flex items-center gap-3">
               <span
-                className="w-3 h-3 rounded-full shadow-sm shrink-0"
+                className="w-3.5 h-3.5 rounded-full shadow-sm shrink-0"
                 style={{ backgroundColor: selectedRailwayInfo?.color || "#E60012" }}
               />
               <div className="leading-tight">
@@ -333,7 +330,7 @@ export default function TransitAppPage() {
                       : selectedStationInfo?.name || "Select Station"}
                   </span>
                   {selectedStationInfo?.code && (
-                    <span className="text-[10px] font-bold text-slate-400 bg-slate-800 px-1.5 py-0.2 rounded">
+                    <span className="text-[10px] font-bold text-slate-400 bg-white/[0.08] px-1.5 py-0.5 rounded font-mono">
                       {selectedStationInfo.code}
                     </span>
                   )}
@@ -345,14 +342,46 @@ export default function TransitAppPage() {
                 </span>
               </div>
             </div>
-            <span className="text-xs text-slate-400 flex items-center gap-1 group-hover:text-slate-200">
-              <span className="text-[11px]">{lang === "ja" ? "変更" : "Change"}</span>
+            <span className="text-xs text-slate-400 flex items-center gap-1 group-hover:text-slate-200 font-medium">
+              <span>{lang === "ja" ? "駅を選ぶ" : "Change Station"}</span>
               <ChevronDown className="w-3.5 h-3.5" />
             </span>
           </button>
         </div>
 
-        {/* Live Service Disruption Warning (Only if Alert Exists) */}
+        {/* 3. Traveler Situation Presets (Tourist / First-Timer Friendly) */}
+        <div className="space-y-1.5">
+          <div className="text-[11px] font-semibold text-slate-400 flex items-center justify-between px-1">
+            <span>{t.yourSituation}</span>
+            <span className="text-[10px] text-slate-500 font-normal">Tap to customize</span>
+          </div>
+
+          <div className="grid grid-cols-4 gap-1.5">
+            {TRAVELER_SITUATIONS.map((sit) => {
+              const isSelected = selectedSituation === sit.id;
+              return (
+                <button
+                  key={sit.id}
+                  type="button"
+                  onClick={() => handleSelectSituation(sit)}
+                  className={cn(
+                    "flex flex-col items-center justify-center p-2 rounded-2xl border text-center transition-all cursor-pointer",
+                    isSelected
+                      ? "bg-emerald-500/15 border-emerald-500/50 text-white shadow-sm"
+                      : "bg-[#12141c] border-white/[0.06] text-slate-400 hover:text-slate-200 hover:border-white/10"
+                  )}
+                >
+                  <span className="text-lg mb-0.5">{sit.icon}</span>
+                  <span className="text-[10px] font-bold leading-tight">
+                    {lang === "ja" ? sit.titleJa : sit.title}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Live Disruption Warning if any */}
         {result?.serviceInfo &&
           result.serviceInfo.status !== "Normal service" &&
           result.serviceInfo.status !== "Normal" && (
@@ -375,29 +404,26 @@ export default function TransitAppPage() {
             </motion.div>
           )}
 
-        {/* 3. The Tranquil Hero Answer Card (No Visual Overload) */}
+        {/* 4. The Digital Boarding Pass (The Core Answer) */}
         {result?.recommendation && (
           <motion.div
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="rounded-3xl p-6 bg-gradient-to-b from-[#141824] to-[#0f121c] border border-slate-800/90 shadow-xl space-y-5 relative overflow-hidden"
+            className="zen-ticket rounded-3xl p-5 md:p-6 shadow-xl space-y-4 relative overflow-hidden"
           >
-            {/* Subtle glow accent */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none" />
-
-            {/* Header Badge */}
+            {/* Top Bar */}
             <div className="flex items-center justify-between">
               <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
                 <Sparkles className="w-3 h-3" />
                 <span>{t.recommendedTitle}</span>
               </span>
 
-              {/* Destination Pill / Change Egress Button */}
+              {/* Destination Egress Pill */}
               {result.transferPoints.length > 0 && (
                 <button
                   type="button"
                   onClick={() => setTransferModalOpen(true)}
-                  className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-200 bg-slate-800/60 px-3 py-1 rounded-full border border-slate-700/40 transition-colors"
+                  className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-200 bg-white/[0.06] hover:bg-white/[0.1] px-3 py-1 rounded-full border border-white/10 transition-colors"
                 >
                   <Compass className="w-3 h-3 text-cyan-400" />
                   <span className="truncate max-w-[120px]">
@@ -408,13 +434,13 @@ export default function TransitAppPage() {
               )}
             </div>
 
-            {/* Prominent, Peaceful Recommendation Focus */}
-            <div className="space-y-1.5 pt-1">
+            {/* Car & Door Typography */}
+            <div className="space-y-1 pt-1">
               <div className="flex items-baseline gap-2">
-                <span className="text-4xl md:text-5xl font-black text-white tracking-tight">
+                <span className="text-4xl md:text-5xl font-black text-white tracking-tight font-mono">
                   Car {result.recommendation.carNumber}
                 </span>
-                <span className="text-2xl md:text-3xl font-bold text-slate-400">
+                <span className="text-2xl md:text-3xl font-bold text-slate-400 font-mono">
                   · Door {currentTransfer?.nearestDoor || 2}
                 </span>
               </div>
@@ -423,14 +449,22 @@ export default function TransitAppPage() {
                 <p className="text-sm text-slate-300 font-medium">
                   {lang === "ja"
                     ? `${currentTransfer.nameJa || currentTransfer.name}の目の前に到着します`
-                    : `Directly aligns with ${currentTransfer.name}`}
+                    : `Directly in front of ${currentTransfer.name}`}
                 </p>
               )}
             </div>
 
-            {/* 2 Reassuring Soft Metric Pills */}
+            {/* Physical Platform Floor Graphic (No More Confusion!) */}
+            <PlatformFloorVisual
+              carNumber={result.recommendation.carNumber}
+              doorNumber={currentTransfer?.nearestDoor || 2}
+              lineColor={selectedRailwayInfo?.color || "#E60012"}
+              lang={lang}
+            />
+
+            {/* Metric Gauges */}
             <div className="grid grid-cols-2 gap-3 pt-1">
-              <div className="bg-[#191e2e]/90 rounded-2xl p-3 border border-slate-800/80">
+              <div className="bg-[#0b0c10] rounded-2xl p-3 border border-white/[0.08]">
                 <div className="text-[11px] text-slate-400 flex items-center gap-1 mb-1">
                   <Users className="w-3 h-3 text-slate-400" />
                   <span>{t.passengerSpace}</span>
@@ -447,7 +481,7 @@ export default function TransitAppPage() {
                 </span>
               </div>
 
-              <div className="bg-[#191e2e]/90 rounded-2xl p-3 border border-slate-800/80">
+              <div className="bg-[#0b0c10] rounded-2xl p-3 border border-white/[0.08]">
                 <div className="text-[11px] text-slate-400 flex items-center gap-1 mb-1">
                   <Footprints className="w-3 h-3 text-slate-400" />
                   <span>{t.transferEgress}</span>
@@ -467,9 +501,9 @@ export default function TransitAppPage() {
           </motion.div>
         )}
 
-        {/* 4. Peaceful Train Car Composition Heatmap */}
+        {/* 5. Minimalist Train Car Visualization */}
         {result?.cars && result.cars.length > 0 && (
-          <div className="rounded-3xl p-4 bg-[#121622] border border-slate-800/80 space-y-3">
+          <div className="rounded-3xl p-4 bg-[#12141c] border border-white/10 space-y-3">
             <div className="flex items-center justify-between text-xs text-slate-400">
               <div className="flex items-center gap-1.5 font-medium text-slate-300">
                 <Train className="w-3.5 h-3.5 text-slate-400" />
@@ -492,108 +526,16 @@ export default function TransitAppPage() {
           </div>
         )}
 
-        {/* Car Telemetry Drawer (Smoothly Revealed only if tapped) */}
-        <AnimatePresence>
-          {selectedCar && result?.cars && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="overflow-hidden"
-            >
-              {(() => {
-                const car = result.cars.find((c) => c.carNumber === selectedCar);
-                if (!car) return null;
-                const congestion = getCongestionLabel(car.congestion);
-                return (
-                  <div className="rounded-2xl p-4 bg-[#141824] border border-slate-800 space-y-2">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="font-bold text-white">
-                        {car.carNumber} {t.carsCount} {t.telemetryBreakdown}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => setSelectedCar(null)}
-                        className="text-slate-400 hover:text-white"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
+        {/* 6. Tokyo Subway 101 Cheat Sheet (Tourist Guide) */}
+        <TokyoCheatSheet lang={lang} />
 
-                    <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                      <div className="bg-[#191e2e] rounded-xl p-2 border border-slate-800">
-                        <div className="font-bold text-sm" style={{ color: congestion.color }}>
-                          {car.congestion}%
-                        </div>
-                        <div className="text-[10px] text-slate-400">{t.crowding}</div>
-                      </div>
-                      <div className="bg-[#191e2e] rounded-xl p-2 border border-slate-800">
-                        <div className="font-bold text-sm text-cyan-400">
-                          {car.walkDistance > 0 ? `${car.walkDistance}m` : t.atGate}
-                        </div>
-                        <div className="text-[10px] text-slate-400">{t.walkDistance}</div>
-                      </div>
-                      <div className="bg-[#191e2e] rounded-xl p-2 border border-slate-800">
-                        <div className="font-bold text-sm text-emerald-400">
-                          {Math.round(car.overallScore * 100)}
-                        </div>
-                        <div className="text-[10px] text-slate-400">{t.matchScore}</div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })()}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* 5. Minimal 3-Segment Priority Toggle (No Clunky Sliders) */}
-        <div className="rounded-2xl p-3 bg-[#121622] border border-slate-800/80 flex items-center justify-between gap-1.5">
-          <button
-            type="button"
-            onClick={() => setComfortWeight(0.15)}
-            className={cn(
-              "flex-1 py-2 px-2 rounded-xl text-xs font-semibold transition-all text-center",
-              comfortWeight <= 0.3
-                ? "bg-slate-800 text-white shadow-sm border border-slate-700"
-                : "text-slate-400 hover:text-slate-200"
-            )}
-          >
-            ⚡ {t.priorityFastExit}
-          </button>
-          <button
-            type="button"
-            onClick={() => setComfortWeight(0.5)}
-            className={cn(
-              "flex-1 py-2 px-2 rounded-xl text-xs font-semibold transition-all text-center",
-              comfortWeight > 0.3 && comfortWeight < 0.7
-                ? "bg-slate-800 text-white shadow-sm border border-slate-700"
-                : "text-slate-400 hover:text-slate-200"
-            )}
-          >
-            ⚖️ {t.priorityBalanced}
-          </button>
-          <button
-            type="button"
-            onClick={() => setComfortWeight(0.85)}
-            className={cn(
-              "flex-1 py-2 px-2 rounded-xl text-xs font-semibold transition-all text-center",
-              comfortWeight >= 0.7
-                ? "bg-slate-800 text-white shadow-sm border border-slate-700"
-                : "text-slate-400 hover:text-slate-200"
-            )}
-          >
-            🧘 {t.priorityRelaxed}
-          </button>
-        </div>
-
-        {/* 6. Expandable AI Commuter Concierge Button (Calm, Optional) */}
+        {/* 7. AI Platform Concierge (Subtle Expandable) */}
         {commuterContext && (
           <div>
             <button
               type="button"
               onClick={() => setShowAiConcierge(!showAiConcierge)}
-              className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-[#121622] hover:bg-[#181d2c] border border-slate-800 text-left transition-colors"
+              className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-[#12141c] hover:bg-[#181b26] border border-white/10 text-left transition-colors"
             >
               <div className="flex items-center gap-2.5">
                 <div className="w-7 h-7 rounded-xl bg-violet-500/10 flex items-center justify-center text-violet-400">
@@ -604,7 +546,7 @@ export default function TransitAppPage() {
                     {t.conciergeTitle}
                   </span>
                   <span className="text-[11px] text-slate-400 block">
-                    {lang === "ja" ? "タップして乗車アドバイスを確認" : "Tap for AI tactical boarding advice"}
+                    {lang === "ja" ? "タップして乗車アドバイスを確認" : "Tap for AI boarding advice & questions"}
                   </span>
                 </div>
               </div>
@@ -632,19 +574,25 @@ export default function TransitAppPage() {
         )}
       </main>
 
-      {/* ─── MODAL: Station & Line Picker ────────────────────────────── */}
+      {/* ─── MODAL: Station & Landmark Hub Picker ──────────────────────── */}
       <AnimatePresence>
         {stationModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/70 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/75 backdrop-blur-md">
             <motion.div
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="w-full max-w-md bg-[#121622] border-t sm:border border-slate-800 rounded-t-3xl sm:rounded-3xl p-5 space-y-4 max-h-[85vh] overflow-y-auto no-scrollbar"
+              transition={{ type: "spring", damping: 25, stiffness: 220 }}
+              className="w-full max-w-md bg-[#12141c] border-t sm:border border-white/15 rounded-t-3xl sm:rounded-3xl p-5 space-y-4 max-h-[88vh] overflow-y-auto no-scrollbar shadow-2xl"
             >
-              <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-                <span className="text-sm font-bold text-white">{t.selectStation}</span>
+              {/* Modal Header */}
+              <div className="flex items-center justify-between pb-2 border-b border-white/10">
+                <div>
+                  <span className="text-sm font-bold text-white block">{t.selectStation}</span>
+                  <span className="text-[10px] text-slate-400 block">
+                    {lang === "ja" ? "観光スポットまたは路線から選択" : "Pick a landmark or search by line"}
+                  </span>
+                </div>
                 <button
                   type="button"
                   onClick={() => setStationModalOpen(false)}
@@ -654,47 +602,56 @@ export default function TransitAppPage() {
                 </button>
               </div>
 
-              {/* Quick Popular Hubs */}
+              {/* Popular Tokyo Landmarks & Sightseeing Spots */}
               <div>
-                <span className="text-[11px] font-semibold text-slate-400 block mb-2">
-                  {t.quickHubs}
+                <span className="text-[11px] font-bold text-slate-300 block mb-2">
+                  {t.popularLandmarks}
                 </span>
-                <div className="grid grid-cols-2 gap-2">
-                  {POPULAR_HUBS.map((hub) => (
+                <div className="space-y-1.5">
+                  {TOKYO_LANDMARK_HUBS.map((hub) => (
                     <button
-                      key={hub.stationId}
+                      key={hub.id}
                       type="button"
-                      onClick={() => {
-                        setSelectedRailway(hub.railwayId);
-                        setSelectedStation(hub.stationId);
-                        setSelectedTransfer("");
-                        setStationModalOpen(false);
-                      }}
+                      onClick={() => handleSelectHub(hub)}
                       className={cn(
-                        "flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all",
+                        "w-full flex items-center justify-between p-2.5 rounded-xl border text-left transition-all",
                         selectedStation === hub.stationId
-                          ? "bg-slate-800 border-slate-600 text-white"
-                          : "bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800/60"
+                          ? "bg-slate-800 border-emerald-500/60 text-white"
+                          : "bg-slate-900/60 border-white/[0.06] text-slate-300 hover:bg-slate-800/60"
                       )}
                     >
-                      <span
-                        className="w-2 h-2 rounded-full shrink-0"
-                        style={{ backgroundColor: hub.color }}
-                      />
-                      <span className="text-xs font-semibold">
-                        {lang === "ja" ? hub.nameJa : hub.name}
-                      </span>
+                      <div className="flex items-center gap-2.5">
+                        <span className="text-xl">{hub.icon}</span>
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-xs font-bold text-white">
+                              {lang === "ja" ? hub.nameJa : hub.name}
+                            </span>
+                            <span
+                              className="w-2 h-2 rounded-full"
+                              style={{ backgroundColor: hub.lineColor }}
+                            />
+                            <span className="text-[10px] font-mono text-slate-400">
+                              {hub.lineCode}
+                            </span>
+                          </div>
+                          <p className="text-[10px] text-slate-400">
+                            {lang === "ja" ? hub.landmarkJa : hub.landmark}
+                          </p>
+                        </div>
+                      </div>
+                      <span className="text-[10px] text-emerald-400 font-medium">Select</span>
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Line Directory */}
+              {/* Full Railway Line Directory */}
               <div>
-                <span className="text-[11px] font-semibold text-slate-400 block mb-2">
+                <span className="text-[11px] font-bold text-slate-300 block mb-2">
                   {t.selectLine}
                 </span>
-                <div className="grid grid-cols-2 gap-1.5 max-h-40 overflow-y-auto no-scrollbar">
+                <div className="grid grid-cols-2 gap-1.5 max-h-36 overflow-y-auto no-scrollbar">
                   {operators.flatMap((o) => o.railways).map((r) => (
                     <button
                       key={r.id}
@@ -703,8 +660,8 @@ export default function TransitAppPage() {
                       className={cn(
                         "flex items-center gap-2 p-2 rounded-xl text-left transition-colors border",
                         selectedRailway === r.id
-                          ? "bg-slate-800 border-slate-600 text-white"
-                          : "bg-slate-900/40 border-slate-800/80 text-slate-400 hover:text-slate-200"
+                          ? "bg-slate-800 border-white/20 text-white"
+                          : "bg-slate-900/40 border-white/[0.06] text-slate-400 hover:text-slate-200"
                       )}
                     >
                       <span
@@ -719,12 +676,12 @@ export default function TransitAppPage() {
                 </div>
               </div>
 
-              {/* Station List for Selected Line */}
+              {/* Stations for this line */}
               <div>
-                <span className="text-[11px] font-semibold text-slate-400 block mb-2">
-                  {lang === "ja" ? "路線内の駅" : "Stations on this line"}
+                <span className="text-[11px] font-bold text-slate-300 block mb-2">
+                  {lang === "ja" ? "路線内の全駅" : "All stations on this line"}
                 </span>
-                <div className="grid grid-cols-2 gap-1.5 max-h-44 overflow-y-auto no-scrollbar">
+                <div className="grid grid-cols-2 gap-1.5 max-h-40 overflow-y-auto no-scrollbar">
                   {stations.map((s) => (
                     <button
                       key={s.id}
@@ -737,12 +694,12 @@ export default function TransitAppPage() {
                       className={cn(
                         "flex items-center gap-1.5 p-2 rounded-xl text-left transition-colors border",
                         selectedStation === s.id
-                          ? "bg-slate-800 border-slate-600 text-white"
-                          : "bg-slate-900/40 border-slate-800 text-slate-400 hover:text-slate-200"
+                          ? "bg-slate-800 border-white/20 text-white"
+                          : "bg-slate-900/40 border-white/[0.06] text-slate-400 hover:text-slate-200"
                       )}
                     >
                       {s.code && (
-                        <span className="text-[9px] font-bold text-slate-400 bg-slate-800 px-1 py-0.2 rounded shrink-0">
+                        <span className="text-[9px] font-mono font-bold text-slate-400 bg-white/[0.08] px-1 py-0.2 rounded shrink-0">
                           {s.code}
                         </span>
                       )}
@@ -761,15 +718,15 @@ export default function TransitAppPage() {
       {/* ─── MODAL: Destination Egress Picker ────────────────────────── */}
       <AnimatePresence>
         {transferModalOpen && result && (
-          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/70 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/75 backdrop-blur-md">
             <motion.div
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="w-full max-w-md bg-[#121622] border-t sm:border border-slate-800 rounded-t-3xl sm:rounded-3xl p-5 space-y-3"
+              transition={{ type: "spring", damping: 25, stiffness: 220 }}
+              className="w-full max-w-md bg-[#12141c] border-t sm:border border-white/15 rounded-t-3xl sm:rounded-3xl p-5 space-y-3 shadow-2xl"
             >
-              <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+              <div className="flex items-center justify-between pb-2 border-b border-white/10">
                 <span className="text-sm font-bold text-white">{t.targetEgress}</span>
                 <button
                   type="button"
@@ -795,7 +752,7 @@ export default function TransitAppPage() {
                         "w-full flex items-center justify-between p-3 rounded-2xl border transition-all text-left",
                         isSelected
                           ? "bg-emerald-500/15 border-emerald-500/50 text-white"
-                          : "bg-slate-900/60 border-slate-800 text-slate-300 hover:bg-slate-800/60"
+                          : "bg-slate-900/60 border-white/[0.06] text-slate-300 hover:bg-slate-800/60"
                       )}
                     >
                       <div className="flex items-center gap-3">
@@ -828,9 +785,9 @@ export default function TransitAppPage() {
       </AnimatePresence>
 
       {/* Footer */}
-      <footer className="max-w-md mx-auto w-full px-4 py-4 text-center text-xs text-slate-600 border-t border-slate-800/50">
-        <p className="font-medium text-slate-500">{t.footerTitle}</p>
-        <p className="text-[11px] text-slate-600 mt-0.5">{t.footerSubtitle}</p>
+      <footer className="max-w-md mx-auto w-full px-4 py-4 text-center text-xs text-slate-600 border-t border-white/[0.06]">
+        <p className="font-semibold text-slate-400">{t.footerTitle}</p>
+        <p className="text-[11px] text-slate-500 mt-0.5">{t.footerSubtitle}</p>
       </footer>
     </div>
   );

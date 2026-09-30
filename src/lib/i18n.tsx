@@ -8,57 +8,57 @@ export const translations = {
   en: {
     // Nav
     brandName: "Yutori Car",
-    brandSubtitle: "Tokyo Subway Optimizer",
+    brandSubtitle: "Tokyo Subway Door Guide",
     navOverview: "Overview",
     navStations: "Key Stations",
-    navAlgorithm: "Pareto Algorithm",
-    navLaunchApp: "Launch App",
+    navAlgorithm: "How It Works",
+    navLaunchApp: "Open App",
     navBackHome: "Home",
 
     // Hero
-    heroBadge: "Tokyo Metropolitan Transit Optimization",
-    heroTitle: "Find your ideal train car in real-time.",
+    heroBadge: "Tokyo Transit • First-Timer Friendly",
+    heroTitle: "Find the exact train door to stand at in Tokyo.",
     heroSubtitle:
-      "Avoid 200% rush-hour crush without adding 6 minutes of platform walking. Yutori Car balances crowding telemetry against transfer coordinates across Tokyo's subway corridors.",
-    heroCtaPrimary: "Launch Transit Advisor",
-    heroCtaSecondary: "Explore Supported Hubs",
-    liveTelemetryBadge: "Live ODPT Ingestion",
+      "Avoid 200% rush-hour crush without running 200m down the platform. Yutori Car calculates the ideal car and door matching your luggage, transfer escalator, and comfort preference.",
+    heroCtaPrimary: "Find My Train Door",
+    heroCtaSecondary: "Explore Sightseeing Hubs",
+    liveTelemetryBadge: "Official ODPT Tokyo Data",
 
     // Interactive Preview
     previewStation: "Marunouchi Line • Otemachi",
     previewCar: "Car 4 · Door 2",
-    previewEgress: "Direct alignment with Tozai Line Escalator",
+    previewEgress: "Steps off directly at Tozai Line Escalator",
     previewSpace: "45% Load (Comfortable)",
     previewWalk: "12m (~10s walk)",
 
     // Dilemma Section
-    dilemmaTitle: "The Tokyo Commuter Dilemma",
+    dilemmaTitle: "Why Tokyo Commutes Feel Overwhelming",
     dilemmaSubtitle:
-      "On an 8 or 10-car Tokyo subway, passenger density is profoundly uneven.",
-    speedTrapTitle: "The Speed Trap",
+      "On 10-car Tokyo trains, passenger crush is notoriously uneven.",
+    speedTrapTitle: "The Transfer Trap",
     speedTrapDesc:
-      "Boarding directly at stairs saves walking distance at your transfer, but traps you in 180%–200% crush load and boarding bottleneck delays.",
+      "Boarding directly opposite the transfer stairs saves walk time, but subjects you to 200% crush load where you can barely breathe or move your suitcase.",
     walkingPenaltyTitle: "The Walking Penalty",
     walkingPenaltyDesc:
-      "Boarding a quiet end car offers physical space, but forces a 200-meter dash through crowded corridors, risking missed connections.",
-    yutoriSolutionTitle: "The Yutori Balance",
+      "Escaping to an empty end car feels nice at first, but forces a 200-meter dash through a packed underground station to catch your connecting train.",
+    yutoriSolutionTitle: "The 'Yutori' Balance",
     yutoriSolutionDesc:
-      "Multi-objective Pareto optimization models 1D platform coordinates to compute the exact door matching your personal comfort curve.",
+      "Multi-objective Pareto optimization calculates the exact door that gives you maximum personal space while keeping your transfer effortless.",
 
     // Core Pillars
-    pillar1Title: "1D Platform Spatial Graph",
+    pillar1Title: "Physical Platform Floor Coordinates",
     pillar1Desc:
-      "Modeled coordinates for escalators, stairs, and elevators across major interchange hubs like Tokyo, Otemachi, Shibuya, and Shinjuku.",
-    pillar2Title: "Real-Time ODPT Telemetry",
+      "Know exactly which floor sticker (e.g. Car 4 ▲ Door 2) to stand on before the train even pulls into the station.",
+    pillar2Title: "Live Real-Time Telemetry",
     pillar2Desc:
-      "Ingests live train positions, train composition sizes, delay indicators, and load factors directly from the Open Data for Public Transportation API.",
-    pillar3Title: "Groq-Powered AI Concierge",
+      "Ingests live train positions, delays, train compositions, and car load factors directly from Tokyo's official transit data.",
+    pillar3Title: "AI Commuter Concierge",
     pillar3Desc:
-      "Sub-200ms explainable AI briefings explaining why each door was chosen, barrier-free accessibility advice, and interactive commuter Q&A.",
+      "Sub-200ms Groq-powered advice in English and Japanese. Explains baggage navigation, elevator paths, and mild A/C cars.",
 
     // Hubs Section
-    hubsTitle: "Pre-Mapped Major Interchange Hubs",
-    hubsSubtitle: "Accurate physical platform coordinates for complex transfer stations.",
+    hubsTitle: "Popular Tokyo Stations & Landmarks",
+    hubsSubtitle: "Pre-mapped physical platform egresses for Tokyo's busiest interchanges.",
     hubOtemachi: "Otemachi",
     hubTokyo: "Tokyo",
     hubShibuya: "Shibuya",
@@ -66,21 +66,24 @@ export const translations = {
     hubGinza: "Ginza",
 
     // CTA Banner
-    ctaBannerTitle: "Upgrade your Tokyo commute today.",
+    ctaBannerTitle: "Step onto Tokyo platforms with peace of mind.",
     ctaBannerSubtitle:
-      "Zero registration required. Instant car and door recommendations powered by live subway data.",
-    ctaBannerButton: "Open Yutori Car Now",
+      "No registration required. Clear floor guides and real-time crowding advice for tourists and locals alike.",
+    ctaBannerButton: "Launch Yutori Car Free",
 
     // Tool / App Interface Strings
     toolTitle: "Yutori Car",
-    toolSubtitle: "Optimal Door Finder",
-    quickHubs: "Major Interchange Hubs",
+    toolSubtitle: "Tokyo Door Guide",
+    touristPromptTitle: "First time in Tokyo?",
+    touristPromptDesc: "Pick your situation or destination landmark below to get an instant physical floor recommendation.",
+    popularLandmarks: "Popular Landmarks & Stations",
+    yourSituation: "Your Travel Situation",
     selectLine: "Select Line",
     selectStation: "Select Station",
-    targetEgress: "Target Exit / Transfer Point",
-    pickDestination: "Pick destination",
+    targetEgress: "Destination Exit / Transfer",
+    pickDestination: "Choose where you want to go",
     nearestCar: "Nearest Car",
-    priorityTitle: "Boarding Priority",
+    priorityTitle: "Travel Priority",
     priorityFastExit: "Fast Exit",
     priorityBalanced: "Balanced",
     priorityRelaxed: "Relaxed",
@@ -89,22 +92,22 @@ export const translations = {
     priorityBalancedDesc: "Balanced (Optimal mix)",
     stairsAlignment: "Stairs Alignment",
     openSeating: "Open Seating",
-    recommendedTitle: "Optimal Boarding Spot",
-    directAlignmentWith: "Directly aligns with",
-    balancedForGeneral: "Balanced for minimum platform walking and seating availability",
+    recommendedTitle: "Recommended Boarding Door",
+    directAlignmentWith: "Steps off directly at: ",
+    balancedForGeneral: "Balanced for easy platform walking and comfortable breathing room",
     passengerSpace: "Passenger Space",
     loadCapacity: "load capacity",
-    transferEgress: "Transfer Egress",
+    transferEgress: "Walk to Escalator / Gate",
     corridorTransit: "corridor transit",
-    immediateExit: "Immediate exit",
-    liveTelemetry: "Live Telemetry",
-    estimatedFlow: "Estimated Flow",
+    immediateExit: "Steps away from exit",
+    liveTelemetry: "Live Telemetry Active",
+    estimatedFlow: "Standard Flow Estimate",
     destinationDirection: "Heading towards front of train",
-    tapCarForDetails: "Tap a car for details",
+    tapCarForDetails: "Tap any car for details",
     trainComposition: "Train Composition",
     carsCount: "Cars",
     delayText: "m delay",
-    telemetryBreakdown: "Specifics",
+    telemetryBreakdown: "Car Details",
     rankOf: "Rank #{rank} of {total}",
     crowding: "Crowding",
     walkDistance: "Walk Distance",
@@ -112,18 +115,18 @@ export const translations = {
     atGate: "At gate",
 
     // AI Concierge
-    conciergeTitle: "Transit Concierge",
+    conciergeTitle: "AI Platform Concierge",
     conciergeSubtitle: "Door advice & platform guidance",
     proTip: "Pro Tip: ",
-    quickInquiries: "Quick Inquiries",
-    askPlaceholder: "Ask about this train, doors, or transfers...",
+    quickInquiries: "Common Inquiries",
+    askPlaceholder: "Ask about luggage, elevators, or transfers...",
     conciergeResponse: "Concierge Response",
 
     // Footer
-    footerTitle: "Yutori Car (ゆとり車両)",
-    footerSubtitle: "Real-Time Tokyo Transit Optimization & Spatial Intelligence",
+    footerTitle: "Yutori Car · ゆとり車両",
+    footerSubtitle: "Human-Centered Tokyo Transit & Spatial Intelligence",
     footerResearch:
-      "Waseda University Research Alignment · ODPT Open Data · Groq AI Engine",
+      "Waseda University Academic Alignment · Open Data for Public Transportation (ODPT) · Groq Low-Latency AI",
   },
   ja: {
     // Nav
@@ -131,74 +134,77 @@ export const translations = {
     brandSubtitle: "東京地下鉄 最適ドア案内",
     navOverview: "概要",
     navStations: "主要駅",
-    navAlgorithm: "パレート最適化",
+    navAlgorithm: "仕組み",
     navLaunchApp: "アプリ起動",
     navBackHome: "ホーム",
 
     // Hero
-    heroBadge: "東京都心 リアルタイム地下鉄乗車最適化",
-    heroTitle: "今乗るべき「理想の号車・ドア」がすぐわかる",
+    heroBadge: "東京地下鉄・観光・初心者にもやさしい案内",
+    heroTitle: "乗るべき「号車とドア」がひと目でわかる。",
     heroSubtitle:
-      "乗り換え階段前のすし詰め混雑を避けつつ、無駄なホーム徒歩時間をゼロに。ODPTのリアルタイム混雑データと駅構内1D座標グラフから、最適な号車とドア位置を瞬時に算出します。",
-    heroCtaPrimary: "車両案内ツールを起動する",
-    heroCtaSecondary: "対応主要駅を見る",
+      "乗り換え階段前のすし詰め混雑を避けつつ、200mの無駄なホーム徒歩を解消。スーツケースの有無や乗り換えエスカレーター位置に合わせた最適な乗車ドアをご案内します。",
+    heroCtaPrimary: "乗るべきドアを調べる",
+    heroCtaSecondary: "対応観光地・主要駅を見る",
     liveTelemetryBadge: "ODPT公式データ連携",
 
     // Interactive Preview
     previewStation: "丸ノ内線 • 大手町駅",
     previewCar: "4号車 · 2番ドア",
     previewEgress: "東西線連絡エスカレーター直結",
-    previewSpace: "混雑率 45% (座席・空間あり)",
+    previewSpace: "混雑率 45% (座席・ゆとりあり)",
     previewWalk: "徒歩12m (~約10秒)",
 
     // Dilemma Section
-    dilemmaTitle: "東京通勤のジレンマ",
+    dilemmaTitle: "なぜ東京の通勤・移動は疲れるのか？",
     dilemmaSubtitle:
-      "8両・10両編成の地下鉄では、号車ごとの混雑率が著しく偏っています。",
+      "10両編成の地下鉄では、階段付近と端っこで混雑率が極端に偏っています。",
     speedTrapTitle: "乗り換え最速の罠",
     speedTrapDesc:
-      "階段直結の号車に乗ると到着後の徒歩は減りますが、乗車率は200%に達し、乗降遅延や激しい疲労に苛まれます。",
+      "階段直結の号車に乗ると到着後の徒歩は減りますが、乗車率200%の圧迫感にさらされ、スーツケースの持ち込みも困難になります。",
     walkingPenaltyTitle: "端っこ号車の徒歩負担",
     walkingPenaltyDesc:
-      "空いている先頭や最後尾に乗ると快適ですが、目的地で200mもの混雑したホームを歩かされ、乗り換えに乗り遅れるリスクがあります。",
+      "空いている端の号車に乗ると快適ですが、目的地で200mもの長い混雑ホームを歩かされ、乗り換えに遅れる危険があります。",
     yutoriSolutionTitle: "「ゆとり」パレート解",
     yutoriSolutionDesc:
-      "多目的パレート最適化により、個人の「快適性」と「乗り換えスピード」の希望バランスに合わせた最善のドアを導き出します。",
+      "多目的パレート最適化により、大きな荷物の有無や乗り換え時間の長短に応じた、最もバランスの良いドアを導き出します。",
 
     // Core Pillars
-    pillar1Title: "駅ホーム1次元空間グラフ",
+    pillar1Title: "実際のホーム足元ステッカーと完全連動",
     pillar1Desc:
-      "大手町、東京、渋谷、新宿など主要駅のエスカレーター・階段・エレベーターの位置を1m単位でモデル化。",
-    pillar2Title: "ODPT公式リアルタイムデータ",
+      "電車が来る前に、ホーム床のどの番号（4号車 ▲ 2番ドア）に並べばいいのかが直感的にわかります。",
+    pillar2Title: "リアルタイム運行・混雑データ",
     pillar2Desc:
       "東京メトロ・都営地下鉄の列車位置、遅延状況、編成両数、号車別混雑度データをリアルタイムに取得。",
     pillar3Title: "Groq搭載 AI車両コンシェルジュ",
     pillar3Desc:
-      "わずか200msの超低遅延推論で、なぜそのドアが最適なのかの戦術的アドバイスやバリアフリー案内を日英で提供。",
+      "わずか200msの超低遅延推論で、荷物があるときのルートや弱冷房車の位置、おすすめの並び方を日英で解説。",
 
     // Hubs Section
-    hubsTitle: "構内座標対応 主要ターミナル駅",
-    hubsSubtitle: "複雑な乗り換え導線も、ピンポイントなドア位置指定で迷わず直結。",
+    hubsTitle: "対応主要駅・人気観光エリア",
+    hubsSubtitle: "複雑な乗り換え駅も、迷わずスムーズに通り抜けられます。",
     hubOtemachi: "大手町",
-    hubTokyo: "東京",
+    hubTokyo: "東京駅",
     hubShibuya: "渋谷",
     hubShinjuku: "新宿",
     hubGinza: "銀座",
 
     // CTA Banner
-    ctaBannerTitle: "いつもの通勤に、ゆとりを。",
+    ctaBannerTitle: "東京の地下鉄を、もっと心地よく、迷わずに。",
     ctaBannerSubtitle:
-      "会員登録不要。駅と路線を選ぶだけで、リアルタイムの最適号車をご案内します。",
-    ctaBannerButton: "ゆとり車両を使ってみる",
+      "会員登録不要。足元ステッカーのガイドとリアルタイムの最適号車を今すぐ体験できます。",
+    ctaBannerButton: "ゆとり車両を無料で使う",
 
     // Tool / App Interface Strings
     toolTitle: "ゆとり車両",
-    toolSubtitle: "最適ドア探索エンジン",
-    quickHubs: "主要ターミナル駅",
+    toolSubtitle: "最適ドア案内",
+    touristPromptTitle: "東京の電車が初めてですか？",
+    touristPromptDesc: "状況や目的の観光地を選ぶだけで、ホームで迷わず並べるドア位置をご案内します。",
+    popularLandmarks: "人気の主要エリア・観光地",
+    yourSituation: "今の状況・持ち物は？",
     selectLine: "路線を選択",
     selectStation: "乗車駅を選択",
     targetEgress: "降車後の目的地・乗り換え先",
-    pickDestination: "目的地を選択",
+    pickDestination: "目的地を選択してください",
     nearestCar: "最寄号車",
     priorityTitle: "乗車優先設定",
     priorityFastExit: "最速降車",
@@ -209,7 +215,7 @@ export const translations = {
     priorityBalancedDesc: "バランス (パレート最適)",
     stairsAlignment: "階段直結",
     openSeating: "空間・着席",
-    recommendedTitle: "最適な乗車位置",
+    recommendedTitle: "おすすめの乗車ドア",
     directAlignmentWith: "直結出口: ",
     balancedForGeneral: "構内徒歩時間と混雑度のバランスを考慮した最適位置",
     passengerSpace: "車内混雑状況",
@@ -236,7 +242,7 @@ export const translations = {
     conciergeSubtitle: "ドア位置アドバイス & 構内案内",
     proTip: "アドバイス: ",
     quickInquiries: "よくある質問",
-    askPlaceholder: "この列車や乗り換えについて質問...",
+    askPlaceholder: "荷物、エレベーター、乗り換えについて質問...",
     conciergeResponse: "コンシェルジュの回答",
 
     // Footer
