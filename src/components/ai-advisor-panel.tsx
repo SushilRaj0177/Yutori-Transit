@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
 import {
   Sparkles,
   Bot,
@@ -107,16 +106,16 @@ export function AIAdvisorPanel({ context }: AIAdvisorPanelProps) {
   if (!context) return null;
 
   return (
-    <div className="human-card rounded-3xl p-5 space-y-4">
+    <div className="rounded-2xl border border-slate-200/80 bg-white shadow-xs p-4 space-y-3.5">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-xl bg-violet-500/15 border border-violet-500/30 flex items-center justify-center text-violet-400">
-            <Sparkles className="w-4 h-4" />
+          <div className="w-7 h-7 rounded-xl bg-violet-50 border border-violet-200/60 flex items-center justify-center text-violet-600 shadow-xs">
+            <Sparkles className="w-3.5 h-3.5" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-white">Transit Concierge</h3>
-            <p className="text-[11px] text-slate-400">Door advice & platform guidance</p>
+            <h3 className="text-xs font-bold text-slate-800">Tokyo Transit Assistant</h3>
+            <p className="text-[10px] text-slate-500">Fast AI advice for this station & line</p>
           </div>
         </div>
 
@@ -124,33 +123,33 @@ export function AIAdvisorPanel({ context }: AIAdvisorPanelProps) {
         <button
           type="button"
           onClick={() => setLanguage(language === "en" ? "ja" : "en")}
-          className="flex items-center gap-1.5 text-xs font-semibold bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 px-3 py-1.5 rounded-full border border-slate-700/60 transition-colors"
+          className="flex items-center gap-1.5 text-xs font-semibold bg-slate-100 hover:bg-slate-200/80 text-slate-700 px-2.5 py-1 rounded-full transition-colors cursor-pointer"
         >
-          <Languages className="w-3.5 h-3.5 text-violet-400" />
+          <Languages className="w-3 h-3 text-violet-600" />
           <span>{language === "en" ? "日本語" : "English"}</span>
         </button>
       </div>
 
       {/* Rationale Bubble */}
-      <div className="bg-[#181d2a]/90 rounded-2xl p-4 border border-slate-800 space-y-2.5">
+      <div className="bg-slate-50 rounded-xl p-3.5 border border-slate-200/70 space-y-2">
         {loadingRationale ? (
-          <div className="flex items-center justify-center py-4 gap-2 text-xs text-slate-400">
-            <Loader2 className="w-4 h-4 animate-spin text-violet-400" />
-            <span>Formulating best boarding advice...</span>
+          <div className="flex items-center justify-center py-3 gap-2 text-xs text-slate-500">
+            <Loader2 className="w-3.5 h-3.5 animate-spin text-violet-600" />
+            <span>Finding best boarding advice...</span>
           </div>
         ) : rationale ? (
           <>
-            <h4 className="text-sm font-semibold text-white">
+            <h4 className="text-xs font-bold text-slate-900">
               {rationale.headline}
             </h4>
-            <p className="text-xs text-slate-300 leading-relaxed">
+            <p className="text-xs text-slate-600 leading-relaxed">
               {language === "en" ? rationale.rationale : rationale.rationaleJa}
             </p>
             {rationale.tacticalTip && (
-              <div className="flex items-start gap-2 bg-amber-500/10 border border-amber-500/20 rounded-xl p-2.5 mt-2">
-                <Lightbulb className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                <p className="text-[11px] text-amber-200/90 leading-tight">
-                  <strong className="text-amber-300 font-semibold">Pro Tip: </strong>
+              <div className="flex items-start gap-2 bg-amber-50/80 border border-amber-200/60 rounded-xl p-2.5 mt-2">
+                <Lightbulb className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                <p className="text-[11px] text-amber-900 leading-snug">
+                  <strong className="font-semibold text-amber-800">Pro Tip: </strong>
                   {rationale.tacticalTip}
                 </p>
               </div>
@@ -160,20 +159,20 @@ export function AIAdvisorPanel({ context }: AIAdvisorPanelProps) {
       </div>
 
       {/* Ask Concierge */}
-      <div className="space-y-2 pt-1 border-t border-slate-800/80">
-        <div className="flex items-center gap-1.5 text-xs text-slate-400">
-          <Bot className="w-3.5 h-3.5 text-violet-400" />
-          <span>Quick Inquiries</span>
+      <div className="space-y-2 pt-1 border-t border-slate-100">
+        <div className="flex items-center gap-1 text-[11px] font-semibold text-slate-500">
+          <Bot className="w-3.5 h-3.5 text-violet-600" />
+          <span>Tap a quick question:</span>
         </div>
 
         {/* Quick prompt pills */}
-        <div className="flex gap-1.5 overflow-x-auto no-scrollbar py-1">
+        <div className="flex gap-1.5 overflow-x-auto no-scrollbar py-0.5">
           {QUICK_QUESTIONS.map((q, idx) => (
             <button
               key={idx}
               type="button"
               onClick={() => handleAskQuestion(q)}
-              className="text-[11px] whitespace-nowrap bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 px-3 py-1.5 rounded-full transition-colors flex-shrink-0"
+              className="text-[11px] whitespace-nowrap bg-slate-100 hover:bg-slate-200/80 text-slate-700 px-3 py-1.5 rounded-full transition-colors flex-shrink-0 cursor-pointer"
             >
               {q}
             </button>
@@ -193,12 +192,12 @@ export function AIAdvisorPanel({ context }: AIAdvisorPanelProps) {
             value={customQuestion}
             onChange={(e) => setCustomQuestion(e.target.value)}
             placeholder="Ask about this train, doors, or transfers..."
-            className="flex-1 bg-slate-900/90 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-violet-500/60"
+            className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-violet-500 focus:bg-white"
           />
           <button
             type="submit"
             disabled={askingQuestion || !customQuestion.trim()}
-            className="bg-violet-600 hover:bg-violet-500 disabled:opacity-40 text-white px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all flex items-center justify-center shrink-0 shadow-md shadow-violet-900/20"
+            className="bg-violet-600 hover:bg-violet-700 disabled:opacity-40 text-white px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center justify-center shrink-0 cursor-pointer shadow-xs"
           >
             {askingQuestion ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -215,13 +214,13 @@ export function AIAdvisorPanel({ context }: AIAdvisorPanelProps) {
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="bg-violet-950/30 border border-violet-500/25 rounded-2xl p-3.5 text-xs text-slate-200 space-y-1.5"
+              className="bg-violet-50/80 border border-violet-200/60 rounded-xl p-3 text-xs text-slate-800 space-y-1"
             >
-              <div className="flex items-center gap-1.5 text-violet-400 font-semibold text-[11px]">
+              <div className="flex items-center gap-1.5 text-violet-700 font-bold text-[11px]">
                 <Sparkles className="w-3 h-3" />
-                <span>Concierge Response</span>
+                <span>Assistant Response</span>
               </div>
-              <p className="leading-relaxed text-slate-300">{chatAnswer}</p>
+              <p className="leading-relaxed text-slate-700">{chatAnswer}</p>
             </motion.div>
           )}
         </AnimatePresence>
