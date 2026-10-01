@@ -2,127 +2,147 @@
 
 On a Tokyo Metro train, the car next to the transfer stairs is the most crowded,
 and the empty end car can leave you a long walk down the platform at your
-destination. Yutori tells you the car and door to board for your trip, and lets
-you slide between **getting out fast** and **having room**. It shows every number
-together with where it came from.
+destination. Yutori tells you which car and door to board for your trip, and lets
+you slide between **getting out fast** and **having room**.
+
+It is built to be relied on, so it **never presents a guess as data**. A door is
+recommended only when the position of the exit on the platform has been
+confirmed. Positions come from riders, and a position counts only once at least
+three people on different networks agree.
 
 <p align="center">
-  <img src="docs/img/mobile-en.png" width="30%" alt="Phone view, English" />
-  <img src="docs/img/mobile-ja-dark.png" width="30%" alt="Phone view, Japanese, dark mode" />
+  <img src="docs/img/mobile-en.png" width="24%" alt="Recommendation for a rider-confirmed exit" />
+  <img src="docs/img/mobile-report.png" width="24%" alt="Unconfirmed exit: no door is guessed; riders on the platform can confirm it" />
+  <img src="docs/img/mobile-ja-dark.png" width="24%" alt="Demo mode in Japanese, clearly labelled as invented data" />
 </p>
 
-![Desktop view with the Pareto chart open](docs/img/desktop.png)
+## Why rider reports?
 
-## What it does
+The app needs to know *which car and door each staircase, escalator and lift
+is next to*. This project checked every channel the official open-data platform
+(ODPT) offers: the query API, the bulk dumps, the dataset catalogue and the
+GTFS-Realtime feeds. **None of them publish platform positions**
+(`odpt:StationFacility` returns 404, and the dump file does not exist). Neither do they publish
+Tokyo Metro train positions or per-car crowding (details and dates in
+[docs/DATA.md](docs/DATA.md)).
 
-1. Pick a line (Marunouchi or Ginza), where you get on, where you get off, and
-   which exit or transfer you need there.
-2. The engine checks every (car, door) pair: walking time to that exit, plus the
-   load of that car.
-3. It keeps the **Pareto-optimal** doors (no other door is both faster *and* emptier)
-   and picks one according to the slider. The slider track shows the ranges where
-   the answer stays the same, so a trip with no real trade-off looks like one.
-4. It tells you how robust the pick is ("Solid pick" / "Close call") by re-solving
-   200 times with the crowding numbers perturbed.
-5. Live ODPT data (service disruptions, approaching trains and their delay, next
-   departures) is shown next to the answer. A delayed train raises the crowding
-   estimate.
-6. It explains the decision in English and Japanese. An LLM may rephrase that
-   explanation, but output citing any number the engine did not produce is
-   thrown away.
+So the positions come from the people standing on the platform. They read the
+car and door numbers painted there (e.g. `4-2`) and tap them in. The app turns
+those reports into a position only when they agree:
 
-## Honest status
+* one vote per network address (one person with many browser profiles counts once);
+* the median of the reported positions (robust to a mistaken or malicious report);
+* **verified** at ≥ 3 reports with ≥ 75 % within one door of each other;
+  otherwise *pending* or *disputed*, and then **no door is recommended**.
 
-| | |
+Reporting in the platform's own car numbers also means the answer never depends
+on assumptions about which end of the train car 1 is at.
+
+## What a rider sees
+
+| Situation | What the app shows |
 |---|---|
-| Station data, line geometry, Pareto solver, robustness check | done, tested |
-| Live service status and timetable (ODPT) | done, **verified against live responses** ([probe output](docs/odpt-probe.md)) |
-| Live train positions and delays | implemented, but **ODPT does not publish Tokyo Metro positions** (verified); the app says so |
-| Per-car crowding | **estimated** by a documented model. ODPT publishes no per-car load (verified); the app switches to live loads automatically if that changes |
-| Platform exit positions | **demo layouts** for 12 stations. The exits are real; their positions along the platform are not surveyed yet ([how to survey](docs/DATA.md#surveying-a-station-turning-a-demo-layout-into-a-surveyed-one)) |
+| Exit position verified (riders or survey) | "Board car 2, door 1": walk time, relative crowding, robustness, slider |
+| Exit position not yet verified | **No door.** "Not confirmed yet", the usually-quietest car (labelled as an estimate), and a one-tap way to confirm it from the platform |
+| Live ODPT data | Service status (平常運転 / disruptions) and the next departures from the real timetable |
+| No live data | Says "unavailable"; never shows placeholder trains or times |
+| Demo mode (footer link, off by default) | Invented positions, with a banner on every screen saying not to use them for real trips |
 
-The UI never shows a placeholder as if it were data: missing live data reads
-"unavailable", estimates are labelled as estimates, and stations without
-platform data get no recommendation.
+Crowding per car is a rule-of-thumb estimate (no operator publishes per-car
+load), so it is shown as *usually quieter / about average / usually busier*,
+never as a made-up percentage. It also counts for half as much as walking time
+measured from a verified position.
 
 ## How it works
 
 ```
              browser                                      server (Next.js route handlers)
-┌──────────────────────────────────┐   /api/live    ┌──────────────────────────────────┐
-│ Planner UI (React)               │ ─────────────▶ │ ODPT client                      │
-│  · route, exit, slider, time     │   every 30 s   │  · TrainInformation  (60 s cache)│──▶ ODPT v4
-│                                  │ ◀───────────── │  · Train             (20 s cache)│
-│ engine (pure TS, runs in browser)│                │  · StationTimetable  (6 h cache) │
-│  · geometry  → door positions    │                │  · keys never leave the server   │
-│  · crowding  → per-car estimate  │  /api/narrate  ├──────────────────────────────────┤
-│  · pareto    → frontier + pick   │ ─────────────▶ │ recompute plan from the query    │
-│  · stability → robustness        │   query only   │ → template explanation           │──▶ Groq (optional)
-│  · explain   → EN/JA template    │ ◀───────────── │ → LLM rephrase, number-checked   │
+┌──────────────────────────────────┐  /api/layouts  ┌──────────────────────────────────┐
+│ Planner UI (React)               │ ─────────────▶ │ rider reports → consensus        │──▶ Postgres
+│  · route, exit, slider, time     │  /api/reports  │  (one vote per network, median,  │    (Neon / PGlite)
+│  · one-tap position reports      │ ─────────────▶ │   ≥3 agreeing → verified)        │
+│                                  │                ├──────────────────────────────────┤
+│ engine (pure TS, runs in browser)│   /api/live    │ ODPT client                      │
+│  · geometry  → door positions    │ ─────────────▶ │  · TrainInformation  (60 s cache)│──▶ ODPT v4
+│  · crowding  → relative estimate │                │  · StationTimetable  (6 h cache) │
+│  · pareto    → frontier + pick   │  /api/narrate  ├──────────────────────────────────┤
+│  · stability → robustness        │ ─────────────▶ │ recompute plan server-side       │
+│  · explain   → EN/JA template    │   query only   │ → LLM rephrase, unit-checked     │──▶ Groq (optional)
 └──────────────────────────────────┘                └──────────────────────────────────┘
 ```
 
-* `src/engine/`: the model, with no framework code. [docs/MODEL.md](docs/MODEL.md)
-  has the equations, every assumption, and why min–max normalisation was replaced
-  with fixed scales.
-* `src/data/`: lines, stations (EN/JA), demo platform layouts.
-  [docs/DATA.md](docs/DATA.md) lists the provenance of each source and what still
-  needs verifying.
-* `src/core/`: wiring (plan, live parsing, explanations, Japan-time service-day
-  handling).
-* `src/server/`: the ODPT client, LLM narration and rate limiting. Nothing here
-  is bundled to the browser (`server-only`).
-* `src/ui/`: the interface. Native `<select>` for stations (the phone's own
-  picker), an SVG platform diagram, the slider with answer bands, and a Pareto
-  chart.
+* `src/engine/`: the optimisation model, with no framework code. [docs/MODEL.md](docs/MODEL.md)
+  has the equations and every assumption.
+* `src/core/consensus.ts`: rider reports → verified / pending / disputed.
+* `src/core/positions.ts`: precedence rules: surveyed > rider-verified > demo (only in demo mode) > unknown.
+* `src/data/`: lines and stations (verified against ODPT) and the exits per station.
+* `src/server/`: ODPT client, report store, rate limiting, LLM narration (`server-only`).
+* `src/ui/`: the interface.
 
 ### Design decisions
 
-* **The solver runs on the client.** Moving the slider is a pure function of
-  data already loaded, so there is no network round trip.
-* **No database.** The specification proposed PostgreSQL and Redis. With 44
-  stations and 12 layouts, version-controlled TypeScript data is easier to
-  review and test, and costs nothing to host. A database becomes worthwhile once
-  layouts are crowd-sourced.
-* **Fixed objective scales instead of min–max.** Min–max made 42 % vs 54 % (seats
-  free everywhere) look as large as 60 % vs 200 %. See MODEL.md §3.
-* **The LLM is optional and fenced.** The deterministic template is always the
-  baseline, and the narration route recomputes the plan from the query instead
-  of trusting numbers from the client.
+* **No recommendation without a verified position.** An honest "not confirmed
+  yet" beats a confident wrong door.
+* **The LLM never decides, and only describes real positions.** The server
+  recomputes the plan from the query. Output is rejected if it cites any number
+  the engine didn't produce, in the wrong unit, or calls a door "fastest" when
+  it isn't. Demo positions are never narrated.
+* **Estimated crowding is discounted** (×0.5) against walking time from a
+  verified position. A rule of thumb shouldn't overrule a measurement at equal
+  weight.
+* **The solver runs on the client**, so moving the slider involves no round trip.
 
 ## Run it
 
 ```bash
 npm install
-cp .env.example .env.local   # add ODPT keys (and optionally a Groq key)
+cp .env.example .env.local   # ODPT keys; optional Groq key, DATABASE_URL, REPORT_SALT
 npm run dev                  # http://localhost:3000
 ```
 
-Without any keys the app still works: it plans from the time-of-day model and
-says that live data is unavailable.
+Locally, rider reports go to an embedded Postgres (PGlite) in `.data/`. In
+production, set `DATABASE_URL` (see below). Without it, a Vercel deployment turns
+reporting off instead of silently losing reports.
 
 ```bash
-npm run check        # eslint + tsc + vitest
+npm run check        # eslint + tsc + vitest (52 tests)
 npm run build
 npm run odpt:probe   # print what ODPT actually returns for these lines
 ```
 
-Tests (`vitest`, 35 cases) cover door geometry, the Pareto sweep against a
-brute-force check on random inputs with ties, solver endpoints and
-breakpoints, a < 2 ms solve for 40 candidates, the crowding model, stability
-determinism, ODPT parsing (service status, approaching trains, timetables
-across midnight, per-car field validation), JST service-day handling, and the
-narration checker (including a real model output that was caught misusing a number).
+The tests cover:
+
+* the engine: geometry, a Pareto sweep checked against brute force, solver
+  endpoints, the crowding discount, and the model;
+* consensus: troll reports, disputes, invalid input;
+* a **"no door without a verified position" rule** for pending, disputed and demo states;
+* the report API on a real embedded Postgres: one vote per network, vote
+  changes, rate limits;
+* ODPT parsing and JST service-day handling;
+* the narration checker, including a real model output it caught misusing a number.
+
+### Deploying for real users (Vercel + free Postgres)
+
+1. Import the repo into Vercel.
+2. Add a Postgres database from Vercel's storage marketplace (Neon has a free
+   tier). This sets `DATABASE_URL`; the table is created on first use.
+3. Set `ODPT_CONSUMER_KEY`, `REPORT_SALT` (a long random string) and optionally
+   `GROQ_API_KEY` in Project Settings → Environment Variables.
+
+## Privacy
+
+Reports store the station, exit, car and door, plus **salted SHA-256 hashes** of
+a random per-browser id and of the IP address (to stop ballot stuffing). There
+are no accounts, no location tracking, and no raw IPs.
 
 ## Roadmap
 
-1. Add a line whose train positions ODPT does publish (e.g. Toei Shinjuku or Oedo), so live delays feed the estimate.
-2. Survey the 12 demo stations and mark them `surveyed`.
-3. Calibrate the crowding model (published line congestion rates, ODPT
-   `PassengerSurvey` ridership for hotspot weights, a few manual per-car counts) and report the error.
-4. Add more lines. The engine already handles any car count and door count; the
-   Tozai and Chiyoda lines (10 cars, 4 doors) are the obvious next ones.
-5. Model Japanese public holidays in the day-type logic.
+1. Get the first stations verified by real riders: Otemachi, Shinjuku and Tokyo
+   first, by asking Tokyo-based student and developer communities.
+2. Rider-reported **crowding** ("car 3 is packed right now") with time decay,
+   replacing the estimate where reports are recent.
+3. Add a line whose train positions ODPT does publish (Toei), so live delays feed the plan.
+4. Calibrate the crowding model with ODPT `PassengerSurvey` ridership and report its error.
 
 ## Data credit
 

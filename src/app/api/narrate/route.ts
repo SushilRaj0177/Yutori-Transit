@@ -1,5 +1,8 @@
+import { clientIp } from "@/server/client-ip";
 import { factsOf } from "@/core/explain";
 import { plan } from "@/core/plan";
+import { getLine } from "@/data/network";
+import { communityBook } from "@/server/community";
 import { allow } from "@/server/rate-limit";
 import { narrate } from "@/server/narrate";
 
@@ -8,7 +11,7 @@ import { narrate } from "@/server/narrate";
  * the narration can only describe what the engine actually decided.
  */
 export async function POST(req: Request) {
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "local";
+  const ip = clientIp(req);
   if (!allow(ip)) return Response.json({ error: "slow down" }, { status: 429 });
 
   let body: Record<string, unknown>;
@@ -22,8 +25,12 @@ export async function POST(req: Request) {
   const hour = num(body.hour, 0, 24);
   if (speedWeight === null || hour === null) return Response.json({ error: "speedWeight and hour are required" }, { status: 400 });
 
+  const line = getLine(String(body.line ?? ""));
+  if (!line) return Response.json({ error: "unknown-line" }, { status: 422 });
+  // Narration is only offered for real positions (surveyed or rider-verified), never for demo ones.
+  const { book } = await communityBook(line);
   const result = plan({
-    line: String(body.line ?? ""),
+    line: line.id,
     from: String(body.from ?? ""),
     to: String(body.to ?? ""),
     egressId: typeof body.egressId === "string" ? body.egressId : undefined,
@@ -31,7 +38,10 @@ export async function POST(req: Request) {
     hour,
     dayType: body.dayType === "holiday" ? "holiday" : "weekday",
     delayS: num(body.delayS, 0, 3600) ?? undefined,
+    community: book,
+    demo: false,
   });
   if (!result.ok) return Response.json({ error: result.error.kind }, { status: 422 });
-  return Response.json(await narrate(factsOf(result.plan)));
+  if (!result.plan.door) return Response.json({ error: "position-unknown" }, { status: 422 });
+  return Response.json(await narrate(factsOf(result.plan, result.plan.door)));
 }

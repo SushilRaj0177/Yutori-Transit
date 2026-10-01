@@ -87,6 +87,18 @@ differences nobody could feel. Fixed scales mean "no discomfort while seats are
 free, worst case at 200 %", and the slider means the same thing at every station
 and time of day.
 
+**Crowding trust.** When loads are only estimated, the crowding term is
+multiplied by `ESTIMATE_TRUST = 0.5`: `J = w·T + (1 − w)·0.5·C`. Walking time
+from a verified position is a measurement and the crowding estimate is a rule
+of thumb, so the estimate should not overrule the measurement at equal weight.
+In a test at 08:15 on Shinjuku → Otemachi (Tozai exit), "Balanced" otherwise
+sent riders 31 m from the exit for a car that was only estimated to be quieter.
+Live loads use trust 1. The Pareto frontier is unchanged.
+
+**Shown as relative levels.** The UI does not display estimated percentages.
+Each car is "usually quieter / about average / usually busier" relative to the
+train mean (±7 % band), because the model's absolute scale is not calibrated.
+
 With `0 < w < 1` the minimiser of a positively weighted sum is always on the
 frontier. At the endpoints, ties are broken by the other objective, so the pick
 stays non-dominated there as well (this is tested).
@@ -134,7 +146,7 @@ The LLM never chooses anything.
 
 ## 6. Calibration plan (open)
 
-* Survey real egress positions for the demo stations (`docs/DATA.md`).
+* Collect rider-verified positions (`docs/DATA.md`), starting with the busiest transfer stations.
 * Replace `peak_line` with a published figure, with its source cited.
 * Fit `σ` and `A` against per-car observations (manual counts on a few trains,
   or a per-car feed if one becomes available) and report the error.

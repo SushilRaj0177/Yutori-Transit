@@ -33,3 +33,8 @@ export function loadWord(pct: number, lang: "en" | "ja"): string {
   const w = words.find(([lim]) => pct <= lim)!;
   return lang === "en" ? w[1] : w[2];
 }
+
+/** Relative crowding (estimates): three calm steps, not a fake-precise gradient. */
+export function crowdColor(level: "quieter" | "average" | "busier"): string {
+  return level === "quieter" ? "rgb(110 196 140)" : level === "average" ? "rgb(240 200 90)" : "rgb(240 140 80)";
+}

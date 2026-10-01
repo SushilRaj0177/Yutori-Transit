@@ -1,21 +1,35 @@
-import type { Bilingual, ScoredCandidate } from "@/engine/types";
-import type { Plan } from "./plan";
+import type { Bilingual, EgressKind, ScoredCandidate } from "@/engine/types";
+import type { CrowdLevel, DoorPlan, Plan } from "./plan";
+import type { PositionSource } from "./positions";
 
 /**
  * Deterministic explanation of a plan. This is the source of truth: the
  * optional LLM layer may only rephrase these facts, and its output is checked
- * against them (see src/server/narrate.ts).
+ * against them (see narration-check.ts).
+ *
+ * Crowding is described relative to the rest of the train ("usually quieter")
+ * unless it comes from a live measurement. The model's absolute percentages are
+ * not calibrated, so quoting them would be false precision.
  */
+
+interface Pick {
+  car: number;
+  door: number;
+  egressS: number;
+  crowd: CrowdLevel;
+  /** Only present when the load is a live measurement. */
+  loadPct?: number;
+}
 
 export interface Facts {
   destination: Bilingual;
   egress: Bilingual;
-  egressKind: string;
-  best: { car: number; door: number; walkM: number; egressS: number; loadPct: number };
-  trainMeanLoadPct: number;
+  egressKind: EgressKind;
+  best: Pick & { walkM: number };
+  fastest: Pick;
+  roomiest: Pick;
   loadSource: "odpt-live" | "estimate";
-  fastest: { car: number; door: number; egressS: number; loadPct: number };
-  roomiest: { car: number; door: number; egressS: number; loadPct: number };
+  positionSource: PositionSource;
   /** Share of perturbed re-solves that keep the same car. Omitted from LLM input. */
   sameCarShare?: number;
 }
@@ -31,54 +45,73 @@ export function narrationFacts(f: Facts): Facts {
   return rest;
 }
 
-const pick = (c: ScoredCandidate) => ({ car: c.car, door: c.door, egressS: Math.round(c.egressS), loadPct: c.loadPct });
-
-export function factsOf(p: Plan): Facts {
-  const b = p.solution.best;
+export function factsOf(p: Plan, d: DoorPlan): Facts {
+  const live = p.loadSource === "odpt-live";
+  const pick = (c: ScoredCandidate): Pick => ({
+    car: c.car,
+    door: c.door,
+    egressS: Math.round(c.egressS),
+    crowd: p.crowd[c.car - 1],
+    ...(live ? { loadPct: c.loadPct } : {}),
+  });
+  const b = d.solution.best;
   return {
     destination: p.to.name,
-    egress: p.target.leadsTo,
-    egressKind: p.target.kind,
-    best: { car: b.car, door: b.door, walkM: Math.round(b.walkM), egressS: Math.round(b.egressS), loadPct: b.loadPct },
-    trainMeanLoadPct: p.meanLoadPct,
+    egress: d.target.leadsTo,
+    egressKind: d.target.kind,
+    best: { ...pick(b), walkM: Math.round(b.walkM) },
+    fastest: pick(d.solution.fastest),
+    roomiest: pick(d.solution.roomiest),
     loadSource: p.loadSource,
-    fastest: pick(p.solution.fastest),
-    roomiest: pick(p.solution.roomiest),
-    sameCarShare: Math.round(p.stability.sameCar * 100),
+    positionSource: d.positionSource,
+    sameCarShare: Math.round(d.stability.sameCar * 100),
   };
 }
+
+const KIND: Record<EgressKind, Bilingual> = {
+  stairs: { en: "stairs", ja: "階段" },
+  escalator: { en: "escalator", ja: "エスカレーター" },
+  way: { en: "stairs/escalator", ja: "階段・エスカレーター" },
+  elevator: { en: "elevator", ja: "エレベーター" },
+};
 
 export function explain(f: Facts): Bilingual {
   const b = f.best;
   const en: string[] = [];
   const ja: string[] = [];
-  const estEn = f.loadSource === "estimate" ? "estimated " : "";
-  const estJa = f.loadSource === "estimate" ? "推定" : "";
+  const est = f.loadSource === "estimate";
+  const usually = est ? "usually " : "";
+  const usuallyJa = est ? "普段は" : "";
 
-  en.push(`Door ${b.door} of car ${b.car} puts you ${b.walkM} m from the ${f.egressKind} to ${f.egress.en} (about ${b.egressS} s to reach it).`);
-  ja.push(`${b.car}号車${b.door}番ドアから${f.egress.ja}まで約${b.walkM}m、到達まで約${b.egressS}秒です。`);
+  en.push(`Door ${b.door} of car ${b.car} is ${b.walkM} m from the ${KIND[f.egressKind].en} to ${f.egress.en} (about ${b.egressS} s).`);
+  ja.push(`${b.car}号車${b.door}番ドアから${f.egress.ja}方面の${KIND[f.egressKind].ja}まで約${b.walkM}m（約${b.egressS}秒）です。`);
 
-  if (b.loadPct < f.trainMeanLoadPct - 5) {
-    en.push(`Car ${b.car} is ${estEn}${b.loadPct}% full against a ${f.trainMeanLoadPct}% train average.`);
-    ja.push(`${b.car}号車の${estJa}混雑率は${b.loadPct}%で、編成平均${f.trainMeanLoadPct}%より空いています。`);
-  } else if (b.loadPct > f.trainMeanLoadPct + 5) {
-    en.push(`Car ${b.car} is busier than average (${estEn}${b.loadPct}% vs ${f.trainMeanLoadPct}%), the price of the short walk.`);
-    ja.push(`${b.car}号車は${estJa}混雑率${b.loadPct}%と平均${f.trainMeanLoadPct}%より混みますが、移動距離が短くなります。`);
+  const pct = (c: Pick) => (c.loadPct !== undefined ? ` (${c.loadPct}%)` : "");
+  if (b.crowd === "quieter") {
+    en.push(`Car ${b.car} is ${usually}quieter than the rest of the train${pct(b)}.`);
+    ja.push(`${b.car}号車は${usuallyJa}編成の中でも空いている車両です${pct(b)}。`);
+  } else if (b.crowd === "busier") {
+    en.push(`Car ${b.car} is ${usually}busier than average${pct(b)}: the price of the short walk.`);
+    ja.push(`${b.car}号車は${usuallyJa}平均より混みますが${pct(b)}、移動は短くなります。`);
   }
 
   const fa = f.fastest;
   const ro = f.roomiest;
   if (fa.car !== b.car || fa.door !== b.door) {
-    en.push(`Car ${fa.car} door ${fa.door} is ${b.egressS - fa.egressS} s quicker at ${fa.loadPct}% load.`);
-    ja.push(`最速は${fa.car}号車${fa.door}番ドア（${b.egressS - fa.egressS}秒短縮、混雑率${fa.loadPct}%）です。`);
+    en.push(`Car ${fa.car} door ${fa.door} is ${b.egressS - fa.egressS} s quicker${fa.crowd === "busier" ? ` but ${usually}more crowded` : ""}.`);
+    ja.push(`${fa.car}号車${fa.door}番ドアなら${b.egressS - fa.egressS}秒早く出られます${fa.crowd === "busier" ? "が、混雑しがちです" : ""}。`);
   }
   if (ro.car !== b.car) {
-    en.push(`Car ${ro.car} has the most room (${ro.loadPct}%) but adds ${ro.egressS - b.egressS} s.`);
-    ja.push(`最も空いているのは${ro.car}号車（${ro.loadPct}%）ですが、${ro.egressS - b.egressS}秒余分にかかります。`);
+    en.push(`Car ${ro.car} has the most room${pct(ro)} but adds ${ro.egressS - b.egressS} s.`);
+    ja.push(`最も空いているのは${ro.car}号車${pct(ro)}ですが、${ro.egressS - b.egressS}秒余分にかかります。`);
   }
-  if (f.loadSource === "estimate" && f.sameCarShare !== undefined && f.sameCarShare < 70) {
-    en.push(`This is a close call: with crowding uncertainty the same car wins only ${f.sameCarShare}% of the time.`);
-    ja.push(`混雑の不確かさを考慮すると、同じ号車が選ばれるのは${f.sameCarShare}%のみで、僅差の判断です。`);
+  if (est && f.sameCarShare !== undefined && f.sameCarShare < 70) {
+    en.push(`It is a close call: crowding is estimated, and the same car wins in only ${f.sameCarShare}% of simulations.`);
+    ja.push(`混雑は推定のため、シミュレーションで同じ号車が選ばれたのは${f.sameCarShare}%のみの僅差です。`);
+  }
+  if (f.positionSource === "demo") {
+    en.push("(Demo position: not real data.)");
+    ja.push("（デモ用の位置です。実データではありません。）");
   }
   return { en: en.join(" "), ja: ja.join("") };
 }

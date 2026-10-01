@@ -38,15 +38,15 @@ export function recommendationStability(
   target: Egress,
   loadsPct: number[],
   speedWeight: number,
-  { sigma = 0.2, trials = 200, seed = 7 } = {},
+  { sigma = 0.2, trials = 200, seed = 7, crowdTrust = 1 } = {},
 ): Stability {
-  const base = solve(buildCandidates(g, target, loadsPct), speedWeight).best;
+  const base = solve(buildCandidates(g, target, loadsPct), speedWeight, crowdTrust).best;
   const rand = mulberry32(seed);
   let sameCar = 0;
   let sameDoor = 0;
   for (let t = 0; t < trials; t++) {
     const noisy = loadsPct.map((l) => l * Math.exp(sigma * gaussian(rand)));
-    const b = solve(buildCandidates(g, target, noisy), speedWeight).best;
+    const b = solve(buildCandidates(g, target, noisy), speedWeight, crowdTrust).best;
     if (b.car === base.car) {
       sameCar++;
       if (b.door === base.door) sameDoor++;

@@ -112,6 +112,13 @@ describe("stability", () => {
 });
 
 describe("cost scales", () => {
+  it("lets an estimated crowding difference count for less than a measured one", () => {
+    // 30 s more walking for a car estimated 60 points emptier.
+    const cs = [cand(10, 160, 1), cand(40, 100, 2)];
+    expect(solve(cs, 0.5, 1).best.car).toBe(2);
+    expect(solve(cs, 0.5, 0.5).best.car).toBe(1);
+  });
+
   it("ignores load differences while every car still has seats", () => {
     // Car 1 is a long walk but slightly emptier; with seats free everywhere the walk should win.
     const cs = [cand(60, 30, 1), cand(10, 45, 2)];

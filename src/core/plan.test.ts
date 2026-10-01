@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { trainLengthM } from "@/engine/geometry";
-import { LAYOUTS } from "@/data/layouts";
+import { doorPositionM, trainLengthM } from "@/engine/geometry";
+import { DEMO_POSITIONS, STATION_EGRESS } from "@/data/layouts";
 import { directionBetween, getLine, LINES, stationsAhead, stationsBehind } from "@/data/network";
-import { plan } from "./plan";
+import { consensus } from "./consensus";
+import { crowdLevels, plan, type PlanQuery } from "./plan";
+import type { CommunityBook } from "./positions";
 
 describe("network data", () => {
   it("has unique, correctly prefixed station codes", () => {
@@ -13,12 +15,14 @@ describe("network data", () => {
     }
   });
 
-  it("keeps every egress inside the stopped train's footprint", () => {
-    for (const layout of LAYOUTS) {
-      const len = trainLengthM(getLine(layout.line)!.geometry);
-      for (const g of layout.egress) {
-        expect(g.positionM).toBeGreaterThanOrEqual(0);
-        expect(g.positionM).toBeLessThanOrEqual(len);
+  it("keeps every demo position inside the stopped train and every egress id unique", () => {
+    const ids = STATION_EGRESS.flatMap((s) => s.egress.map((e) => e.id));
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const s of STATION_EGRESS) {
+      const len = trainLengthM(getLine(s.line)!.geometry);
+      for (const e of s.egress) {
+        expect(DEMO_POSITIONS[e.id]).toBeGreaterThanOrEqual(0);
+        expect(DEMO_POSITIONS[e.id]).toBeLessThanOrEqual(len);
       }
     }
   });
@@ -34,18 +38,39 @@ describe("network data", () => {
 });
 
 describe("plan", () => {
-  const q = { line: "M", from: "M08", to: "M18", speedWeight: 0.5, hour: 8.3, dayType: "weekday" as const };
+  const M = getLine("M")!;
+  const q: PlanQuery = { line: "M", from: "M08", to: "M18", egressId: "m18-tozai", speedWeight: 0.5, hour: 8.3, dayType: "weekday", community: null, demo: false };
+  const verified = (car: number, door: number): CommunityBook => ({
+    M18: { "m18-tozai": consensus(M.geometry, [{ car, door }, { car, door }, { car, door }]) },
+  });
 
-  it("recommends a door when the destination has a layout", () => {
-    const r = plan({ ...q, egressId: "m18-tozai" });
-    expect(r.ok).toBe(true);
-    if (!r.ok) return;
-    expect(r.plan.target.id).toBe("m18-tozai");
-    expect(r.plan.loadSource).toBe("estimate");
-    expect(r.plan.candidates).toHaveLength(18);
-    // Fastest exit to an egress at 10 m must be in car 1.
-    const fastest = plan({ ...q, egressId: "m18-tozai", speedWeight: 1 });
-    expect(fastest.ok && fastest.plan.solution.best.car).toBe(1);
+  it("recommends NO door when the target's position is unknown", () => {
+    const r = plan(q);
+    expect(r.ok && r.plan.door).toBeNull();
+    expect(r.ok && r.plan.target.source).toBeNull();
+  });
+
+  it("does not use pending or disputed rider reports", () => {
+    const pending: CommunityBook = { M18: { "m18-tozai": consensus(M.geometry, [{ car: 2, door: 1 }]) } };
+    expect((plan({ ...q, community: pending }) as { plan: { door: unknown } }).plan.door).toBeNull();
+    const disputed: CommunityBook = { M18: { "m18-tozai": consensus(M.geometry, [{ car: 1, door: 1 }, { car: 1, door: 1 }, { car: 6, door: 3 }, { car: 6, door: 3 }]) } };
+    expect((plan({ ...q, community: disputed }) as { plan: { door: unknown } }).plan.door).toBeNull();
+  });
+
+  it("recommends a door once riders have verified the position", () => {
+    const r = plan({ ...q, community: verified(2, 1), speedWeight: 1 });
+    if (!r.ok || !r.plan.door) throw new Error("expected a door plan");
+    expect(r.plan.door.positionSource).toBe("community");
+    expect(r.plan.door.target.positionM).toBe(doorPositionM(M.geometry, 2, 1));
+    // Fastest possible: the door riders reported.
+    expect(r.plan.door.solution.best).toMatchObject({ car: 2, door: 1 });
+  });
+
+  it("uses demo positions only when demo mode is explicitly on", () => {
+    const r = plan({ ...q, demo: true });
+    expect(r.ok && r.plan.door?.positionSource).toBe("demo");
+    const real = plan({ ...q, demo: true, community: verified(3, 2) });
+    expect(real.ok && real.plan.door?.positionSource).toBe("community");
   });
 
   it("uses live per-car loads when they are supplied", () => {
@@ -54,14 +79,13 @@ describe("plan", () => {
     expect(r.ok && r.plan.loadsPct).toEqual([50, 60, 70, 80, 90, 100]);
   });
 
-  it("refuses destinations without a platform layout instead of inventing one", () => {
-    const r = plan({ ...q, to: "M19" });
-    expect(r.ok).toBe(false);
-    expect(!r.ok && r.error.kind).toBe("no-layout");
-  });
-
-  it("rejects same-station and unknown queries", () => {
+  it("refuses stations that have no egress data at all", () => {
+    expect(plan({ ...q, to: "M19" })).toMatchObject({ ok: false, error: { kind: "no-layout" } });
     expect(plan({ ...q, to: "M08" })).toMatchObject({ ok: false, error: { kind: "same-station" } });
     expect(plan({ ...q, line: "Z" })).toMatchObject({ ok: false, error: { kind: "unknown-line" } });
+  });
+
+  it("describes crowding relative to the train, with an 'average' band", () => {
+    expect(crowdLevels([90, 100, 110, 100])).toEqual(["quieter", "average", "busier", "average"]);
   });
 });

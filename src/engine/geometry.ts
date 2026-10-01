@@ -10,7 +10,7 @@ export const MODEL = {
   /** Extra seconds to get off a car per 100 percentage points of load above 100%. */
   alightDelayPer100PctS: 15,
   /** Fixed time cost of using each egress type (queueing, waiting for the lift). */
-  egressPenaltyS: { stairs: 0, escalator: 4, elevator: 30 } satisfies Record<EgressKind, number>,
+  egressPenaltyS: { stairs: 0, escalator: 4, way: 2, elevator: 30 } satisfies Record<EgressKind, number>,
 } as const;
 
 /** Evenly spaced door centres, the layout used by Tokyo Metro's 3- and 4-door stock. */

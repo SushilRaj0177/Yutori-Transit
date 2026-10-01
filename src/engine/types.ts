@@ -1,6 +1,7 @@
 export type Bilingual = { en: string; ja: string };
 
-export type EgressKind = "stairs" | "escalator" | "elevator";
+/** "way" = stairs or escalator, not yet confirmed which. */
+export type EgressKind = "stairs" | "escalator" | "way" | "elevator";
 
 /**
  * A vertical circulation point on a platform (stairs, escalator, elevator).

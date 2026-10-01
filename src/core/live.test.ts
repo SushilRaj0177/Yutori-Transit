@@ -75,22 +75,24 @@ describe("live parsing", () => {
 });
 
 describe("explanations", () => {
-  const p = plan({ line: "M", from: "M08", to: "M18", egressId: "m18-hanzomon", speedWeight: 0.5, hour: 8.3, dayType: "weekday" });
-  if (!p.ok) throw new Error("fixture plan failed");
-  const facts = factsOf(p.plan);
+  // Demo positions are fine for testing the wording; real use never sees them unlabelled.
+  const fixture = { community: null, demo: true, dayType: "weekday" as const };
+  const p = plan({ ...fixture, line: "M", from: "M08", to: "M18", egressId: "m18-hanzomon", speedWeight: 0.5, hour: 8.3 });
+  if (!p.ok || !p.plan.door) throw new Error("fixture plan failed");
+  const facts = factsOf(p.plan, p.plan.door);
 
   it("template explanations pass the same check applied to LLM output", () => {
     expect(checkNarration(explain(facts), facts)).toBeNull();
   });
 
   it("rejects a real model output that misread the robustness share (2026-10-01)", () => {
-    const g = plan({ line: "G", from: "G19", to: "G01", egressId: "g01-hanzomon", speedWeight: 0.3, hour: 18.5, dayType: "weekday" });
-    if (!g.ok) throw new Error("fixture plan failed");
-    const f = factsOf(g.plan);
+    const g = plan({ ...fixture, line: "G", from: "G19", to: "G01", egressId: "g01-hanzomon", speedWeight: 0.3, hour: 18.5 });
+    if (!g.ok || !g.plan.door) throw new Error("fixture plan failed");
+    const f = factsOf(g.plan, g.plan.door);
     const share = f.sameCarShare!;
     const bad = {
-      en: `Estimated crowding is ${f.best.loadPct}% in car ${f.best.car}, door ${f.best.door}. ${share}% of passengers share this car.`,
-      ja: `推定混雑率${f.best.loadPct}%の${f.best.car}号車${f.best.door}番ドアが最適です。`,
+      en: `Board car ${f.best.car}, door ${f.best.door}. ${share}% of passengers share this car.`,
+      ja: `${f.best.car}号車${f.best.door}番ドアが最適です。`,
     };
     expect(checkNarration(bad, narrationFacts(f))).toMatch(/unsupported pct/);
     expect(narrationFacts(f)).not.toHaveProperty("sameCarShare");
@@ -108,6 +110,13 @@ describe("explanations", () => {
     expect(checkNarration({ en: `Board car ${b.car}, a ${b.walkM}-metre walk.`, ja: `${b.car}号車、約${b.walkM}mです。` }, facts)).toBeNull();
     const notFastest = { ...facts, fastest: { ...facts.fastest, car: b.car === 1 ? 2 : 1 } };
     expect(checkNarration({ en: `Car ${b.car} is the fastest exit.`, ja: `${b.car}号車が最速です。` }, notFastest)).toMatch(/fastest/);
+  });
+
+  it("never lets estimated crowding be quoted as a percentage", () => {
+    const car = facts.best.car;
+    expect(facts.loadSource).toBe("estimate");
+    expect(facts.best.loadPct).toBeUndefined();
+    expect(checkNarration({ en: `Board car ${car}; it is about 142% full.`, ja: `${car}号車、混雑率142%です。` }, narrationFacts(facts))).toMatch(/unsupported pct/);
   });
 
   it("rejects narration that invents numbers or skips the recommended car", () => {

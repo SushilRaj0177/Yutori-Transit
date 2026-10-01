@@ -1,20 +1,23 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { MIN_REPORTS } from "@/core/consensus";
 import { explain, factsOf } from "@/core/explain";
-import { plan as makePlan, type Plan } from "@/core/plan";
+import { plan as makePlan, type DoorPlan, type Plan } from "@/core/plan";
 import { jstClock, type JstClock } from "@/core/time";
 import type { DayType } from "@/engine/crowding";
 import type { Bilingual } from "@/engine/types";
-import { LAYOUTS } from "@/data/layouts";
+import { STATION_EGRESS } from "@/data/layouts";
 import { getLine, LINES } from "@/data/network";
 import { loadColor, loadWord } from "./colors";
 import { tr, type Lang } from "./i18n";
 import { EgressIcon, SwapIcon } from "./icons";
 import { LivePanel } from "./LivePanel";
 import { ParetoChart } from "./ParetoChart";
+import { ReportDoor } from "./ReportDoor";
 import { StationSelect } from "./StationSelect";
 import { TrainDiagram } from "./TrainDiagram";
+import { useCommunity } from "./useCommunity";
 import { useLive } from "./useLive";
 
 interface Prefs {
@@ -22,11 +25,13 @@ interface Prefs {
   line: "M" | "G";
   from: string;
   to: string;
-  egress: Record<string, string>; // per destination
+  egress: Record<string, string>; // chosen egress per destination
   weight: number;
+  /** Illustrative invented positions. Off by default; never on for real trips. */
+  demo: boolean;
 }
 
-const DEFAULTS: Prefs = { lang: "en", line: "M", from: "M08", to: "M18", egress: {}, weight: 0.5 };
+const DEFAULTS: Prefs = { lang: "en", line: "M", from: "M08", to: "M18", egress: {}, weight: 0.5, demo: false };
 const STORE = "yutori:prefs:v1";
 const LINE_DEFAULTS = { M: { from: "M08", to: "M18" }, G: { from: "G01", to: "G16" } } as const;
 
@@ -74,7 +79,8 @@ export function Planner() {
   const [override, setOverride] = useState<Override>(null);
   const { lang } = prefs;
   const line = getLine(prefs.line)!;
-  const layoutCodes = useMemo(() => new Set(LAYOUTS.filter((l) => l.line === line.id).map((l) => l.station)), [line.id]);
+  const covered = useMemo(() => new Set(STATION_EGRESS.filter((l) => l.line === line.id).map((l) => l.station)), [line.id]);
+  const community = useCommunity(line.id);
 
   const routeOk = prefs.from !== prefs.to;
   const live = useLive(line.id, prefs.from, prefs.to, ready && routeOk);
@@ -97,17 +103,28 @@ export function Planner() {
         dayType,
         delayS,
         liveLoadsPct: usingNow ? liveData?.carLoadsPct : null,
+        community: community.book,
+        demo: prefs.demo,
       }),
-    [line.id, prefs.from, prefs.to, prefs.egress, prefs.weight, hour, dayType, delayS, usingNow, liveData?.carLoadsPct],
+    [line.id, prefs.from, prefs.to, prefs.egress, prefs.weight, prefs.demo, hour, dayType, delayS, usingNow, liveData?.carLoadsPct, community.book],
   );
 
   const switchLine = (id: "M" | "G") => set({ line: id, ...LINE_DEFAULTS[id] });
+  const setEgress = (id: string) => set({ egress: { ...prefs.egress, [`${line.id}:${prefs.to}`]: id } });
 
   if (!ready || !clock) return <Skeleton />;
 
   return (
     <div className="mx-auto w-full max-w-[1120px] px-4 pb-16 pt-4 sm:px-6 sm:pt-8">
-      {/* header */}
+      {prefs.demo && (
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-2xl border-2 border-dashed border-amber-500 bg-amber-500/10 px-4 py-3 text-[13px] font-medium text-amber-900 dark:text-amber-200" role="alert">
+          <span>⚠ {tr("demoBanner", lang)}</span>
+          <button onClick={() => set({ demo: false })} className="rounded-lg bg-amber-500 px-3 py-1 font-semibold text-white">
+            {tr("demoOff", lang)}
+          </button>
+        </div>
+      )}
+
       <header className="mb-5 flex items-center justify-between">
         <div className="flex items-baseline gap-2">
           <span className="text-[22px] font-bold tracking-tight">ゆとり</span>
@@ -124,7 +141,6 @@ export function Planner() {
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start">
         <main className="flex min-w-0 flex-col gap-5">
-          {/* route */}
           <section className="card p-3 sm:p-4" aria-label="Route">
             <div className="mb-3 flex gap-2" role="tablist">
               {LINES.map((l) => (
@@ -142,7 +158,7 @@ export function Planner() {
             </div>
             <div className="relative flex flex-col gap-2">
               <StationSelect label={tr("from", lang)} line={line} value={prefs.from} onChange={(from) => set({ from })} lang={lang} />
-              <StationSelect label={tr("to", lang)} line={line} value={prefs.to} onChange={(to) => set({ to })} lang={lang} marked={layoutCodes} markedSuffix={tr("noLayout", lang)} />
+              <StationSelect label={tr("to", lang)} line={line} value={prefs.to} onChange={(to) => set({ to })} lang={lang} marked={covered} markedSuffix={tr("noLayout", lang)} />
               <button
                 onClick={() => set({ from: prefs.to, to: prefs.from })}
                 aria-label={tr("swap", lang)}
@@ -153,7 +169,16 @@ export function Planner() {
             </div>
           </section>
 
-          {result.ok ? <Answer p={result.plan} lang={lang} weight={prefs.weight} setWeight={(weight) => set({ weight })} setEgress={(id) => set({ egress: { ...prefs.egress, [`${line.id}:${prefs.to}`]: id } })} /> : (
+          {result.ok ? (
+            <>
+              <EgressChips p={result.plan} lang={lang} setEgress={setEgress} />
+              {result.plan.door ? (
+                <Answer p={result.plan} d={result.plan.door} lang={lang} weight={prefs.weight} setWeight={(weight) => set({ weight })} setEgress={setEgress} reportsEnabled={community.enabled} onReported={community.reload} />
+              ) : (
+                <Unconfirmed p={result.plan} lang={lang} reportsEnabled={community.enabled} onReported={community.reload} />
+              )}
+            </>
+          ) : (
             <section className="card p-6 text-[15px] leading-relaxed text-[var(--muted)]">
               {result.error.kind === "no-layout" ? tr("missingLayout", lang, { s: result.error.to.name[lang] }) : tr("sameStation", lang)}
             </section>
@@ -163,115 +188,177 @@ export function Planner() {
         <aside className="flex min-w-0 flex-col gap-5">
           {routeOk && <LivePanel state={live} lang={lang} line={line} from={prefs.from} to={prefs.to} />}
           <TimeCard lang={lang} clock={clock} override={override} setOverride={setOverride} />
-          {result.ok && <Why p={result.plan} lang={lang} live={liveData?.fetchedAt ?? null} hour={hour} dayType={dayType} delayS={delayS} />}
+          {result.ok && result.plan.door && (
+            <Why p={result.plan} d={result.plan.door} lang={lang} live={liveData?.fetchedAt ?? null} hour={hour} dayType={dayType} delayS={delayS} />
+          )}
         </aside>
       </div>
 
       <footer className="mt-10 border-t border-[var(--line)] pt-5 text-[12px] leading-relaxed text-[var(--muted)]">
         <p>{tr("odptCredit", lang)}</p>
-        <p className="mt-2">
+        <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
           <a className="underline underline-offset-2 hover:text-[var(--fg)]" href="https://github.com/SushilRaj0177/Yutori-Transit">Source &amp; method</a>
+          <button className="underline underline-offset-2 hover:text-[var(--fg)]" onClick={() => set({ demo: !prefs.demo })}>
+            {prefs.demo ? tr("demoOff", lang) : tr("demoOn", lang)}
+          </button>
         </p>
       </footer>
     </div>
   );
 }
 
-// ── answer ──────────────────────────────────────────────────────────────────
+// ── destination exits ───────────────────────────────────────────────────────
 
-function Answer({ p, lang, weight, setWeight, setEgress }: { p: Plan; lang: Lang; weight: number; setWeight: (w: number) => void; setEgress: (id: string) => void }) {
-  const b = p.solution.best;
-  const estimate = p.loadSource === "estimate";
-  const solid = p.stability.sameCar >= 0.7;
-  const car1Front = p.direction === p.line.towardsFirst;
-
+function EgressChips({ p, lang, setEgress }: { p: Plan; lang: Lang; setEgress: (id: string) => void }) {
   return (
-    <>
-      {/* where are you going at the destination */}
-      <section aria-label={tr("headingFor", lang)}>
-        <h2 className="mb-2 px-1 text-[12px] font-medium uppercase tracking-wider text-[var(--muted)]">{tr("headingFor", lang)} · {p.to.name[lang]}</h2>
-        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0 [scrollbar-width:none]">
-          {p.layout.egress.map((e) => {
-            const on = e.id === p.target.id;
-            return (
-              <button
-                key={e.id}
-                onClick={() => setEgress(e.id)}
-                aria-pressed={on}
-                className={`flex shrink-0 items-center gap-2 rounded-full border px-3.5 py-2 text-[14px] font-medium transition-all ${on ? "border-transparent text-white shadow-md" : "border-[var(--line)] bg-[var(--bg)] hover:border-[var(--muted)]"}`}
-                style={on ? { background: p.line.color } : undefined}
-              >
-                <EgressIcon kind={e.kind} size={16} />
-                <span className="whitespace-nowrap">{e.leadsTo[lang]}</span>
-              </button>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* the answer */}
-      <section className="card overflow-hidden" aria-live="polite">
-        <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3 p-5 pb-3 sm:p-6 sm:pb-3">
-          <div>
-            <div className="text-[13px] font-medium text-[var(--muted)]">{tr("board", lang)}</div>
-            <div className="mt-0.5 flex items-baseline gap-3 font-bold tracking-tight">
-              {lang === "en" ? (
-                <>
-                  <span className="text-[44px] leading-none sm:text-[52px]"><span className="text-[0.55em] font-semibold text-[var(--muted)]">Car </span>{b.car}</span>
-                  <span className="text-[44px] leading-none sm:text-[52px]"><span className="text-[0.55em] font-semibold text-[var(--muted)]">Door </span>{b.door}</span>
-                </>
-              ) : (
-                <span className="text-[44px] leading-none sm:text-[52px]">{b.car}<span className="text-[0.5em] font-semibold text-[var(--muted)]">号車</span> {b.door}<span className="text-[0.5em] font-semibold text-[var(--muted)]">番ドア</span></span>
-              )}
-            </div>
-          </div>
-          <div className="flex flex-wrap gap-2 text-[13px]">
-            <Pill>
-              <EgressIcon kind={p.target.kind} size={14} />
-              {Math.round(b.egressS)}s · {Math.round(b.walkM)}m
-            </Pill>
-            <Pill style={{ background: loadColor(b.loadPct), color: "#1b1b1b" }}>
-              {b.loadPct}% · {loadWord(b.loadPct, lang)}
-              {estimate && <span className="opacity-70">({tr("estimateBadge", lang)})</span>}
-            </Pill>
-            <Pill title={tr("stableHint", lang, { n: Math.round(p.stability.sameCar * 100) })}>
-              <span className={`size-2 rounded-full ${solid ? "bg-emerald-500" : "bg-amber-500"}`} />
-              {solid ? tr("solid", lang) : tr("close", lang)} {Math.round(p.stability.sameCar * 100)}%
-            </Pill>
-          </div>
-        </div>
-
-        <div className="px-2 pb-2 sm:px-4">
-          <TrainDiagram
-            geometry={p.line.geometry}
-            loadsPct={p.loadsPct}
-            egress={p.layout.egress}
-            targetId={p.target.id}
-            pick={b}
-            car1Front={car1Front}
-            lineColor={p.line.color}
-            frontLabel={tr("bound", lang, { x: p.direction.terminus[lang] })}
-            lang={lang}
-            onPickEgress={setEgress}
-          />
-        </div>
-
-        <div className="border-t border-[var(--line)] p-5 sm:p-6">
-          <WeightSlider p={p} lang={lang} weight={weight} setWeight={setWeight} />
-        </div>
-
-        {(p.layout.source === "demo-layout" || estimate) && (
-          <div className="flex flex-wrap gap-x-4 gap-y-1 bg-[var(--surface-2)] px-5 py-2.5 text-[12px] text-[var(--muted)] sm:px-6">
-            {p.layout.source === "demo-layout" && <span>◇ {tr("demoBadge", lang)}: {lang === "en" ? "positions not surveyed" : "位置は未調査"}</span>}
-            {estimate && <span>◇ {lang === "en" ? "Car loads are estimated" : "号車別混雑は推定値"}</span>}
-          </div>
-        )}
-      </section>
-    </>
+    <section aria-label={tr("headingFor", lang)}>
+      <h2 className="mb-2 px-1 text-[12px] font-medium uppercase tracking-wider text-[var(--muted)]">
+        {tr("headingFor", lang)} · {p.to.name[lang]}
+      </h2>
+      <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0 [scrollbar-width:none]">
+        {p.egress.map((e) => {
+          const on = e.def.id === p.target.def.id;
+          const known = e.source === "surveyed" || e.source === "community";
+          return (
+            <button
+              key={e.def.id}
+              onClick={() => setEgress(e.def.id)}
+              aria-pressed={on}
+              className={`flex shrink-0 items-center gap-2 rounded-full border px-3.5 py-2 text-[14px] font-medium transition-all ${on ? "border-transparent text-white shadow-md" : "border-[var(--line)] bg-[var(--bg)] hover:border-[var(--muted)]"}`}
+              style={on ? { background: p.line.color } : undefined}
+            >
+              <EgressIcon kind={e.def.kind} size={16} />
+              <span className="whitespace-nowrap">{e.def.leadsTo[lang]}</span>
+              <span className={`text-[11px] ${on ? "text-white/80" : "text-[var(--muted)]"}`} aria-label={known ? "confirmed" : "not confirmed"}>
+                {known ? "✓" : e.source === "demo" ? "demo" : "?"}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 
-function WeightSlider({ p, lang, weight, setWeight }: { p: Plan; lang: Lang; weight: number; setWeight: (w: number) => void }) {
+// ── confirmed position: the door answer ─────────────────────────────────────
+
+function Answer(props: { p: Plan; d: DoorPlan; lang: Lang; weight: number; setWeight: (w: number) => void; setEgress: (id: string) => void; reportsEnabled: boolean; onReported: () => void }) {
+  const { p, d, lang } = props;
+  const b = d.solution.best;
+  const live = p.loadSource === "odpt-live";
+  const solid = d.stability.sameCar >= 0.7;
+  const car1Front = p.direction === p.line.towardsFirst;
+  const frontLabel = tr("bound", lang, { x: p.direction.terminus[lang] });
+  const [reporting, setReporting] = useState(false);
+  const known = p.egress.flatMap((e) => (e.positionM === null ? [] : [{ ...e.def, positionM: e.positionM }]));
+  const c = p.target.consensus;
+
+  return (
+    <section className="card overflow-hidden" aria-live="polite">
+      <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3 p-5 pb-3 sm:p-6 sm:pb-3">
+        <div>
+          <div className="text-[13px] font-medium text-[var(--muted)]">{tr("board", lang)}</div>
+          <div className="mt-0.5 flex items-baseline gap-3 font-bold tracking-tight">
+            {lang === "en" ? (
+              <>
+                <span className="text-[44px] leading-none sm:text-[52px]"><span className="text-[0.55em] font-semibold text-[var(--muted)]">Car </span>{b.car}</span>
+                <span className="text-[44px] leading-none sm:text-[52px]"><span className="text-[0.55em] font-semibold text-[var(--muted)]">Door </span>{b.door}</span>
+              </>
+            ) : (
+              <span className="text-[44px] leading-none sm:text-[52px]">{b.car}<span className="text-[0.5em] font-semibold text-[var(--muted)]">号車</span> {b.door}<span className="text-[0.5em] font-semibold text-[var(--muted)]">番ドア</span></span>
+            )}
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-2 text-[13px]">
+          <Pill>
+            <EgressIcon kind={d.target.kind} size={14} />
+            {Math.round(b.egressS)}s · {Math.round(b.walkM)}m
+          </Pill>
+          {live ? (
+            <Pill style={{ background: loadColor(b.loadPct), color: "#1b1b1b" }}>{b.loadPct}% · {loadWord(b.loadPct, lang)}</Pill>
+          ) : (
+            <Pill>{tr(p.crowd[b.car - 1], lang)}</Pill>
+          )}
+          <Pill title={tr("stableHint", lang, { n: Math.round(d.stability.sameCar * 100) })}>
+            <span className={`size-2 rounded-full ${solid ? "bg-emerald-500" : "bg-amber-500"}`} />
+            {solid ? tr("solid", lang) : tr("close", lang)}
+          </Pill>
+        </div>
+      </div>
+
+      <div className="px-2 pb-2 sm:px-4">
+        {reporting ? (
+          <div className="px-3 pb-3">
+            <ReportDoor line={p.line} station={p.to.code} target={p.target} lang={lang} enabled={props.reportsEnabled} onDone={props.onReported} onCancel={() => setReporting(false)} />
+          </div>
+        ) : (
+          <TrainDiagram
+            geometry={p.line.geometry}
+            crowd={p.crowd}
+            liveLoadsPct={live ? p.loadsPct : null}
+            egress={known}
+            targetId={d.target.id}
+            pick={b}
+            car1Front={car1Front}
+            lineColor={p.line.color}
+            frontLabel={frontLabel}
+            lang={lang}
+            onPickEgress={props.setEgress}
+          />
+        )}
+      </div>
+
+      <div className="border-t border-[var(--line)] p-5 sm:p-6">
+        <WeightSlider p={p} d={d} lang={lang} weight={props.weight} setWeight={props.setWeight} />
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 bg-[var(--surface-2)] px-5 py-2.5 text-[12px] text-[var(--muted)] sm:px-6">
+        <span>
+          {d.positionSource === "community" && `✓ ${tr("confirmedBy", lang, { n: c?.reports ?? MIN_REPORTS })}`}
+          {d.positionSource === "surveyed" && `✓ ${tr("surveyedPos", lang)}`}
+          {d.positionSource === "demo" && <strong className="text-amber-700 dark:text-amber-300">⚠ {tr("demoPos", lang)}</strong>}
+          {!live && <span className="ml-3">◇ {tr("estimateNote", lang)}</span>}
+        </span>
+        {d.positionSource !== "demo" && !reporting && (
+          <button className="underline underline-offset-2" onClick={() => setReporting(true)}>
+            {tr("wrongPos", lang)}
+          </button>
+        )}
+      </div>
+    </section>
+  );
+}
+
+// ── unknown position: no door, honest alternatives ──────────────────────────
+
+function Unconfirmed({ p, lang, reportsEnabled, onReported }: { p: Plan; lang: Lang; reportsEnabled: boolean; onReported: () => void }) {
+  const live = p.loadSource === "odpt-live";
+  const min = Math.min(...p.loadsPct);
+  const quietest = p.loadsPct.flatMap((l, i) => (l === min ? [i + 1] : []));
+  const showQuiet = live || p.crowd.some((c) => c !== "average");
+
+  return (
+    <section className="card overflow-hidden">
+      <div className="p-5 sm:p-6">
+        <div className="text-[13px] font-medium text-[var(--muted)]">{tr("board", lang)}</div>
+        <div className="mt-1 text-[26px] font-bold leading-tight">{tr("unknownTitle", lang)}</div>
+        <p className="mt-2 text-[15px] leading-relaxed text-[var(--muted)]">{tr("unknownBody", lang, { x: p.target.def.leadsTo[lang] })}</p>
+        {showQuiet && (
+          <p className="mt-3 rounded-xl bg-[var(--surface-2)] px-3 py-2.5 text-[14px] leading-relaxed">
+            {tr(live ? "crowdOnlyLive" : "crowdOnly", lang, { cars: quietest.join(lang === "ja" ? "・" : " / ") })}
+            {!live && <span className="mt-1 block text-[12px] text-[var(--muted)]">{tr("estimateNote", lang)}</span>}
+          </p>
+        )}
+        {p.peak && !live && <p className="mt-2 text-[13px] text-[var(--muted)]">{tr("peakNote", lang)}</p>}
+      </div>
+      <div className="border-t border-[var(--line)] p-5 sm:p-6">
+        <ReportDoor line={p.line} station={p.to.code} target={p.target} lang={lang} enabled={reportsEnabled} onDone={onReported} />
+      </div>
+    </section>
+  );
+}
+
+function WeightSlider({ p, d, lang, weight, setWeight }: { p: Plan; d: DoorPlan; lang: Lang; weight: number; setWeight: (w: number) => void }) {
   const presets: [string, number][] = [[tr("roomiest", lang), 0], [tr("balanced", lang), 0.5], [tr("fastest", lang), 1]];
   return (
     <div>
@@ -280,12 +367,11 @@ function WeightSlider({ p, lang, weight, setWeight }: { p: Plan; lang: Lang; wei
         <span>{tr("speed", lang)}</span>
       </div>
       <div className="relative">
-        {/* segments where the answer stays the same */}
         <div className="pointer-events-none absolute inset-x-0 top-1/2 flex h-2 -translate-y-1/2 gap-[3px] overflow-hidden rounded-full">
-          {p.breakpoints.map((s, i) => {
-            const next = p.breakpoints[i + 1];
+          {d.breakpoints.map((s, i) => {
+            const next = d.breakpoints[i + 1];
             const width = ((next ? next.from : 1.01) - s.from) * 100;
-            const active = s.car === p.solution.best.car && s.door === p.solution.best.door;
+            const active = s.car === d.solution.best.car && s.door === d.solution.best.door;
             return <div key={i} style={{ width: `${width}%`, background: active ? p.line.color : "var(--surface-3)" }} className="h-full transition-colors" />;
           })}
         </div>
@@ -301,7 +387,7 @@ function WeightSlider({ p, lang, weight, setWeight }: { p: Plan; lang: Lang; wei
         />
       </div>
       <p className="mt-1 text-center text-[12px] text-[var(--muted)]">
-        {p.breakpoints.length === 1 ? tr("oneAnswer", lang) : tr("segments", lang, { n: p.breakpoints.length })}
+        {d.breakpoints.length === 1 ? tr("oneAnswer", lang) : tr("segments", lang, { n: d.breakpoints.length })}
       </p>
       <div className="mt-3 grid grid-cols-3 gap-2">
         {presets.map(([label, w]) => (
@@ -344,9 +430,9 @@ function TimeCard({ lang, clock, override, setOverride }: { lang: Lang; clock: J
         />
         <span className="whitespace-nowrap text-[12px] text-[var(--muted)]">JST{!override && ` · ${tr("nowJst", lang)}`}</span>
         <div className="ml-auto flex rounded-xl bg-[var(--surface-2)] p-1 text-[13px]">
-          {(["weekday", "holiday"] as const).map((d) => (
-            <button key={d} onClick={() => setOverride({ hour, dayType: d })} aria-pressed={day === d} className={`rounded-lg px-2.5 py-1 ${day === d ? "bg-[var(--bg)] font-semibold shadow-sm" : "text-[var(--muted)]"}`}>
-              {tr(d, lang)}
+          {(["weekday", "holiday"] as const).map((dt) => (
+            <button key={dt} onClick={() => setOverride({ hour, dayType: dt })} aria-pressed={day === dt} className={`rounded-lg px-2.5 py-1 ${day === dt ? "bg-[var(--bg)] font-semibold shadow-sm" : "text-[var(--muted)]"}`}>
+              {tr(dt, lang)}
             </button>
           ))}
         </div>
@@ -355,13 +441,16 @@ function TimeCard({ lang, clock, override, setOverride }: { lang: Lang; clock: J
   );
 }
 
-function Why({ p, lang, live, hour, dayType, delayS }: { p: Plan; lang: Lang; live: string | null; hour: number; dayType: DayType; delayS?: number }) {
-  const facts = useMemo(() => factsOf(p), [p]);
+function Why({ p, d, lang, live, hour, dayType, delayS }: { p: Plan; d: DoorPlan; lang: Lang; live: string | null; hour: number; dayType: DayType; delayS?: number }) {
+  const facts = useMemo(() => factsOf(p, d), [p, d]);
   const template = useMemo(() => explain(facts), [facts]);
   const [ai, setAi] = useState<{ key: string; text: Bilingual } | null>(null);
-  const key = `${p.line.id}|${p.from.code}|${p.to.code}|${p.target.id}|${facts.best.car}-${facts.best.door}|${Math.round(hour * 4)}|${dayType}|${delayS ?? 0}`;
+  // Demo positions are never sent for LLM narration.
+  const narratable = d.positionSource !== "demo";
+  const key = `${p.line.id}|${p.from.code}|${p.to.code}|${d.target.id}|${facts.best.car}-${facts.best.door}|${Math.round(hour * 4)}|${dayType}|${delayS ?? 0}`;
 
   useEffect(() => {
+    if (!narratable) return;
     const ctrl = new AbortController();
     const timer = setTimeout(async () => {
       try {
@@ -369,11 +458,12 @@ function Why({ p, lang, live, hour, dayType, delayS }: { p: Plan; lang: Lang; li
           method: "POST",
           headers: { "Content-Type": "application/json" },
           signal: ctrl.signal,
-          body: JSON.stringify({ line: p.line.id, from: p.from.code, to: p.to.code, egressId: p.target.id, speedWeight: weightFor(p), hour, dayType, delayS }),
+          body: JSON.stringify({ line: p.line.id, from: p.from.code, to: p.to.code, egressId: d.target.id, speedWeight: weightFor(d), hour, dayType, delayS }),
         });
         if (!res.ok) return;
         const n = await res.json();
-        if (n.source === "llm") setAi({ key, text: n.text });
+        // Only accept narration describing the same door the screen shows.
+        if (n.source === "llm" && String(n.text?.en ?? "").includes(String(facts.best.car))) setAi({ key, text: n.text });
       } catch {
         /* the template is already on screen */
       }
@@ -383,10 +473,11 @@ function Why({ p, lang, live, hour, dayType, delayS }: { p: Plan; lang: Lang; li
       ctrl.abort();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `key` captures everything that changes the answer
-  }, [key]);
+  }, [key, narratable]);
 
-  const narration = ai?.key === key ? ai.text : null;
+  const narration = narratable && ai?.key === key ? ai.text : null;
   const [open, setOpen] = useState(false);
+  const isLive = p.loadSource === "odpt-live";
 
   return (
     <section className="card p-4">
@@ -400,15 +491,15 @@ function Why({ p, lang, live, hour, dayType, delayS }: { p: Plan; lang: Lang; li
       </button>
       {open && (
         <div className="mt-4 space-y-4">
-          <ParetoChart ranked={p.solution.ranked} frontier={p.solution.frontier} best={p.solution.best} lineColor={p.line.color} xLabel={tr("chartX", lang)} yLabel={tr("chartY", lang)} />
+          <ParetoChart ranked={d.solution.ranked} frontier={d.solution.frontier} best={d.solution.best} lineColor={p.line.color} xLabel={tr("chartX", lang)} yLabel={isLive ? tr("chartY", lang) : tr("chartYRel", lang)} relative={!isLive} />
           <p className="text-[12px] leading-relaxed text-[var(--muted)]">{tr("chartNote", lang)}</p>
           <div>
             <h3 className="mb-1.5 text-[12px] font-semibold">{tr("sources", lang)}</h3>
             <ul className="space-y-1.5 text-[12px] leading-relaxed text-[var(--muted)]">
-              <li>• {p.loadSource === "estimate" ? tr("srcCrowdEst", lang) : tr("srcCrowdLive", lang)}</li>
-              <li>• {p.layout.source === "demo-layout" ? tr("srcDemo", lang) : tr("srcSurveyed", lang)}</li>
+              <li>• {isLive ? tr("srcCrowdLive", lang) : tr("srcCrowdEst", lang)}</li>
+              <li>• {d.positionSource === "demo" ? tr("demoPos", lang) : d.positionSource === "surveyed" ? tr("surveyedPos", lang) : tr("confirmedBy", lang, { n: p.target.consensus?.reports ?? MIN_REPORTS })}</li>
               <li>• {live ? tr("srcLive", lang, { t: new Date(live).toLocaleTimeString(lang === "ja" ? "ja-JP" : "en-GB", { timeZone: "Asia/Tokyo" }) }) : tr("srcNoLive", lang)}</li>
-              <li>• {tr("stableHint", lang, { n: Math.round(p.stability.sameCar * 100) })}</li>
+              <li>• {tr("stableHint", lang, { n: Math.round(d.stability.sameCar * 100) })}</li>
             </ul>
           </div>
         </div>
@@ -418,8 +509,8 @@ function Why({ p, lang, live, hour, dayType, delayS }: { p: Plan; lang: Lang; li
 }
 
 /** Midpoint of the slider segment that produced the current answer, so the server reproduces it exactly. */
-function weightFor(p: Plan): number {
-  const seg = p.breakpoints.find((s) => s.car === p.solution.best.car && s.door === p.solution.best.door);
+function weightFor(d: DoorPlan): number {
+  const seg = d.breakpoints.find((s) => s.car === d.solution.best.car && s.door === d.solution.best.door);
   return seg ? (seg.from + seg.to) / 2 : 0.5;
 }
 

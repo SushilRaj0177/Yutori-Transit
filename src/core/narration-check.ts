@@ -9,7 +9,8 @@ export function allowedNumbers(f: Facts): Record<Kind, Set<number>> {
   const picks = [f.best, f.fastest, f.roomiest];
   const nameNumbers = [f.destination.en, f.destination.ja, f.egress.en, f.egress.ja].flatMap((s) => (s.match(/\d+/g) ?? []).map(Number));
   return {
-    pct: set(...picks.map((c) => c.loadPct), f.trainMeanLoadPct, f.best.loadPct - f.trainMeanLoadPct, f.trainMeanLoadPct - f.best.loadPct, f.sameCarShare),
+    // Load percentages exist only for live measurements; estimates are described in words.
+    pct: set(...picks.map((c) => c.loadPct), f.sameCarShare),
     seconds: set(...picks.map((c) => c.egressS), f.best.egressS - f.fastest.egressS, f.roomiest.egressS - f.best.egressS),
     metres: set(f.best.walkM),
     bare: set(...picks.flatMap((c) => [c.car, c.door]), ...nameNumbers),

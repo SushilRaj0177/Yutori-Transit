@@ -10,13 +10,15 @@ interface Props {
   lineColor: string;
   xLabel: string;
   yLabel: string;
+  /** Estimated loads: show order only, not fake-precise percentages. */
+  relative?: boolean;
 }
 
 const W = 360;
 const H = 220;
 const M = { l: 40, r: 12, t: 12, b: 40 };
 
-export function ParetoChart({ ranked, frontier, best, lineColor, xLabel, yLabel }: Props) {
+export function ParetoChart({ ranked, frontier, best, lineColor, xLabel, yLabel, relative = false }: Props) {
   const xs = ranked.map((c) => c.egressS);
   const ys = ranked.map((c) => c.loadPct);
   const [x0, x1] = pad(Math.min(...xs), Math.max(...xs), true);
@@ -30,7 +32,7 @@ export function ParetoChart({ ranked, frontier, best, lineColor, xLabel, yLabel 
       {ticks(y0, y1).map((v) => (
         <g key={`y${v}`}>
           <line x1={M.l} x2={W - M.r} y1={Y(v)} y2={Y(v)} stroke="var(--line)" strokeDasharray="2 4" />
-          <text x={M.l - 6} y={Y(v) + 4} textAnchor="end" className="fill-[var(--muted)] text-[10px] tabular-nums">{v}</text>
+          {!relative && <text x={M.l - 6} y={Y(v) + 4} textAnchor="end" className="fill-[var(--muted)] text-[10px] tabular-nums">{v}</text>}
         </g>
       ))}
       {ticks(x0, x1).map((v) => (
@@ -42,7 +44,7 @@ export function ParetoChart({ ranked, frontier, best, lineColor, xLabel, yLabel 
       <polyline points={frontier.map((c) => `${X(c.egressS)},${Y(c.loadPct)}`).join(" ")} fill="none" stroke={lineColor} strokeWidth={2} strokeOpacity={0.7} />
       {ranked.map((c) => (
         <circle key={`${c.car}-${c.door}`} cx={X(c.egressS)} cy={Y(c.loadPct)} r={c.pareto ? 4.5 : 3} fill={loadColor(c.loadPct)} fillOpacity={c.pareto ? 1 : 0.45} stroke={c.pareto ? "var(--bg)" : "none"}>
-          <title>{`Car ${c.car} door ${c.door}: ${Math.round(c.egressS)}s, ${c.loadPct}%`}</title>
+          <title>{relative ? `Car ${c.car} door ${c.door}: ${Math.round(c.egressS)}s` : `Car ${c.car} door ${c.door}: ${Math.round(c.egressS)}s, ${c.loadPct}%`}</title>
         </circle>
       ))}
       <circle cx={X(best.egressS)} cy={Y(best.loadPct)} r={9} fill="none" stroke="var(--fg)" strokeWidth={2} />

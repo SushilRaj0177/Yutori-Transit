@@ -29,7 +29,16 @@ export function ElevatorIcon({ size = 16, className }: P) {
   );
 }
 
+export function WayUpIcon({ size = 16, className }: P) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden>
+      <path d="M12 19V5M6 11l6-6 6 6" />
+    </svg>
+  );
+}
+
 export function EgressIcon({ kind, ...p }: P & { kind: EgressKind }) {
+  if (kind === "way") return <WayUpIcon {...p} />;
   if (kind === "stairs") return <StairsIcon {...p} />;
   if (kind === "escalator") return <EscalatorIcon {...p} />;
   return <ElevatorIcon {...p} />;
