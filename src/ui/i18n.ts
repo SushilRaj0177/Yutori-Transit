@@ -41,6 +41,10 @@ export const t = {
   onTime: { en: "on time", ja: "定刻" },
   inMin: { en: "in {n} min", ja: "{n}分後" },
   now: { en: "now", ja: "まもなく" },
+  noPositions: {
+    en: "Live train positions for this line are not published on ODPT, so delays of individual trains are not shown.",
+    ja: "この路線の列車位置情報はODPTで公開されていないため、個別列車の遅延は表示されません。",
+  },
   normalService: { en: "Normal service", ja: "平常運転" },
   disrupted: { en: "Service disruption", ja: "運行に乱れ" },
   liveUnavailable: { en: "Live data unavailable. Crowding uses the time-of-day model only.", ja: "運行情報を取得できません。混雑は時間帯モデルのみで推定しています。" },

@@ -60,6 +60,10 @@ export function LivePanel({ state, lang, line, from, to }: Props) {
             </div>
           )}
 
+          {!state.data.positionsPublished && (
+            <p className="text-[12px] leading-relaxed text-[var(--muted)]">{tr("noPositions", lang)}</p>
+          )}
+
           {state.data.approaching && state.data.approaching.length > 0 && (
             <div>
               <h3 className="mb-1.5 text-[12px] font-semibold">{tr("approaching", lang)}</h3>

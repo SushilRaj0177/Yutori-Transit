@@ -1,6 +1,6 @@
 import "server-only";
 import type { Bilingual } from "@/engine/types";
-import { explain, type Facts } from "@/core/explain";
+import { explain, narrationFacts, type Facts } from "@/core/explain";
 import { checkNarration } from "@/core/narration-check";
 
 /**
@@ -10,7 +10,9 @@ import { checkNarration } from "@/core/narration-check";
  */
 
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
-const DEFAULT_MODEL = "llama-3.3-70b-versatile";
+// Verified on 2026-10-01: passes checkNarration reliably in ~0.5 s. The gpt-oss
+// models failed Groq's JSON mode on this prompt.
+const DEFAULT_MODEL = "qwen/qwen3.8-27b";
 
 export interface Narration {
   text: Bilingual;
@@ -44,7 +46,7 @@ export async function narrate(facts: Facts): Promise<Narration> {
         response_format: { type: "json_object" },
         messages: [
           { role: "system", content: SYSTEM },
-          { role: "user", content: JSON.stringify(facts) },
+          { role: "user", content: JSON.stringify(narrationFacts(facts)) },
         ],
       }),
       cache: "no-store",
@@ -54,7 +56,7 @@ export async function narrate(facts: Facts): Promise<Narration> {
     const body = await res.json();
     const parsed = JSON.parse(body.choices?.[0]?.message?.content ?? "{}");
     const text = { en: String(parsed.en ?? ""), ja: String(parsed.ja ?? "") };
-    const problem = checkNarration(text, facts);
+    const problem = checkNarration(text, narrationFacts(facts));
     if (problem) return { ...template, rejected: problem };
     return { text, source: "llm", model };
   } catch (err) {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getLine } from "@/data/network";
-import { explain, factsOf } from "./explain";
+import { explain, factsOf, narrationFacts } from "./explain";
 import { extractCarLoads, parseApproaching, parseDepartures, parseService } from "./live";
 import { checkNarration } from "./narration-check";
 import { plan } from "./plan";
@@ -81,6 +81,33 @@ describe("explanations", () => {
 
   it("template explanations pass the same check applied to LLM output", () => {
     expect(checkNarration(explain(facts), facts)).toBeNull();
+  });
+
+  it("rejects a real model output that misread the robustness share (2026-10-01)", () => {
+    const g = plan({ line: "G", from: "G19", to: "G01", egressId: "g01-hanzomon", speedWeight: 0.3, hour: 18.5, dayType: "weekday" });
+    if (!g.ok) throw new Error("fixture plan failed");
+    const f = factsOf(g.plan);
+    const share = f.sameCarShare!;
+    const bad = {
+      en: `Estimated crowding is ${f.best.loadPct}% in car ${f.best.car}, door ${f.best.door}. ${share}% of passengers share this car.`,
+      ja: `推定混雑率${f.best.loadPct}%の${f.best.car}号車${f.best.door}番ドアが最適です。`,
+    };
+    expect(checkNarration(bad, narrationFacts(f))).toMatch(/unsupported pct/);
+    expect(narrationFacts(f)).not.toHaveProperty("sameCarShare");
+  });
+
+  it("checks units: a car number may not be cited as seconds", () => {
+    const n = facts.best.car;
+    expect(checkNarration({ en: `Board car ${n}, about ${facts.best.egressS} s to the exit.`, ja: `${n}号車、出口まで約${facts.best.egressS}秒。` }, facts)).toBeNull();
+    if (!new Set([facts.best.egressS, facts.fastest.egressS, facts.roomiest.egressS]).has(n))
+      expect(checkNarration({ en: `Board car ${n}, about ${n} s to the exit.`, ja: `${n}号車です。` }, facts)).toMatch(/unsupported seconds/);
+  });
+
+  it("accepts hyphenated units and rejects false 'fastest' claims", () => {
+    const b = facts.best;
+    expect(checkNarration({ en: `Board car ${b.car}, a ${b.walkM}-metre walk.`, ja: `${b.car}号車、約${b.walkM}mです。` }, facts)).toBeNull();
+    const notFastest = { ...facts, fastest: { ...facts.fastest, car: b.car === 1 ? 2 : 1 } };
+    expect(checkNarration({ en: `Car ${b.car} is the fastest exit.`, ja: `${b.car}号車が最速です。` }, notFastest)).toMatch(/fastest/);
   });
 
   it("rejects narration that invents numbers or skips the recommended car", () => {

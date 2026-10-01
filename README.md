@@ -36,8 +36,9 @@ together with where it came from.
 | | |
 |---|---|
 | Station data, line geometry, Pareto solver, robustness check | done, tested |
-| Live service status, train positions, delays, timetable (ODPT) | implemented against the ODPT v4 schema; **run `npm run odpt:probe` to verify against live responses** |
-| Per-car crowding | **estimated** by a documented model. ODPT has no known public per-car load field; the app switches to live loads automatically if one is configured |
+| Live service status and timetable (ODPT) | done, **verified against live responses** ([probe output](docs/odpt-probe.md)) |
+| Live train positions and delays | implemented, but **ODPT does not publish Tokyo Metro positions** (verified); the app says so |
+| Per-car crowding | **estimated** by a documented model. ODPT publishes no per-car load (verified); the app switches to live loads automatically if that changes |
 | Platform exit positions | **demo layouts** for 12 stations. The exits are real; their positions along the platform are not surveyed yet ([how to survey](docs/DATA.md#surveying-a-station-turning-a-demo-layout-into-a-surveyed-one)) |
 
 The UI never shows a placeholder as if it were data: missing live data reads
@@ -106,19 +107,19 @@ npm run build
 npm run odpt:probe   # print what ODPT actually returns for these lines
 ```
 
-Tests (`vitest`, 32 cases) cover door geometry, the Pareto sweep against a
+Tests (`vitest`, 35 cases) cover door geometry, the Pareto sweep against a
 brute-force check on random inputs with ties, solver endpoints and
 breakpoints, a < 2 ms solve for 40 candidates, the crowding model, stability
 determinism, ODPT parsing (service status, approaching trains, timetables
 across midnight, per-car field validation), JST service-day handling, and the
-narration checker.
+narration checker (including a real model output that was caught misusing a number).
 
 ## Roadmap
 
-1. Run the ODPT probe and record its output in `docs/`; correct anything it contradicts.
+1. Add a line whose train positions ODPT does publish (e.g. Toei Shinjuku or Oedo), so live delays feed the estimate.
 2. Survey the 12 demo stations and mark them `surveyed`.
-3. Calibrate the crowding model (published line congestion rates, a few manual
-   per-car counts) and report the error.
+3. Calibrate the crowding model (published line congestion rates, ODPT
+   `PassengerSurvey` ridership for hotspot weights, a few manual per-car counts) and report the error.
 4. Add more lines. The engine already handles any car count and door count; the
    Tozai and Chiyoda lines (10 cars, 4 doors) are the obvious next ones.
 5. Model Japanese public holidays in the day-type logic.

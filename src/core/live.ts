@@ -11,6 +11,8 @@ export interface LiveSnapshot {
   odptConfigured: boolean;
   service: ServiceStatus | null;
   approaching: ApproachingTrain[] | null;
+  /** False when ODPT returned no train records at all for the line (not published). */
+  positionsPublished: boolean;
   departures: Departure[] | null;
   /** Per-car load for the next train, only if ODPT actually published one. */
   carLoadsPct: number[] | null;

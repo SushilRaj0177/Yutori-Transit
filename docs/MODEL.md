@@ -114,9 +114,21 @@ explanation says so.
 2. If `GROQ_API_KEY` is set, an LLM may rephrase those facts. The server
    recomputes the plan itself (the client sends only the query), so the model
    only ever sees engine output.
-3. `checkNarration` rejects any output that cites a number not derivable from
-   the facts, skips the recommended car, misses a language, or runs too long. On
-   rejection the template stays. The template passes the same check in the tests.
+3. `checkNarration` rejects any output that:
+   - cites a number not produced by the engine, **with its unit**: a `%` must be a
+     load figure, `s`/`秒` a time, `m` a distance, and a bare number a car or door;
+   - calls the pick "fastest" or "roomiest" when it isn't;
+   - skips the recommended car, misses a language, or runs too long.
+
+   On rejection the template stays. The template passes the same check in the tests.
+4. The robustness share is **not** given to the model. In live testing
+   (2026-10-01, `qwen/qwen3.8-27b`) the model rendered it as "64% of passengers
+   share this car". The plain number check let that through, which is why the
+   check is now unit-aware. That output is kept as a regression test.
+
+Measured on 2026-10-01 over 10 real calls across both lines: 8 narrations
+accepted (each checked by hand against the engine output, all correct), 2 fell
+back to the template on a Groq rate limit (HTTP 429). Latency was about 0.4–0.8 s.
 
 The LLM never chooses anything.
 

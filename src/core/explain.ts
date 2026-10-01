@@ -16,7 +16,19 @@ export interface Facts {
   loadSource: "odpt-live" | "estimate";
   fastest: { car: number; door: number; egressS: number; loadPct: number };
   roomiest: { car: number; door: number; egressS: number; loadPct: number };
-  sameCarShare: number;
+  /** Share of perturbed re-solves that keep the same car. Omitted from LLM input. */
+  sameCarShare?: number;
+}
+
+/**
+ * What the LLM sees. The robustness share is left out: in testing the model
+ * reported it as "64% of passengers share this car". The UI shows robustness
+ * in its own badge, so the narration does not need it.
+ */
+export function narrationFacts(f: Facts): Facts {
+  const { sameCarShare: _omit, ...rest } = f;
+  void _omit;
+  return rest;
 }
 
 const pick = (c: ScoredCandidate) => ({ car: c.car, door: c.door, egressS: Math.round(c.egressS), loadPct: c.loadPct });
@@ -64,7 +76,7 @@ export function explain(f: Facts): Bilingual {
     en.push(`Car ${ro.car} has the most room (${ro.loadPct}%) but adds ${ro.egressS - b.egressS} s.`);
     ja.push(`最も空いているのは${ro.car}号車（${ro.loadPct}%）ですが、${ro.egressS - b.egressS}秒余分にかかります。`);
   }
-  if (f.loadSource === "estimate" && f.sameCarShare < 70) {
+  if (f.loadSource === "estimate" && f.sameCarShare !== undefined && f.sameCarShare < 70) {
     en.push(`This is a close call: with crowding uncertainty the same car wins only ${f.sameCarShare}% of the time.`);
     ja.push(`混雑の不確かさを考慮すると、同じ号車が選ばれるのは${f.sameCarShare}%のみで、僅差の判断です。`);
   }

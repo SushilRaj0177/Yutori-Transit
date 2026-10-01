@@ -6,38 +6,40 @@ Every number on screen comes from one of these sources, and the UI says which.
 |---|---|---|
 | Station lists, order, numbering, names (EN/JA) | Tokyo Metro official numbering, hard-coded in `src/data/network.ts` | real |
 | Service status (delays, suspensions) | ODPT `odpt:TrainInformation` | live, every 60 s |
-| Train positions and delay | ODPT `odpt:Train` | live, every 20 s |
+| Train positions and delay | ODPT `odpt:Train` | live, every 20 s, where published (not for Tokyo Metro; see below) |
 | Next departures | ODPT `odpt:StationTimetable` | static timetable, cached 6 h |
-| Per-car load | ODPT, **only** if a field is configured via `ODPT_CAR_LOAD_FIELD` | not found yet; falls back to the estimate |
+| Per-car load | ODPT, **only** if a field is configured via `ODPT_CAR_LOAD_FIELD` | not published by ODPT (verified); falls back to the estimate |
 | Car load estimate | `src/engine/crowding.ts` | model, labelled "estimate" |
 | Egress positions on platforms | `src/data/layouts.ts` | **demo**: connections are real, positions are not surveyed |
 
-## What has been verified, and what has not
+## Verified against live ODPT (2026-10-01, ~13:30 JST weekday)
 
-The code was written against the published ODPT v4 schema, but the development
-environment could not reach `api.odpt.org`. Before treating the live layer as
-verified, run:
+Raw output: [`docs/odpt-probe.md`](odpt-probe.md). Re-run with `npm run odpt:probe`.
 
-```bash
-npm run odpt:probe > docs/odpt-probe.md
-```
+| Check | Result |
+|---|---|
+| Station order, station ids, line colours (`odpt:Railway`) | ✅ match `network.ts` for both lines |
+| Rail direction ids | ✅ `TokyoMetro.{Ogikubo,Ikebukuro,Shibuya,Asakusa}` |
+| `odpt:TrainInformation`: status field absent in normal service | ✅ ("現在、平常どおり運転しています。", no `odpt:trainInformationStatus`) |
+| `odpt:StationTimetable` calendars and fields | ✅ `odpt.Calendar:Weekday` / `SaturdayHoliday`, `odpt:departureTime`, `odpt:destinationStation`, `odpt:trainType` |
+| Live train positions for **Tokyo Metro** (`odpt:Train`) | ❌ **not published**: 0 records on both the standard and Challenge endpoints. Standard has Toei (90 trains) and Yokohama Municipal; Challenge has JR East, Tobu, Keio and Keikyu. The app now says so instead of showing an empty list |
+| Per-car load on any `odpt:Train` record | ❌ none. No numeric per-car arrays, and no `odpt:carComposition` on Toei trains either |
+| `odpt:StationFacility` | ❌ HTTP 404, not served by the API. Platform positions must be surveyed |
+| `odpt:PassengerSurvey` (Tokyo Metro) | ✅ 147 records: annual station ridership, usable for weighting crowding hotspots |
 
-and check the output for the following:
+Still open:
 
-- [ ] `odpt:Train` for both lines returns `odpt:fromStation`, `odpt:toStation`,
-      `odpt:railDirection`, `odpt:delay` and `odpt:destinationStation`.
-- [ ] Rail direction ids are `odpt.RailDirection:TokyoMetro.{Ogikubo,Ikebukuro,Shibuya,Asakusa}`.
-- [ ] `odpt:TrainInformation` omits `odpt:trainInformationStatus` during normal
-      service (the parser treats its presence as a disruption).
-- [ ] `odpt:StationTimetable` objects carry `odpt:calendar` values
-      `odpt.Calendar:Weekday` / `odpt.Calendar:SaturdayHoliday`.
-- [ ] Whether any `odpt:Train` field is a per-car numeric array (the probe flags
-      candidates). If one exists, set `ODPT_CAR_LOAD_FIELD` and the app switches to
-      "live" loads for the next train.
-- [ ] Whether `odpt:StationFacility` publishes nearest-car information for
-      transfers and exits. If it does, it can replace hand-surveyed layouts.
-- [ ] Car numbering: which end car 1 is on for each line. `network.ts` assumes
-      the Ogikubo end (Marunouchi) and the Shibuya end (Ginza).
+- [ ] Car numbering: which end car 1 is on for each line. `network.ts` assumes the
+      Ogikubo end (Marunouchi) and the Shibuya end (Ginza). ODPT does not publish this.
+- [ ] Rolling-stock lengths and door counts (see MODEL.md §1).
+
+**Implication.** On Tokyo Metro, live data can only adjust the plan through service
+status and the timetable. Lines that do publish positions (Toei, and JR East etc.
+via the Challenge endpoint) would let real per-train delay feed the crowding
+estimate.
+
+**Note for sandboxed development:** Node's built-in `fetch` ignores `HTTPS_PROXY`. Behind a proxy, run
+the server or the probe with `NODE_USE_ENV_PROXY=1` (Node ≥ 22.21). On Vercel this is not needed.
 
 ## Surveying a station (turning a demo layout into a surveyed one)
 

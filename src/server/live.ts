@@ -24,6 +24,7 @@ export async function liveSnapshot(line: Line, fromCode: string, toCode: string)
     approaching: null,
     departures: null,
     carLoadsPct: null,
+    positionsPublished: false,
     errors,
   };
   if (!from || !direction) return { ...base, errors: ["invalid route"] };
@@ -42,11 +43,15 @@ export async function liveSnapshot(line: Line, fromCode: string, toCode: string)
     ),
   ]);
 
-  const approaching = trains ? parseApproaching(line, from.odpt, from.code, direction, trains) : null;
+  // ODPT has no Tokyo Metro train positions (verified 2026-10-01): an empty list means
+  // "not published", which is different from "no train approaching right now".
+  const positionsPublished = Boolean(trains && trains.length > 0);
+  const approaching = trains && positionsPublished ? parseApproaching(line, from.odpt, from.code, direction, trains) : null;
   const nextTrain = trains?.find((t) => t["odpt:trainNumber"] === approaching?.[0]?.trainNumber);
 
   return {
     ...base,
+    positionsPublished,
     service: info ? parseService(info) : null,
     approaching,
     departures: timetables ? parseDepartures(line, timetables, calendar, clock.minuteOfServiceDay) : null,
