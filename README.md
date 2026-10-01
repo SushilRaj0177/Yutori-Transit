@@ -1,149 +1,130 @@
-# Yutori Car (ゆとり車両)
-### Real-Time Car-Level Crowding & Pareto-Optimal Door Recommendation Engine
+# Yutori (ゆとり) — which door should you board?
 
-[![Next.js](https://img.shields.io/badge/Next.js-16.3-black?logo=next.js)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-v4-06B6D4?logo=tailwindcss)](https://tailwindcss.com/)
-[![ODPT API](https://img.shields.io/badge/Data-ODPT%20v4-FF9900)](https://developer.odpt.org/)
-[![Groq AI](https://img.shields.io/badge/AI%20Copilot-Groq%20Inference-F05A28)](https://groq.com/)
+On a Tokyo Metro train, the car next to the transfer stairs is the most crowded,
+and the empty end car can leave you a long walk down the platform at your
+destination. Yutori tells you the car and door to board for your trip, and lets
+you slide between **getting out fast** and **having room**. It shows every number
+together with where it came from.
 
-Yutori Car is an intelligent Tokyo subway boarding optimization platform. It resolves the classic **Tokyo Commuter Dilemma** (the trade-off between transfer walking speed and physical passenger crush) by ingesting live transit telemetry from the **Open Data for Public Transportation (ODPT)** API, projecting station platforms into discrete 1D spatial coordinate graphs, and evaluating the **Pareto-Optimal Boarding Door** in real-time.
+<p align="center">
+  <img src="docs/img/mobile-en.png" width="30%" alt="Phone view, English" />
+  <img src="docs/img/mobile-ja-dark.png" width="30%" alt="Phone view, Japanese, dark mode" />
+</p>
 
----
+![Desktop view with the Pareto chart open](docs/img/desktop.png)
 
-## 1. Problem Formulation: The Tokyo Commuter Dilemma
+## What it does
 
-Greater Tokyo operates the highest passenger density transit network in the world. However, passenger load along an 8-car or 10-car train is profoundly non-uniform:
-- **The Speed Trap**: Cars directly adjacent to platform stairs or transfer corridors (e.g. at Shinjuku, Otemachi, Shibuya) frequently exceed 180%–200% capacity (crush load). Commuters suffer severe discomfort and bottleneck delays while boarding and alighting.
-- **The Comfort Penalty**: Boarding an empty end car provides physical comfort, but exiting 150m away from the transfer staircase can add 3 to 6 minutes of platform navigation, causing missed train connections.
+1. Pick a line (Marunouchi or Ginza), where you get on, where you get off, and
+   which exit or transfer you need there.
+2. The engine checks every (car, door) pair: walking time to that exit, plus the
+   load of that car.
+3. It keeps the **Pareto-optimal** doors (no other door is both faster *and* emptier)
+   and picks one according to the slider. The slider track shows the ranges where
+   the answer stays the same, so a trip with no real trade-off looks like one.
+4. It tells you how robust the pick is ("Solid pick" / "Close call") by re-solving
+   200 times with the crowding numbers perturbed.
+5. Live ODPT data (service disruptions, approaching trains and their delay, next
+   departures) is shown next to the answer. A delayed train raises the crowding
+   estimate.
+6. It explains the decision in English and Japanese. An LLM may rephrase that
+   explanation, but output citing any number the engine did not produce is
+   thrown away.
 
-**Yutori Car** balances this trade-off quantitatively. Rather than merely showing static timetables, it computes the exact car and door index (e.g., *Car 4, Door 2*) that satisfies the commuter's customizable preference curve between physical space and transfer speed.
+## Honest status
 
----
+| | |
+|---|---|
+| Station data, line geometry, Pareto solver, robustness check | done, tested |
+| Live service status, train positions, delays, timetable (ODPT) | implemented against the ODPT v4 schema; **run `npm run odpt:probe` to verify against live responses** |
+| Per-car crowding | **estimated** by a documented model. ODPT has no known public per-car load field; the app switches to live loads automatically if one is configured |
+| Platform exit positions | **demo layouts** for 12 stations. The exits are real; their positions along the platform are not surveyed yet ([how to survey](docs/DATA.md#surveying-a-station-turning-a-demo-layout-into-a-surveyed-one)) |
 
-## 2. Mathematical Optimization Model
+The UI never shows a placeholder as if it were data: missing live data reads
+"unavailable", estimates are labelled as estimates, and stations without
+platform data get no recommendation.
 
-Yutori Car models the commuter decision as a **Multi-Objective Combinatorial Optimization** problem over discrete 1D spatial platform coordinates.
-
-### Objective Function
-For each candidate door $(c, d)$ where $c \in \{1, \dots, N\}$ (car index) and $d \in \{1, \dots, M\}$ (door index):
-
-$$J(c, d) = w_{\text{speed}} \cdot D_{\text{norm}}(c, d, \text{Egress}) + w_{\text{comfort}} \cdot C_{\text{norm}}(c)$$
-
-Where:
-- $w_{\text{speed}}, w_{\text{comfort}} \in [0, 1]$ subject to $w_{\text{speed}} + w_{\text{comfort}} = 1$ (User Preference Slider).
-- $D_{\text{norm}}(c, d, \text{Egress})$ is the normalized walking distance from door $(c, d)$ to the destination transfer point (stairs, escalator, elevator).
-- $C_{\text{norm}}(c)$ is the normalized crowding factor for car $c$ ingested from ODPT load factor telemetry.
-
-### 1D Platform Coordinate Projection
-Platforms are mapped as 1D linear metric spaces $[0, L_{\text{plat}}]$ in meters:
-$$X_{\text{door}}(c, d) = (c - 1) \cdot (L_{\text{car}} + L_{\text{gap}}) + \text{DoorOffset}(d)$$
-$$D(c, d, \text{Egress}) = |X_{\text{door}}(c, d) - X_{\text{egress}}|$$
-
-### Pareto Frontier Determination
-A candidate door $(c_1, d_1)$ dominates $(c_2, d_2)$ if:
-$$D(c_1, d_1) \le D(c_2, d_2) \quad \text{and} \quad C(c_1) \le C(c_2)$$
-with at least one strict inequality. Only non-dominated solutions are returned to the interactive UI.
-
----
-
-## 3. System Architecture
+## How it works
 
 ```
-┌─────────────────────────────────┐       ┌─────────────────────────────────┐
-│       ODPT API (v4)             │       │   Curated Platform Graph        │
-│  - Real-time train positions    │       │   - 1D Platform egress metrics  │
-│  - Line service disruptions     │       │   - Escalator/Stairs offsets    │
-│  - Car load factors             │       │   - Accessibility coordinates   │
-└────────────────┬────────────────┘       └────────────────┬────────────────┘
-                 │                                         │
-                 ▼                                         ▼
-┌───────────────────────────────────────────────────────────────────────────┐
-│                       Next.js App Server Engine                           │
-│  • Parallel Ingestion Core: /api/optimize, /api/stations, /api/lines      │
-│  • Discrete Pareto Optimization Engine: Fast sub-millisecond solver       │
-│  • Edge-cached In-memory Spatial Lookups                                  │
-└─────────────────────────────────────┬─────────────────────────────────────┘
-                                      │
-                 ┌────────────────────┴────────────────────┐
-                 ▼                                         ▼
-┌───────────────────────────────────┐    ┌───────────────────────────────────┐
-│     AI Transit Copilot (Groq)     │    │     Interactive UI Layer          │
-│  - Ultra-low latency (~200ms)     │    │  - Real-time Car Crowding Heatmap │
-│  - Grounded tactical rationales   │    │  - Mobile PWA Standalone Support  │
-│  - Bilingual JA/EN explanations   │    │  - Pareto Priority Slider         │
-│  - Interactive platform Q&A       │    │  - Egress Landmark Picker         │
-└───────────────────────────────────┘    └───────────────────────────────────┘
+             browser                                      server (Next.js route handlers)
+┌──────────────────────────────────┐   /api/live    ┌──────────────────────────────────┐
+│ Planner UI (React)               │ ─────────────▶ │ ODPT client                      │
+│  · route, exit, slider, time     │   every 30 s   │  · TrainInformation  (60 s cache)│──▶ ODPT v4
+│                                  │ ◀───────────── │  · Train             (20 s cache)│
+│ engine (pure TS, runs in browser)│                │  · StationTimetable  (6 h cache) │
+│  · geometry  → door positions    │                │  · keys never leave the server   │
+│  · crowding  → per-car estimate  │  /api/narrate  ├──────────────────────────────────┤
+│  · pareto    → frontier + pick   │ ─────────────▶ │ recompute plan from the query    │
+│  · stability → robustness        │   query only   │ → template explanation           │──▶ Groq (optional)
+│  · explain   → EN/JA template    │ ◀───────────── │ → LLM rephrase, number-checked   │
+└──────────────────────────────────┘                └──────────────────────────────────┘
 ```
 
----
+* `src/engine/`: the model, with no framework code. [docs/MODEL.md](docs/MODEL.md)
+  has the equations, every assumption, and why min–max normalisation was replaced
+  with fixed scales.
+* `src/data/`: lines, stations (EN/JA), demo platform layouts.
+  [docs/DATA.md](docs/DATA.md) lists the provenance of each source and what still
+  needs verifying.
+* `src/core/`: wiring (plan, live parsing, explanations, Japan-time service-day
+  handling).
+* `src/server/`: the ODPT client, LLM narration and rate limiting. Nothing here
+  is bundled to the browser (`server-only`).
+* `src/ui/`: the interface. Native `<select>` for stations (the phone's own
+  picker), an SVG platform diagram, the slider with answer bands, and a Pareto
+  chart.
 
-## 4. Key Engineering Features
+### Design decisions
 
-- **Live Transit Telemetry**: Integrates official Open Data for Public Transportation (ODPT) feeds covering Tokyo Metro, Toei Subway, and JR East interchanges.
-- **Explainable AI Transit Copilot**: Powered by Groq ultra-low-latency inference (`qwen/qwen3.8-27b`), the copilot produces fact-grounded tactical boarding briefings in English and Japanese.
-- **Physical Station Landmark Modeling**: Curated 1D coordinate maps for key Tokyo interchange hubs (Otemachi, Tokyo, Shinjuku, Shibuya, Ginza) with fallback architectural projections for all stations.
-- **Zero API Key Leakage**: Server-side Next.js route handlers strictly isolate credentials (`.env.local` is never sent to the client bundle or committed to Git).
-- **Progressive Web App (PWA)**: Includes manifest configuration for installability on mobile devices with fullscreen standalone UI.
+* **The solver runs on the client.** Moving the slider is a pure function of
+  data already loaded, so there is no network round trip.
+* **No database.** The specification proposed PostgreSQL and Redis. With 44
+  stations and 12 layouts, version-controlled TypeScript data is easier to
+  review and test, and costs nothing to host. A database becomes worthwhile once
+  layouts are crowd-sourced.
+* **Fixed objective scales instead of min–max.** Min–max made 42 % vs 54 % (seats
+  free everywhere) look as large as 60 % vs 200 %. See MODEL.md §3.
+* **The LLM is optional and fenced.** The deterministic template is always the
+  baseline, and the narration route recomputes the plan from the query instead
+  of trusting numbers from the client.
 
----
+## Run it
 
-## 5. Local Setup & Development
+```bash
+npm install
+cp .env.example .env.local   # add ODPT keys (and optionally a Groq key)
+npm run dev                  # http://localhost:3000
+```
 
-### Prerequisites
-- Node.js 18+
-- npm or yarn
+Without any keys the app still works: it plans from the time-of-day model and
+says that live data is unavailable.
 
-### Installation
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/SushilRaj0177/Yutori-Transit.git
-   cd Yutori-Transit
-   ```
+```bash
+npm run check        # eslint + tsc + vitest
+npm run build
+npm run odpt:probe   # print what ODPT actually returns for these lines
+```
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+Tests (`vitest`, 32 cases) cover door geometry, the Pareto sweep against a
+brute-force check on random inputs with ties, solver endpoints and
+breakpoints, a < 2 ms solve for 40 candidates, the crowding model, stability
+determinism, ODPT parsing (service status, approaching trains, timetables
+across midnight, per-car field validation), JST service-day handling, and the
+narration checker.
 
-3. Configure environment variables:
-   Copy `.env.example` to `.env.local`:
-   ```bash
-   cp .env.example .env.local
-   ```
-   Add your keys:
-   ```env
-   ODPT_CONSUMER_KEY=your_odpt_consumer_key
-   ODPT_CHALLENGE_KEY=your_odpt_challenge_key
-   GROQ_API_KEY=your_groq_api_key
-   ```
+## Roadmap
 
-4. Run the development server:
-   ```bash
-   npm run dev
-   ```
-   Open [http://localhost:3000](http://localhost:3000) in your browser.
+1. Run the ODPT probe and record its output in `docs/`; correct anything it contradicts.
+2. Survey the 12 demo stations and mark them `surveyed`.
+3. Calibrate the crowding model (published line congestion rates, a few manual
+   per-car counts) and report the error.
+4. Add more lines. The engine already handles any car count and door count; the
+   Tozai and Chiyoda lines (10 cars, 4 doors) are the obvious next ones.
+5. Model Japanese public holidays in the day-type logic.
 
-5. Build for production:
-   ```bash
-   npm run build
-   npm run start
-   ```
+## Data credit
 
----
-
-## 6. Deployment on Vercel
-
-1. Push your repository to GitHub.
-2. Import the project into [Vercel](https://vercel.com).
-3. Under **Project Settings > Environment Variables**, add:
-   - `ODPT_CONSUMER_KEY`
-   - `ODPT_CHALLENGE_KEY`
-   - `GROQ_API_KEY`
-4. Deploy! Vercel will build and serve the application globally with edge caching.
-
----
-
-## 7. Research & Academic Trajectory
-
-Developed as part of academic preparation for semester exchange research at **Waseda University** (School of Fundamental Science and Engineering) focusing on **Intelligent Spatial Systems, Urban Computational Mobility, and Software Dependability**.
+This app uses data from the Public Transportation Open Data Center (公共交通オープンデータセンター,
+ODPT). The accuracy and completeness of the data are not guaranteed. Please do
+not contact rail operators about this app.

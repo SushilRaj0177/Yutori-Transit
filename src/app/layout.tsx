@@ -1,49 +1,27 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { LanguageProvider } from "@/lib/i18n";
 
 export const metadata: Metadata = {
-  title: "Yutori — Tokyo Train Door Guide",
+  title: "Yutori — which door should you board?",
   description:
-    "Know exactly which train car and door to stand at in Tokyo. Smart boarding for tourists and locals.",
-  manifest: "/manifest.json",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: "Yutori",
-  },
+    "Pick the train car and door on Tokyo Metro that best trades walking time at your destination against crowding. Pareto-optimal, explainable, honest about its data.",
+  appleWebApp: { capable: true, title: "Yutori", statusBarStyle: "default" },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#FAFAF8",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f6f7f9" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0c0f" },
+  ],
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+  viewportFit: "cover",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body className="antialiased min-h-dvh">
-        <LanguageProvider>{children}</LanguageProvider>
-      </body>
+      <body className="min-h-dvh">{children}</body>
     </html>
   );
 }
