@@ -27,19 +27,18 @@ export async function POST(req: Request) {
 
   const line = getLine(String(body.line ?? ""));
   if (!line) return Response.json({ error: "unknown-line" }, { status: 422 });
-  // Narration is only offered for real positions (surveyed or rider-verified), never for demo ones.
   const { book } = await communityBook(line);
   const result = plan({
     line: line.id,
     from: String(body.from ?? ""),
     to: String(body.to ?? ""),
-    egressId: typeof body.egressId === "string" ? body.egressId : undefined,
+    destId: typeof body.destId === "string" ? body.destId : undefined,
     speedWeight,
     hour,
     dayType: body.dayType === "holiday" ? "holiday" : "weekday",
     delayS: num(body.delayS, 0, 3600) ?? undefined,
     community: book,
-    demo: false,
+    stepFree: body.stepFree === true,
   });
   if (!result.ok) return Response.json({ error: result.error.kind }, { status: 422 });
   if (!result.plan.door) return Response.json({ error: "position-unknown" }, { status: 422 });

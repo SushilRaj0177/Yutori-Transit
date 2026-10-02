@@ -5,53 +5,46 @@ and the empty end car can leave you a long walk down the platform at your
 destination. Yutori tells you which car and door to board for your trip, and lets
 you slide between **getting out fast** and **having room**.
 
-It is built to be relied on, so it **never presents a guess as data**. A door is
-recommended only when the position of the exit on the platform has been
-confirmed. Positions come from riders, and a position counts only once at least
-three people on different networks agree.
+It is built to be relied on, so **every door it recommends comes from an on-site
+survey**, and every number on screen says where it came from.
 
 <p align="center">
-  <img src="docs/img/mobile-en.png" width="24%" alt="Recommendation for a rider-confirmed exit" />
-  <img src="docs/img/mobile-report.png" width="24%" alt="Unconfirmed exit: no door is guessed; riders on the platform can confirm it" />
-  <img src="docs/img/mobile-ja-dark.png" width="24%" alt="Demo mode in Japanese, clearly labelled as invented data" />
+  <img src="docs/img/mobile-en.png" width="30%" alt="Shinjuku to Otemachi: board car 5 door 3 for exits A1 and A2, from the on-site survey, with a live ODPT disruption notice" />
+  <img src="docs/img/mobile-ja-dark.png" width="30%" alt="The same trip in Japanese, dark mode, including the note about an entry left out" />
 </p>
 
-## Why rider reports?
+## Where the data comes from
 
-The app needs to know *which car and door each staircase, escalator and lift
-is next to*. This project checked every channel the official open-data platform
-(ODPT) offers: the query API, the bulk dumps, the dataset catalogue and the
-GTFS-Realtime feeds. **None of them publish platform positions**
-(`odpt:StationFacility` returns 404, and the dump file does not exist). Neither do they publish
-Tokyo Metro train positions or per-car crowding (details and dates in
-[docs/DATA.md](docs/DATA.md)).
+| What | Source | How it gets into the app |
+|---|---|---|
+| Which car and door is next to each staircase, escalator and elevator, and which gate, exit numbers and transfers it leads to | 「[電車の停車位置](https://wadattsu261.com/stationhome-info/)」, an on-site survey of every platform by わだっつ (wadattsu261.com) | `scripts/survey/` crawls the 43 station pages politely, parses them and validates every entry (below). 261 positions across all 44 stations of both lines. Each answer links to its source page and shows its update date |
+| Service status (delays, suspensions) | ODPT `odpt:TrainInformation` | live, verified against real responses |
+| Next departures | ODPT `odpt:StationTimetable` | scheduled times, verified |
+| Crowding per car | **no public source exists** (ODPT checked thoroughly) | a rule-of-thumb estimate, shown only as "usually quieter / busier", never as a percentage, and weighted at half the importance of walking time |
 
-So the positions come from the people standing on the platform. They read the
-car and door numbers painted there (e.g. `4-2`) and tap them in. The app turns
-those reports into a position only when they agree:
+**Validation.** The survey states each door twice: by its order in the direction
+of travel ("3rd door of car 1") and by its physical label (『1号車1番ドア』, car 1 door 1).
+The parser converts one into the other with the train's numbering and **drops any entry where they
+disagree**. Of 263 entries, 2 contradict themselves at the source (Otemachi and
+Omotesando). They are left out, and the app tells riders so, instead of guessing.
+The same check catches the other line's platforms on shared stations (Akasaka-mitsuke,
+Omotesando), which the parser excludes.
 
-* one vote per network address (one person with many browser profiles counts once);
-* the median of the reported positions (robust to a mistaken or malicious report);
-* **verified** at ≥ 3 reports with ≥ 75 % within one door of each other;
-  otherwise *pending* or *disputed*, and then **no door is recommended**.
-
-Reporting in the platform's own car numbers also means the answer never depends
-on assumptions about which end of the train car 1 is at.
+ODPT itself publishes **no** platform positions, Tokyo Metro train positions or
+per-car crowding. `docs/DATA.md` has the evidence.
 
 ## What a rider sees
 
-| Situation | What the app shows |
-|---|---|
-| Exit position verified (riders or survey) | "Board car 2, door 1": walk time, relative crowding, robustness, slider |
-| Exit position not yet verified | **No door.** "Not confirmed yet", the usually-quietest car (labelled as an estimate), and a one-tap way to confirm it from the platform |
-| Live ODPT data | Service status (平常運転 / disruptions) and the next departures from the real timetable |
-| No live data | Says "unavailable"; never shows placeholder trains or times |
-| Demo mode (footer link, off by default) | Invented positions, with a banner on every screen saying not to use them for real trips |
-
-Crowding per car is a rule-of-thumb estimate (no operator publishes per-car
-load), so it is shown as *usually quieter / about average / usually busier*,
-never as a made-up percentage. It also counts for half as much as walking time
-measured from a verified position.
+- **The gate they want at the destination:** transfer lines and exit numbers
+  ("Tozai Line · Exits A4, A5, B1–B10").
+- **"Board car 5, door 3"**, the walk to the stairs, and whether that car is
+  usually quieter or busier.
+- **A slider between faster exit and more room,** with bands showing where the answer changes.
+- **Step-free mode:** only elevator or level routes; says so plainly when none is listed.
+- **Live service status** and the next departures.
+- **A note when a route was left out** for inconsistent data, plus a link to the source page.
+- **"Changed? Report it":** rider reports that disagree with the survey raise a visible
+  warning but never silently override it.
 
 ## How it works
 
@@ -60,7 +53,7 @@ measured from a verified position.
 ┌──────────────────────────────────┐  /api/layouts  ┌──────────────────────────────────┐
 │ Planner UI (React)               │ ─────────────▶ │ rider reports → consensus        │──▶ Postgres
 │  · route, exit, slider, time     │  /api/reports  │  (one vote per network, median,  │    (Neon / PGlite)
-│  · one-tap position reports      │ ─────────────▶ │   ≥3 agreeing → verified)        │
+│  · "changed?" reports            │ ─────────────▶ │   ≥3 agreeing → flag a change)   │
 │                                  │                ├──────────────────────────────────┤
 │ engine (pure TS, runs in browser)│   /api/live    │ ODPT client                      │
 │  · geometry  → door positions    │ ─────────────▶ │  · TrainInformation  (60 s cache)│──▶ ODPT v4
@@ -73,20 +66,19 @@ measured from a verified position.
 
 * `src/engine/`: the optimisation model, with no framework code. [docs/MODEL.md](docs/MODEL.md)
   has the equations and every assumption.
-* `src/core/consensus.ts`: rider reports → verified / pending / disputed.
-* `src/core/positions.ts`: precedence rules: surveyed > rider-verified > demo (only in demo mode) > unknown.
-* `src/data/`: lines and stations (verified against ODPT) and the exits per station.
+* `scripts/survey/`: crawler, parser and cross-check for the platform survey; `src/data/survey.json` is its output.
+* `src/data/survey.ts`: survey data grouped into destinations (gate, exits, transfers, access points).
+* `src/core/consensus.ts`: rider "changed?" reports → verified / pending / disputed.
 * `src/server/`: ODPT client, report store, rate limiting, LLM narration (`server-only`).
 * `src/ui/`: the interface.
 
 ### Design decisions
 
-* **No recommendation without a verified position.** An honest "not confirmed
-  yet" beats a confident wrong door.
-* **The LLM never decides, and only describes real positions.** The server
-  recomputes the plan from the query. Output is rejected if it cites any number
-  the engine didn't produce, in the wrong unit, or calls a door "fastest" when
-  it isn't. Demo positions are never narrated.
+* **Sourced positions only.** Every recommended door comes from the survey and links to it. Contradictory
+  entries are dropped and disclosed, not repaired by guessing.
+* **The LLM never decides.** The server recomputes the plan from the query, and output is rejected
+  if it cites any number the engine didn't produce, uses the wrong unit, or calls a door
+  "fastest" when it isn't.
 * **Estimated crowding is discounted** (×0.5) against walking time from a
   verified position. A rule of thumb shouldn't overrule a measurement at equal
   weight.
@@ -100,12 +92,12 @@ cp .env.example .env.local   # ODPT keys; optional Groq key, DATABASE_URL, REPOR
 npm run dev                  # http://localhost:3000
 ```
 
-Locally, rider reports go to an embedded Postgres (PGlite) in `.data/`. In
+Locally, rider "changed?" reports go to an embedded Postgres (PGlite) in `.data/`. In
 production, set `DATABASE_URL` (see below). Without it, a Vercel deployment turns
 reporting off instead of silently losing reports.
 
 ```bash
-npm run check        # eslint + tsc + vitest (52 tests)
+npm run check        # eslint + tsc + vitest (57 tests)
 npm run build
 npm run odpt:probe   # print what ODPT actually returns for these lines
 ```
@@ -115,7 +107,9 @@ The tests cover:
 * the engine: geometry, a Pareto sweep checked against brute force, solver
   endpoints, the crowding discount, and the model;
 * consensus: troll reports, disputes, invalid input;
-* a **"no door without a verified position" rule** for pending, disputed and demo states;
+* the survey parser on synthetic pages in both of the site's layouts, and the label/order cross-check;
+* the survey data itself: every station covered in every arrival direction, doors within a 6-car, 3-door train,
+  and a spot check against the published Otemachi page;
 * the report API on a real embedded Postgres: one vote per network, vote
   changes, rate limits;
 * ODPT parsing and JST service-day handling;
@@ -135,16 +129,28 @@ Reports store the station, exit, car and door, plus **salted SHA-256 hashes** of
 a random per-browser id and of the IP address (to stop ballot stuffing). There
 are no accounts, no location tracking, and no raw IPs.
 
+## Updating the survey data
+
+```bash
+npx tsx scripts/survey/fetch.mts --refresh   # polite crawl into .cache/ (not committed)
+npx tsx scripts/survey/parse.mts             # writes src/data/survey.json and .cache/survey/review.md
+```
+
+`review.md` lists every extracted entry next to the sentence it came from, plus everything
+rejected or skipped. Read it before committing a data update.
+
 ## Roadmap
 
-1. Get the first stations verified by real riders: Otemachi, Shinjuku and Tokyo
-   first, by asking Tokyo-based student and developer communities.
-2. Rider-reported **crowding** ("car 3 is packed right now") with time decay,
-   replacing the estimate where reports are recent.
-3. Add a line whose train positions ODPT does publish (Toei), so live delays feed the plan.
-4. Calibrate the crowding model with ODPT `PassengerSurvey` ridership and report its error.
+1. Ask the survey's author for permission to use the data publicly, and report the two
+   inconsistencies found.
+2. Add more lines: the survey covers all Tokyo Metro, Toei and JR lines, and the engine handles any car and door count.
+3. Rider-reported **crowding** ("car 3 is packed right now") with time decay.
+4. Calibrate the crowding estimate with ODPT `PassengerSurvey` ridership and report its error.
 
 ## Data credit
+
+Platform positions: 「電車の停車位置」 by わだっつ (wadattsu261.com), on-site survey. Used with attribution
+and a link on every answer; the raw pages are not redistributed.
 
 This app uses data from the Public Transportation Open Data Center (公共交通オープンデータセンター,
 ODPT). The accuracy and completeness of the data are not guaranteed. Please do

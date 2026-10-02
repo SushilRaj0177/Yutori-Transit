@@ -1,0 +1,5489 @@
+{
+ "source": "電車の停車位置 (wadattsu261.com), on-site survey by わだっつ",
+ "retrieved": "2026-10-02",
+ "stations": [
+  {
+   "line": "M",
+   "station": "M01",
+   "source": "https://wadattsu261.com/content/ogikubo-metromarunouchihome-info/",
+   "updated": "2025-10-05",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "西改札(西口方面)",
+     "exits": [],
+     "transfers": [],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsFirst",
+     "gate": "西改札(西口方面)",
+     "exits": [],
+     "transfers": [],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "エレベーター専用改札(西口・北口・南口各方面)",
+     "exits": [],
+     "transfers": [
+      "jr"
+     ],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 2,
+       "door": 2
+      },
+      {
+       "car": 2,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsFirst",
+     "gate": "エレベーター専用改札(西口・北口・南口各方面)",
+     "exits": [],
+     "transfers": [
+      "jr"
+     ],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 2,
+       "door": 2
+      },
+      {
+       "car": 2,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "JR荻窪駅方面改札(南口・北口方面)",
+     "exits": [],
+     "transfers": [
+      "jr"
+     ],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsFirst",
+     "gate": "JR荻窪駅方面改札(南口・北口方面)",
+     "exits": [],
+     "transfers": [
+      "jr"
+     ],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "M",
+   "station": "M02",
+   "source": "https://wadattsu261.com/content/minamiasagaya-metromarunouchihome-info/",
+   "updated": "2025-10-05",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "1番線ホーム側:杉並郵便局方面改札(出口1方面)",
+     "exits": [
+      "1"
+     ],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 2,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "2番線ホーム側:杉並区役所方面改札(出口2方面)",
+     "exits": [
+      "2"
+     ],
+     "transfers": [],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 3,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "1番線ホーム側:杉並郵便局方面改札(出口1方面)",
+     "exits": [
+      "1"
+     ],
+     "transfers": [],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 4,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "1番線ホーム側:杉並郵便局方面改札(出口1方面)",
+     "exits": [
+      "1"
+     ],
+     "transfers": [],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 3,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "2番線ホーム側:杉並区役所方面改札(出口2方面)",
+     "exits": [
+      "2"
+     ],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 3,
+       "door": 1
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "M",
+   "station": "M03",
+   "source": "https://wadattsu261.com/content/shinkoenji-metromarunouchihome-info/",
+   "updated": "2025-10-05",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "2番線ホーム側:高円寺南方面改札(出口2方面)",
+     "exits": [
+      "2"
+     ],
+     "transfers": [],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 4,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "1番線ホーム側:梅里方面改札(出口1方面)",
+     "exits": [
+      "1"
+     ],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 4,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "地上行きエレベーター専用改札",
+     "exits": [],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "1番線ホーム側:梅里方面改札(出口1方面)",
+     "exits": [
+      "1"
+     ],
+     "transfers": [],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 3,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "2番線ホーム側:高円寺南方面改札(出口2方面)",
+     "exits": [
+      "2"
+     ],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 2,
+       "door": 3
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "M",
+   "station": "M04",
+   "source": "https://wadattsu261.com/content/higashikoenji-metromarunouchihome-info/",
+   "updated": "2025-10-05",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "2番線ホーム側:東高円寺駅前交差点方面改札(出口2・3方面)",
+     "exits": [
+      "2",
+      "3"
+     ],
+     "transfers": [],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 2,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "1番線ホーム側:蚕糸の森公園方面改札(出口1方面)",
+     "exits": [
+      "1"
+     ],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 3,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "2番線ホーム側:東高円寺駅前交差点方面改札(出口2・3方面)",
+     "exits": [
+      "2",
+      "3"
+     ],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 3,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "蚕糸の森公園方面改札(出口1方面)",
+     "exits": [
+      "1"
+     ],
+     "transfers": [],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 2,
+       "door": 3
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "M",
+   "station": "M05",
+   "source": "https://wadattsu261.com/content/shinnakano-metromarunouchihome-info/",
+   "updated": "2025-10-06",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "杉山公園交差点南出口方面改札(出口1方面)",
+     "exits": [
+      "1"
+     ],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "杉山公園交差点北出口方面改札(出口2方面)・鍋屋横丁交差点北出口方面改札(出口4方面)",
+     "exits": [
+      "2",
+      "4"
+     ],
+     "transfers": [],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 3,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "鍋屋横丁交差点南出口方面改札(出口3方面)",
+     "exits": [
+      "3"
+     ],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "鍋屋横丁交差点北出口方面改札(出口4方面)",
+     "exits": [
+      "4"
+     ],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "杉山公園交差点南出口方面改札(出口1方面)・鍋屋横丁交差点南出口方面改札(出口3方面)",
+     "exits": [
+      "1",
+      "3"
+     ],
+     "transfers": [],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 4,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "杉山公園交差点北出口方面改札(出口2方面)",
+     "exits": [
+      "2"
+     ],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "M",
+   "station": "M06",
+   "source": "https://wadattsu261.com/content/nakanosakaue-metromarunouchihome-info/",
+   "updated": "2025-10-04",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "本町方面改札(3出口方面)",
+     "exits": [
+      "3"
+     ],
+     "transfers": [],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 2,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "本町方面改札(3出口方面)",
+     "exits": [
+      "3"
+     ],
+     "transfers": [],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 3,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "中野坂上交差点方面改札・都営大江戸線改札(1・2・A1・A2出口方面)",
+     "exits": [
+      "1",
+      "2",
+      "A1",
+      "A2"
+     ],
+     "transfers": [
+      "toei-oedo"
+     ],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "中野坂上交差点方面改札・都営大江戸線改札(1・2・A1・A2出口方面)",
+     "exits": [
+      "1",
+      "2",
+      "A1",
+      "A2"
+     ],
+     "transfers": [
+      "toei-oedo"
+     ],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "本町方面改札(3出口方面)",
+     "exits": [
+      "3"
+     ],
+     "transfers": [],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 2,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "本町方面改札(3出口方面)",
+     "exits": [
+      "3"
+     ],
+     "transfers": [],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "M",
+   "station": "M07",
+   "source": "https://wadattsu261.com/content/nishishinjuku-metromarunouchihome-info/",
+   "updated": "2025-10-04",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "(改札名なし)",
+     "exits": [],
+     "transfers": [],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 2,
+       "door": 2
+      },
+      {
+       "car": 2,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "(改札名なし)",
+     "exits": [],
+     "transfers": [],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 4,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "(改札名なし)",
+     "exits": [],
+     "transfers": [],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 5,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "(改札名なし)",
+     "exits": [],
+     "transfers": [],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 5,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "(改札名なし)",
+     "exits": [],
+     "transfers": [],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 4,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "(改札名なし)",
+     "exits": [],
+     "transfers": [],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 2,
+       "door": 3
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "M",
+   "station": "M08",
+   "source": "https://wadattsu261.com/content/shinjuku-metromarunouchihome-info/",
+   "updated": "2025-10-06",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "西改札(A10ー18・B14ーB18出口方面)",
+     "exits": [
+      "A10–18",
+      "B14–B18"
+     ],
+     "transfers": [
+      "jr",
+      "toei-oedo",
+      "keio",
+      "odakyu"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "西改札(A10ー18・B14ーB18出口方面)",
+     "exits": [
+      "A10–18",
+      "B14–B18"
+     ],
+     "transfers": [
+      "jr",
+      "toei-oedo",
+      "keio",
+      "odakyu"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "東改札(A6ーA9・B9ーB13出口方面)",
+     "exits": [
+      "A6–A9",
+      "B9–B13"
+     ],
+     "transfers": [
+      "jr",
+      "seibu"
+     ],
+     "kind": "上り階段・上りエスカレーター・エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "東改札(A6ーA9・B9ーB13出口方面)",
+     "exits": [
+      "A6–A9",
+      "B9–B13"
+     ],
+     "transfers": [
+      "jr",
+      "seibu"
+     ],
+     "kind": "上り階段・上りエスカレーター・エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "M",
+   "station": "M09",
+   "source": "https://wadattsu261.com/content/shinjukusanchome-metromarunouchihome-info/",
+   "updated": "2026-05-25",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "新宿方面改札(A5・B5ーB7・B9出口方面)",
+     "exits": [
+      "A5",
+      "B5–B7",
+      "B9"
+     ],
+     "transfers": [
+      "seibu"
+     ],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "新宿方面改札(A5・B5ーB7・B9出口方面)",
+     "exits": [
+      "A5",
+      "B5–B7",
+      "B9"
+     ],
+     "transfers": [
+      "seibu"
+     ],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "新宿方面改札(A5・B5ーB7・B9出口方面)",
+     "exits": [
+      "A5",
+      "B5–B7",
+      "B9"
+     ],
+     "transfers": [
+      "seibu"
+     ],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 1,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "新宿方面改札(A5・B5ーB7・B9出口方面)",
+     "exits": [
+      "A5",
+      "B5–B7",
+      "B9"
+     ],
+     "transfers": [
+      "seibu"
+     ],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "伊勢丹方面改札(A1・A2・A4・B2-B4・C1-C8出口方面)",
+     "exits": [
+      "A1",
+      "A2",
+      "A4",
+      "B2–B4",
+      "C1–C8"
+     ],
+     "transfers": [
+      "toei-shinjuku",
+      "fukutoshin"
+     ],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 4,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "伊勢丹方面改札(A1・A2・A4・B2-B4・C1-C8出口方面)",
+     "exits": [
+      "A1",
+      "A2",
+      "A4",
+      "B2–B4",
+      "C1–C8"
+     ],
+     "transfers": [
+      "toei-shinjuku",
+      "fukutoshin"
+     ],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 4,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "伊勢丹方面改札(A1・A2・A4・B2-B4・C1-C8出口方面)",
+     "exits": [
+      "A1",
+      "A2",
+      "A4",
+      "B2–B4",
+      "C1–C8"
+     ],
+     "transfers": [
+      "toei-shinjuku",
+      "fukutoshin"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 5,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "伊勢丹方面改札(A1・A2・A4・B2-B4・C1-C8出口方面)",
+     "exits": [
+      "A1",
+      "A2",
+      "A4",
+      "B2–B4",
+      "C1–C8"
+     ],
+     "transfers": [
+      "toei-shinjuku",
+      "fukutoshin"
+     ],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "伊勢丹方面改札(A1・A2・A4・B2-B4・C1-C8出口方面)",
+     "exits": [
+      "A1",
+      "A2",
+      "A4",
+      "B2–B4",
+      "C1–C8"
+     ],
+     "transfers": [
+      "toei-shinjuku",
+      "fukutoshin"
+     ],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "M",
+   "station": "M10",
+   "source": "https://wadattsu261.com/content/shinjukugyoenmae-metromarunouchihome-info/",
+   "updated": "2025-10-06",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "1番線ホーム側:新宿門方面改札(出口1方面)",
+     "exits": [
+      "1"
+     ],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "2番線ホーム側:大木戸方面改札(出口2方面)・新宿一丁目方面改札(出口3方面)",
+     "exits": [
+      "2",
+      "3"
+     ],
+     "transfers": [],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 4,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "2番線ホーム側:大木戸方面改札(出口2方面)",
+     "exits": [
+      "2"
+     ],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "1番線ホーム側:新宿門方面改札(出口1方面)",
+     "exits": [
+      "1"
+     ],
+     "transfers": [],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 3,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "2番線ホーム側:新宿一丁目方面改札(出口3方面)",
+     "exits": [
+      "3"
+     ],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 1,
+       "door": 3
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "M",
+   "station": "M11",
+   "source": "https://wadattsu261.com/content/yotsuyasanchome-metromarunouchihome-info/",
+   "updated": "2025-10-06",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "舟町方面改札(1・3出口方面)",
+     "exits": [
+      "1",
+      "3"
+     ],
+     "transfers": [],
+     "kind": "(経路のみ)",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 3,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "舟町方面改札(1・3出口方面)",
+     "exits": [
+      "1",
+      "3"
+     ],
+     "transfers": [],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 5,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "舟町方面改札(1・3出口方面)",
+     "exits": [
+      "1",
+      "3"
+     ],
+     "transfers": [],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 3,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "左門町方面改札(2・4出口方面)",
+     "exits": [
+      "2",
+      "4"
+     ],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 3,
+       "door": 2
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "M",
+   "station": "M12",
+   "source": "https://wadattsu261.com/content/yotsuya-metromarunouchihome-info/",
+   "updated": "2025-10-06",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "赤坂方面改札(1出口方面)・JR四ツ谷駅方面改札・麹町方面改札(2・3出口方面)",
+     "exits": [
+      "1",
+      "2",
+      "3"
+     ],
+     "transfers": [
+      "jr",
+      "namboku"
+     ],
+     "kind": "エスカレーター・階段・エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "赤坂方面改札(1出口方面)・JR四ツ谷駅方面改札・麹町方面改札(2・3出口方面)",
+     "exits": [
+      "1",
+      "2",
+      "3"
+     ],
+     "transfers": [
+      "jr",
+      "namboku"
+     ],
+     "kind": "JR四ツ谷駅方面改札口・赤坂方面改札方面階段・エスカレーター・エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "M",
+   "station": "M13",
+   "source": "https://wadattsu261.com/content/akasakamitsuke-metroginza-marunouchihome-info/",
+   "updated": "2025-10-05",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 2,
+     "direction": "towardsFirst",
+     "gate": "B3F:山王下方面改札(11出口方面)",
+     "exits": [
+      "11"
+     ],
+     "transfers": [],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 5,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsFirst",
+     "gate": "B3F:山王下方面改札(11出口方面)",
+     "exits": [
+      "11"
+     ],
+     "transfers": [],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 4,
+     "direction": "towardsLast",
+     "gate": "B3F:山王下方面改札(11・A-D出口方面)",
+     "exits": [
+      "11"
+     ],
+     "transfers": [],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 4,
+     "direction": "towardsLast",
+     "gate": "B3F:山王下方面改札・B1F:赤坂見附方面改札方面エレベーター",
+     "exits": [],
+     "transfers": [],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 4,
+     "direction": "towardsLast",
+     "gate": "B1F:赤坂見附方面改札(10・A-D出口方面)、B2F:半蔵門線・有楽町線・南北線乗り換え方面",
+     "exits": [
+      "10"
+     ],
+     "transfers": [
+      "hanzomon",
+      "yurakucho",
+      "namboku"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 3,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 4,
+     "direction": "towardsLast",
+     "gate": "B1F:赤坂見附方面改札(10・A-D出口方面)、B2F:半蔵門線・有楽町線・南北線乗り換え方面",
+     "exits": [
+      "10"
+     ],
+     "transfers": [
+      "hanzomon",
+      "yurakucho",
+      "namboku"
+     ],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 4,
+     "direction": "towardsLast",
+     "gate": "B1F:赤坂見附方面改札(10・A-D出口方面)、B2F:半蔵門線・有楽町線・南北線乗り換え方面",
+     "exits": [
+      "10"
+     ],
+     "transfers": [
+      "hanzomon",
+      "yurakucho",
+      "namboku"
+     ],
+     "kind": "東京メトロ半蔵門線・有楽町線・南北線乗り換え方面通路・エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "M",
+   "station": "M14",
+   "source": "https://wadattsu261.com/content/kokkaigijidomae-metromarunouchihome-info/",
+   "updated": "2025-10-06",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "永田町方面改札(5・6出口方面)・赤坂方面改札(7・8出口方面)",
+     "exits": [
+      "5",
+      "6",
+      "7",
+      "8"
+     ],
+     "transfers": [
+      "chiyoda",
+      "namboku"
+     ],
+     "kind": "エレベーター・階段・エスカレーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "国会議事堂方面改札(1-4出口方面)",
+     "exits": [
+      "1–4"
+     ],
+     "transfers": [],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "国会議事堂方面改札(1-4出口方面)",
+     "exits": [
+      "1–4"
+     ],
+     "transfers": [],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 2,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "国会議事堂方面改札(1-4出口方面)",
+     "exits": [
+      "1–4"
+     ],
+     "transfers": [],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 3,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "国会議事堂方面改札(出口1-4方面)・永田町方面改札(5・6出口方面)・赤坂方面改札(7・8出口方面)",
+     "exits": [
+      "1–4",
+      "5",
+      "6",
+      "7",
+      "8"
+     ],
+     "transfers": [
+      "chiyoda",
+      "namboku"
+     ],
+     "kind": "階段・エスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 4,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "国会議事堂方面改札(出口1-4方面)・永田町方面改札(5・6出口方面)・赤坂方面改札(7・8出口方面)",
+     "exits": [
+      "1–4",
+      "5",
+      "6",
+      "7",
+      "8"
+     ],
+     "transfers": [
+      "chiyoda",
+      "namboku"
+     ],
+     "kind": "階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 3,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "国会議事堂方面改札(出口1-4方面)・永田町方面改札(5・6出口方面)・赤坂方面改札(7・8出口方面)",
+     "exits": [
+      "1–4",
+      "5",
+      "6",
+      "7",
+      "8"
+     ],
+     "transfers": [
+      "chiyoda",
+      "namboku"
+     ],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 2,
+       "door": 1
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "M",
+   "station": "M15",
+   "source": "https://wadattsu261.com/content/kasumigaseki-metromarunouchihome-info/",
+   "updated": "2025-10-01",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:桜田通り方面改札(A1-A13出口方面)、B2F:内幸町方面改札(C1-C4出口)方面",
+     "exits": [
+      "A1–A13",
+      "C1–C4"
+     ],
+     "transfers": [
+      "chiyoda",
+      "hibiya"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:桜田通り方面改札(A1-A13出口方面)、B2F:内幸町方面改札(C1-C4出口)方面",
+     "exits": [
+      "A1–A13",
+      "C1–C4"
+     ],
+     "transfers": [
+      "chiyoda",
+      "hibiya"
+     ],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 2,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:桜田通り方面改札(A1-A13出口方面)、B2F:内幸町方面改札(C1-C4出口)方面",
+     "exits": [
+      "A1–A13",
+      "C1–C4"
+     ],
+     "transfers": [
+      "chiyoda",
+      "hibiya"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 3,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "日比谷公園方面改札(B1-B3出口方面)",
+     "exits": [
+      "B1–B3"
+     ],
+     "transfers": [],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:日比谷公園方面改札(B1-B3出口方面)",
+     "exits": [
+      "B1–B3"
+     ],
+     "transfers": [],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:桜田通り方面改札(A1-A13出口方面)、B2F:内幸町方面改札(C1-C4出口)方面",
+     "exits": [
+      "A1–A13",
+      "C1–C4"
+     ],
+     "transfers": [
+      "chiyoda",
+      "hibiya"
+     ],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 5,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:桜田通り方面改札(A1-A13出口方面)、B2F:内幸町方面改札(C1-C4出口)方面",
+     "exits": [
+      "A1–A13",
+      "C1–C4"
+     ],
+     "transfers": [
+      "chiyoda",
+      "hibiya"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 4,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:桜田通り方面改札(A1-A13出口方面)、B2F:内幸町方面改札(C1-C4出口)方面",
+     "exits": [
+      "A1–A13",
+      "C1–C4"
+     ],
+     "transfers": [
+      "chiyoda",
+      "hibiya"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 3,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:桜田通り方面改札(A1-A13出口方面)、B2F:内幸町方面改札(C1-C4出口)方面",
+     "exits": [
+      "A1–A13",
+      "C1–C4"
+     ],
+     "transfers": [
+      "chiyoda",
+      "hibiya"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "M",
+   "station": "M16",
+   "source": "https://wadattsu261.com/content/ginza-metromarunouchihome-info/",
+   "updated": "2026-04-28",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 3,
+     "direction": "towardsFirst",
+     "gate": "日比谷方面改札(C1出口方面)",
+     "exits": [
+      "C1"
+     ],
+     "transfers": [],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 4,
+     "direction": "towardsLast",
+     "gate": "日比谷方面改札(C1出口方面)",
+     "exits": [
+      "C1"
+     ],
+     "transfers": [],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 3,
+     "direction": "towardsFirst",
+     "gate": "数寄屋橋交差点改札(A1・A2・A4・B2-B4・C1-C8出口方面)",
+     "exits": [
+      "A1",
+      "A2",
+      "A4",
+      "B2–B4",
+      "C1–C8"
+     ],
+     "transfers": [
+      "hibiya",
+      "ginza"
+     ],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 2,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 4,
+     "direction": "towardsLast",
+     "gate": "数寄屋橋交差点改札(A1・A2・A4・B2-B4・C1-C8出口方面)",
+     "exits": [
+      "A1",
+      "A2",
+      "A4",
+      "B2–B4",
+      "C1–C8"
+     ],
+     "transfers": [
+      "hibiya",
+      "ginza"
+     ],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 2,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 3,
+     "direction": "towardsFirst",
+     "gate": "数寄屋橋交差点改札(A1・A2・A4・B2-B4・C1-C8出口方面)",
+     "exits": [
+      "A1",
+      "A2",
+      "A4",
+      "B2–B4",
+      "C1–C8"
+     ],
+     "transfers": [
+      "hibiya",
+      "ginza"
+     ],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 3,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 3,
+     "direction": "towardsFirst",
+     "gate": "数寄屋橋交差点改札(A1・A2・A4・B2-B4・C1-C8出口方面)",
+     "exits": [
+      "A1",
+      "A2",
+      "A4",
+      "B2–B4",
+      "C1–C8"
+     ],
+     "transfers": [
+      "hibiya",
+      "ginza"
+     ],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 5,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 4,
+     "direction": "towardsLast",
+     "gate": "数寄屋橋交差点改札(A1・A2・A4・B2-B4・C1-C8出口方面)",
+     "exits": [
+      "A1",
+      "A2",
+      "A4",
+      "B2–B4",
+      "C1–C8"
+     ],
+     "transfers": [
+      "hibiya",
+      "ginza"
+     ],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 5,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 3,
+     "direction": "towardsFirst",
+     "gate": "有楽町方面改札(C6-C9出口方面)",
+     "exits": [
+      "C6–C9"
+     ],
+     "transfers": [
+      "yurakucho"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 4,
+     "direction": "towardsLast",
+     "gate": "有楽町方面改札(C6-C9出口方面)",
+     "exits": [
+      "C6–C9"
+     ],
+     "transfers": [
+      "yurakucho"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "M",
+   "station": "M17",
+   "source": "https://wadattsu261.com/content/tokyo-metromarunouchihome-info/",
+   "updated": "2026-06-15",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:中央改札(M1ーM7出口方面)",
+     "exits": [
+      "M1–M7"
+     ],
+     "transfers": [
+      "shinkansen",
+      "jr"
+     ],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 2,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:中央改札(M1ーM7出口方面)",
+     "exits": [
+      "M1–M7"
+     ],
+     "transfers": [
+      "shinkansen",
+      "jr"
+     ],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 2,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:中央改札(M1ーM7出口方面)",
+     "exits": [
+      "M1–M7"
+     ],
+     "transfers": [
+      "shinkansen",
+      "jr"
+     ],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 4,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:中央改札(M1ーM7出口方面)",
+     "exits": [
+      "M1–M7"
+     ],
+     "transfers": [
+      "shinkansen",
+      "jr"
+     ],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 4,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:中央改札(M1ーM7出口方面)",
+     "exits": [
+      "M1–M7"
+     ],
+     "transfers": [
+      "shinkansen",
+      "jr"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 5,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:中央改札(M1ーM7出口方面)",
+     "exits": [
+      "M1–M7"
+     ],
+     "transfers": [
+      "shinkansen",
+      "jr"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 5,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:北改札(M8-M14出口方面)",
+     "exits": [
+      "M8–M14"
+     ],
+     "transfers": [
+      "jr"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:北改札(M8-M14出口方面)",
+     "exits": [
+      "M8–M14"
+     ],
+     "transfers": [
+      "jr"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "M",
+   "station": "M18",
+   "source": "https://wadattsu261.com/content/otemachi-metromarunouchihome-info/",
+   "updated": "2026-05-05",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "大手町二丁目方面改札(A4・A5・B1ーB10出口方面)",
+     "exits": [
+      "A4",
+      "A5",
+      "B1–B10"
+     ],
+     "transfers": [
+      "tozai"
+     ],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "サンケイ前交差点方面改札(E1・E2・C1-C14・D1ーD7出口方面)・大手門方面改札(都営三田線乗り換え方面)",
+     "exits": [
+      "E1",
+      "E2",
+      "C1–C14",
+      "D1–D7"
+     ],
+     "transfers": [
+      "toei-mita",
+      "chiyoda",
+      "hanzomon"
+     ],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 1,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "サンケイ前交差点方面改札(E1・E2・C1-C14・D1ーD7出口方面)・大手門方面改札(都営三田線乗り換え方面)",
+     "exits": [
+      "E1",
+      "E2",
+      "C1–C14",
+      "D1–D7"
+     ],
+     "transfers": [
+      "toei-mita",
+      "chiyoda",
+      "hanzomon"
+     ],
+     "kind": "下り階段・下りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 2,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "鎌倉橋方面改札(A1・A2出口方面)",
+     "exits": [
+      "A1",
+      "A2"
+     ],
+     "transfers": [],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "鎌倉橋方面改札(A1・A2出口方面)",
+     "exits": [
+      "A1",
+      "A2"
+     ],
+     "transfers": [],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "大手町二丁目方面改札(A4・A5・B1ーB10出口方面)",
+     "exits": [
+      "A4",
+      "A5",
+      "B1–B10"
+     ],
+     "transfers": [
+      "tozai"
+     ],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    }
+   ],
+   "omitted": [
+    {
+     "direction": "towardsLast",
+     "gate": "サンケイ前交差点方面改札(E1・E2・C1-C14・D1ーD7出口方面)"
+    }
+   ]
+  },
+  {
+   "line": "M",
+   "station": "M19",
+   "source": "https://wadattsu261.com/content/awajicho-metromarunouchihome-info/",
+   "updated": "2025-10-04",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "小川町方面改札(A4-A7・B3-B7出口方面)",
+     "exits": [
+      "A4–A7",
+      "B3–B7"
+     ],
+     "transfers": [
+      "chiyoda"
+     ],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "須田町方面改札(A1-A3出口方面)",
+     "exits": [
+      "A1–A3"
+     ],
+     "transfers": [
+      "toei-shinjuku",
+      "chiyoda"
+     ],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "小川町方面改札(A4-A7・B3-B7出口方面)",
+     "exits": [
+      "A4–A7",
+      "B3–B7"
+     ],
+     "transfers": [
+      "toei-shinjuku",
+      "chiyoda"
+     ],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "須田町方面改札(A1-A3出口方面)",
+     "exits": [
+      "A1–A3"
+     ],
+     "transfers": [],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 2
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "M",
+   "station": "M20",
+   "source": "https://wadattsu261.com/content/ochanomizu-metromarunouchihome-info/",
+   "updated": "2025-10-05",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "JR御茶ノ水駅方面改札(出口2方面)",
+     "exits": [
+      "2"
+     ],
+     "transfers": [
+      "jr",
+      "chiyoda"
+     ],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "東京医科歯科大学方面改札(出口1方面)",
+     "exits": [
+      "1"
+     ],
+     "transfers": [
+      "jr"
+     ],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 4,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "JR御茶ノ水駅方面改札(出口2方面)",
+     "exits": [
+      "2"
+     ],
+     "transfers": [
+      "jr"
+     ],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 1,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "東京医科歯科大学方面改札(出口1方面)",
+     "exits": [
+      "1"
+     ],
+     "transfers": [],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "M",
+   "station": "M21",
+   "source": "https://wadattsu261.com/content/hongosanchome-metromarunouchihome-info/",
+   "updated": "2025-10-02",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "(改札名なし)",
+     "exits": [],
+     "transfers": [],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 2,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "(改札名なし)",
+     "exits": [],
+     "transfers": [],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 4,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "(改札名なし)",
+     "exits": [],
+     "transfers": [],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 4,
+       "door": 1
+      },
+      {
+       "car": 3,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "(改札名なし)",
+     "exits": [],
+     "transfers": [],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 3,
+       "door": 1
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "M",
+   "station": "M22",
+   "source": "https://wadattsu261.com/content/korakuen-metromarunouchihome-info/",
+   "updated": "2025-10-03",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "1F:後楽園方面改札(1ー4出口方面)、B1F:春日通り方面改札(5ー8出口方面)、B5F:都営三田線・大江戸線のりかえ専用改札",
+     "exits": [
+      "1–4",
+      "5–8"
+     ],
+     "transfers": [
+      "toei-mita",
+      "toei-oedo",
+      "namboku"
+     ],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 1,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "1F:後楽園方面改札(1ー4出口方面)、B1F:春日通り方面改札(5ー8出口方面)、B5F:都営三田線・大江戸線のりかえ専用改札",
+     "exits": [
+      "1–4",
+      "5–8"
+     ],
+     "transfers": [
+      "toei-mita",
+      "toei-oedo",
+      "namboku"
+     ],
+     "kind": "下り階段・下りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 3,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "1F:後楽園方面改札(1ー4出口方面)、B1F:春日通り方面改札(5ー8出口方面)、B5F:都営三田線・大江戸線のりかえ専用改札",
+     "exits": [
+      "1–4",
+      "5–8"
+     ],
+     "transfers": [
+      "toei-mita",
+      "toei-oedo",
+      "namboku"
+     ],
+     "kind": "下り階段・下りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 3,
+       "door": 3
+      },
+      {
+       "car": 3,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "1F:後楽園方面改札(1ー4出口方面)、B1F:春日通り方面改札(5ー8出口方面)、B5F:都営三田線・大江戸線のりかえ専用改札",
+     "exits": [
+      "1–4",
+      "5–8"
+     ],
+     "transfers": [
+      "toei-mita",
+      "toei-oedo",
+      "namboku"
+     ],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 2,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "1F:後楽園方面改札(1ー4出口方面)、B1F:春日通り方面改札(5ー8出口方面)、B5F:都営三田線・大江戸線のりかえ専用改札",
+     "exits": [
+      "1–4",
+      "5–8"
+     ],
+     "transfers": [
+      "toei-mita",
+      "toei-oedo",
+      "namboku"
+     ],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 1,
+       "door": 3
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "M",
+   "station": "M23",
+   "source": "https://wadattsu261.com/content/myogadani-metromarunouchihome-info/",
+   "updated": "2025-10-04",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "(改札名なし)",
+     "exits": [],
+     "transfers": [],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 5,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "(改札名なし)",
+     "exits": [],
+     "transfers": [],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "(改札名なし)",
+     "exits": [],
+     "transfers": [],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "(改札名なし)",
+     "exits": [],
+     "transfers": [],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "(改札名なし)",
+     "exits": [],
+     "transfers": [],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "(改札名なし)",
+     "exits": [],
+     "transfers": [],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 5,
+       "door": 2
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "M",
+   "station": "M24",
+   "source": "https://wadattsu261.com/content/shinotsuka-metromarunouchihome-info/",
+   "updated": "2025-10-06",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "(改札名なし)",
+     "exits": [],
+     "transfers": [],
+     "kind": "南改札方面・下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "(改札名なし)",
+     "exits": [],
+     "transfers": [],
+     "kind": "南改札方面・下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 3,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "(改札名なし)",
+     "exits": [],
+     "transfers": [],
+     "kind": "北改札方面階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "(改札名なし)",
+     "exits": [],
+     "transfers": [],
+     "kind": "北改札方面階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "M",
+   "station": "M25",
+   "source": "https://wadattsu261.com/content/ikebukuro-metromarunouchihome-info/",
+   "updated": "2026-05-25",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsLast",
+     "gate": "B4F:副都心線のりかえ方面・B1F:西通路東改札(C1-10出口方面)",
+     "exits": [
+      "C1–10"
+     ],
+     "transfers": [
+      "fukutoshin"
+     ],
+     "kind": "副都心線ホーム階行き:下りエスカレーター・下り階段・エレベーター、改札階行き:上り階段・上りエスカレーター・エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B4F:副都心線のりかえ方面・B1F:西通路東改札(C1-10出口方面)",
+     "exits": [
+      "C1–10"
+     ],
+     "transfers": [
+      "fukutoshin"
+     ],
+     "kind": "副都心線ホーム階行き:下りエスカレーター・下り階段・エレベーター、改札階行き:上り階段・上りエスカレーター・エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsLast",
+     "gate": "B1F:中央通路西改札(1-20出口方面)",
+     "exits": [
+      "1–20"
+     ],
+     "transfers": [
+      "jr",
+      "tobu"
+     ],
+     "kind": "上り階段・エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:中央通路西改札(1-20出口方面)",
+     "exits": [
+      "1–20"
+     ],
+     "transfers": [
+      "jr",
+      "tobu"
+     ],
+     "kind": "上り階段・エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsLast",
+     "gate": "B1F:中央通路中央改札(22-26・28ー33・36-41出口方面)",
+     "exits": [
+      "22–26",
+      "28–33",
+      "36–41"
+     ],
+     "transfers": [
+      "yurakucho",
+      "seibu"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 4,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:中央通路中央改札(22-26・28ー33・36-41出口方面)",
+     "exits": [
+      "22–26",
+      "28–33",
+      "36–41"
+     ],
+     "transfers": [
+      "yurakucho",
+      "seibu"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 4,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsLast",
+     "gate": "B1F:中央通路中央改札(22-26・28ー33・36-41出口方面)",
+     "exits": [
+      "22–26",
+      "28–33",
+      "36–41"
+     ],
+     "transfers": [
+      "yurakucho",
+      "seibu"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 2,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:中央通路中央改札(22-26・28ー33・36-41出口方面)",
+     "exits": [
+      "22–26",
+      "28–33",
+      "36–41"
+     ],
+     "transfers": [
+      "yurakucho",
+      "seibu"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 2,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsLast",
+     "gate": "B1F:中央通路東改札(27・34・35ー42・43出口方面)",
+     "exits": [
+      "27",
+      "34",
+      "35–42",
+      "43"
+     ],
+     "transfers": [],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:中央通路東改札(27・34・35ー42・43出口方面)",
+     "exits": [
+      "27",
+      "34",
+      "35–42",
+      "43"
+     ],
+     "transfers": [],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "G",
+   "station": "G01",
+   "source": "https://wadattsu261.com/content/shibuya-metroginzahome-info/",
+   "updated": "2024-11-01",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 0,
+     "direction": "towardsFirst",
+     "gate": "3F:スクランブルスクエア方面改札(ハチ公前広場・渋谷マークシティ・渋谷スクランブルスクエアはこちらから)",
+     "exits": [],
+     "transfers": [
+      "jr",
+      "keio"
+     ],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 0,
+     "direction": "towardsFirst",
+     "gate": "2F:ヒカリエ方面改札・1F:明治通り方面改札(渋谷ヒカリエはこちらから)",
+     "exits": [],
+     "transfers": [
+      "hanzomon",
+      "fukutoshin",
+      "tokyu"
+     ],
+     "kind": "下りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 5,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 0,
+     "direction": "towardsFirst",
+     "gate": "2F:ヒカリエ方面改札・1F:明治通り方面改札(渋谷ヒカリエはこちらから)",
+     "exits": [],
+     "transfers": [
+      "hanzomon",
+      "fukutoshin",
+      "tokyu"
+     ],
+     "kind": "下り階段・エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "G",
+   "station": "G02",
+   "source": "https://wadattsu261.com/content/omotesando-metroginza-hanzomonhome-info/",
+   "updated": "2025-11-08",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 4,
+     "direction": "towardsFirst",
+     "gate": "B2F:表参道交差点・青山通り・青山学院方面改札(A3ーA5・B1ーB4出口方面)",
+     "exits": [
+      "A3–A5",
+      "B1–B4"
+     ],
+     "transfers": [
+      "chiyoda"
+     ],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 4,
+     "direction": "towardsFirst",
+     "gate": "B2F:表参道交差点・青山通り・青山学院方面改札(A3ーA5・B1ーB4出口方面)",
+     "exits": [
+      "A3–A5",
+      "B1–B4"
+     ],
+     "transfers": [
+      "chiyoda"
+     ],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 4,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 4,
+     "direction": "towardsFirst",
+     "gate": "B2F:表参道交差点・青山通り・青山学院方面改札(A3ーA5・B1ーB4出口方面)",
+     "exits": [
+      "A3–A5",
+      "B1–B4"
+     ],
+     "transfers": [
+      "chiyoda"
+     ],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 5,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 5,
+     "direction": "towardsLast",
+     "gate": "B2F:表参道交差点・青山通り・青山学院方面改札(A3ーA5・B1ーB4出口方面)",
+     "exits": [
+      "A3–A5",
+      "B1–B4"
+     ],
+     "transfers": [
+      "chiyoda"
+     ],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 5,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 5,
+     "direction": "towardsLast",
+     "gate": "B2F:表参道交差点・青山通り・青山学院方面改札(A3ーA5・B1ーB4出口方面)",
+     "exits": [
+      "A3–A5",
+      "B1–B4"
+     ],
+     "transfers": [
+      "chiyoda"
+     ],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 4,
+       "door": 1
+      }
+     ]
+    }
+   ],
+   "omitted": [
+    {
+     "direction": "towardsLast",
+     "gate": "B2F:表参道交差点・青山通り・青山学院方面改札(A3ーA5・B1ーB4出口方面)"
+    }
+   ]
+  },
+  {
+   "line": "G",
+   "station": "G03",
+   "source": "https://wadattsu261.com/content/gaienmae-metroginzahome-info/",
+   "updated": "2026-03-02",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:神宮球場方面改札(出口1-3方面)",
+     "exits": [
+      "1–3"
+     ],
+     "transfers": [],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:神宮球場方面改札(出口1-3方面)",
+     "exits": [
+      "1–3"
+     ],
+     "transfers": [],
+     "kind": "階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 2,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "外苑いちょう並木方面改札(出口4a・4b方面)",
+     "exits": [
+      "4a",
+      "4b"
+     ],
+     "transfers": [],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "外苑いちょう並木方面改札(出口4a・4b方面)",
+     "exits": [
+      "4a",
+      "4b"
+     ],
+     "transfers": [],
+     "kind": "階段・エスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:外苑いちょう並木方面改札(出口4a・4b方面)",
+     "exits": [
+      "4a",
+      "4b"
+     ],
+     "transfers": [],
+     "kind": "階段・エスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:外苑いちょう並木方面改札(出口4a・4b方面)",
+     "exits": [
+      "4a",
+      "4b"
+     ],
+     "transfers": [],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "神宮球場方面改札(出口1-3方面)",
+     "exits": [
+      "1–3"
+     ],
+     "transfers": [],
+     "kind": "階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "神宮球場方面改札(出口1-3方面)",
+     "exits": [
+      "1–3"
+     ],
+     "transfers": [],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "G",
+   "station": "G04",
+   "source": "https://wadattsu261.com/content/aoyamaicchome-metroginzahome-info/",
+   "updated": "2026-03-01",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:北青山方面改札(出口0-2方面)・B4F:大江戸線のりかえ専用改札口",
+     "exits": [
+      "0–2"
+     ],
+     "transfers": [
+      "toei-oedo",
+      "hanzomon"
+     ],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:北青山方面改札(出口0-2方面)・B4F:大江戸線のりかえ専用改札口",
+     "exits": [
+      "0–2"
+     ],
+     "transfers": [
+      "toei-oedo",
+      "hanzomon"
+     ],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 3,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:南青山方面改札(出口3-5方面)",
+     "exits": [
+      "3–5"
+     ],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 3,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:北青山方面改札(出口0-2方面)・B1F:南青山方面改札(出口3-5方面)・B4F:大江戸線のりかえ専用改札口",
+     "exits": [
+      "0–2",
+      "3–5"
+     ],
+     "transfers": [
+      "toei-oedo",
+      "hanzomon"
+     ],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 4,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:北青山方面改札(出口0-2方面)・B1F:南青山方面改札(出口3-5方面)・B4F:大江戸線のりかえ専用改札口",
+     "exits": [
+      "0–2",
+      "3–5"
+     ],
+     "transfers": [
+      "toei-oedo",
+      "hanzomon"
+     ],
+     "kind": "下り階段・エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "G",
+   "station": "G05",
+   "source": "https://wadattsu261.com/content/akasakamitsuke-metroginza-marunouchihome-info/",
+   "updated": "2025-10-05",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:赤坂見附方面改札(10・A-D出口方面)・B2F:東京メトロ半蔵門線・有楽町線・南北線乗り換え方面",
+     "exits": [
+      "10"
+     ],
+     "transfers": [
+      "hanzomon",
+      "yurakucho",
+      "namboku"
+     ],
+     "kind": "赤坂見附方面改札・半蔵門線・有楽町線・南北線乗り換え方面下りエスカレーター・エレベーター・下り階段",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B3F:山王下方面改札(11出口方面)",
+     "exits": [
+      "11"
+     ],
+     "transfers": [],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 3,
+       "door": 2
+      },
+      {
+       "car": 3,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B3F:山王下方面改札(11出口方面)",
+     "exits": [
+      "11"
+     ],
+     "transfers": [],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 4,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 3,
+     "direction": "towardsLast",
+     "gate": "B3F:山王下方面改札(11・A-D出口方面)",
+     "exits": [
+      "11"
+     ],
+     "transfers": [],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 5,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 3,
+     "direction": "towardsLast",
+     "gate": "B3F:山王下方面改札・B1F:赤坂見附方面改札方面エレベーター",
+     "exits": [],
+     "transfers": [],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 4,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 3,
+     "direction": "towardsLast",
+     "gate": "B1F:赤坂見附方面改札(10・A-D出口方面)、B2F:半蔵門線・有楽町線・南北線乗り換え方面",
+     "exits": [
+      "10"
+     ],
+     "transfers": [
+      "hanzomon",
+      "yurakucho",
+      "namboku"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 3,
+     "direction": "towardsLast",
+     "gate": "B1F:赤坂見附方面改札(10・A-D出口方面)、B2F:半蔵門線・有楽町線・南北線乗り換え方面",
+     "exits": [
+      "10"
+     ],
+     "transfers": [
+      "hanzomon",
+      "yurakucho",
+      "namboku"
+     ],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "G",
+   "station": "G06",
+   "source": "https://wadattsu261.com/content/tameikesanno-metroginzahome-info/",
+   "updated": "2026-03-02",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B3F:南北線乗り換え方面・B2F:赤坂方面改札(出口7・8方面)・B2F:永田町方面改札(出口5・6方面)・B6F:千代田線:国会議事堂前駅乗り換え方面・B2F:丸ノ内線:国会議事堂前駅乗り換え方面",
+     "exits": [
+      "7",
+      "8",
+      "5",
+      "6"
+     ],
+     "transfers": [
+      "chiyoda",
+      "namboku",
+      "marunouchi"
+     ],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B3F:南北線乗り換え方面・B2F:赤坂方面改札(出口7・8方面)・B2F:永田町方面改札(出口5・6方面)・B6F:千代田線:国会議事堂前駅乗り換え方面・B2F:丸ノ内線:国会議事堂前駅乗り換え方面",
+     "exits": [
+      "7",
+      "8",
+      "5",
+      "6"
+     ],
+     "transfers": [
+      "chiyoda",
+      "namboku",
+      "marunouchi"
+     ],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B3F:溜池交差点方面改札(出口9-14方面)",
+     "exits": [
+      "9–14"
+     ],
+     "transfers": [],
+     "kind": "下りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 2,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B3F:溜池交差点方面改札(出口9-14方面)",
+     "exits": [
+      "9–14"
+     ],
+     "transfers": [],
+     "kind": "下りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 2,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B3F:溜池交差点方面改札(出口9-14方面)",
+     "exits": [
+      "9–14"
+     ],
+     "transfers": [],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B3F:溜池交差点方面改札(出口9-14方面)",
+     "exits": [
+      "9–14"
+     ],
+     "transfers": [],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B3F:溜池交差点方面改札(出口9-14方面)",
+     "exits": [
+      "9–14"
+     ],
+     "transfers": [],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B3F:溜池交差点方面改札(出口9-14方面)",
+     "exits": [
+      "9–14"
+     ],
+     "transfers": [],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "G",
+   "station": "G07",
+   "source": "https://wadattsu261.com/content/toranomon-metroginzahome-info/",
+   "updated": "2023-08-01",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "虎ノ門交差点方面改札(2ー8・11出口方面)",
+     "exits": [
+      "2–8",
+      "11"
+     ],
+     "transfers": [
+      "hibiya"
+     ],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 1,
+       "door": 2
+      },
+      {
+       "car": 1,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "西新橋方面改札(1・12・B1-B6出口方面)",
+     "exits": [
+      "1",
+      "12",
+      "B1–B6"
+     ],
+     "transfers": [
+      "hibiya"
+     ],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 4,
+       "door": 3
+      },
+      {
+       "car": 5,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "西新橋方面改札(1・12・B1-B6出口方面)",
+     "exits": [
+      "1",
+      "12",
+      "B1–B6"
+     ],
+     "transfers": [
+      "hibiya"
+     ],
+     "kind": "(経路のみ)",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "西新橋方面改札(1・12・B1-B6出口方面)",
+     "exits": [
+      "1",
+      "12",
+      "B1–B6"
+     ],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 5,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "虎ノ門交差点方面改札(2ー8・11出口方面)",
+     "exits": [
+      "2–8",
+      "11"
+     ],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 1,
+       "door": 2
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "G",
+   "station": "G08",
+   "source": "https://wadattsu261.com/content/shinbashi-metroginzahome-info/",
+   "updated": "2026-07-12",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:西新橋方面改札(出口7・8・B-E方面)",
+     "exits": [
+      "7",
+      "8"
+     ],
+     "transfers": [],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:新橋交差点・JR新橋駅方面改札(出口1-6方面)",
+     "exits": [
+      "1–6"
+     ],
+     "transfers": [
+      "jr",
+      "toei-asakusa",
+      "keisei",
+      "yurikamome"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 3,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:新橋交差点・JR新橋駅方面改札(出口1-6方面)",
+     "exits": [
+      "1–6"
+     ],
+     "transfers": [
+      "jr",
+      "toei-asakusa",
+      "keisei",
+      "yurikamome"
+     ],
+     "kind": "上り階段・エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 5,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:新橋交差点・JR新橋駅方面改札(出口1-6方面)",
+     "exits": [
+      "1–6"
+     ],
+     "transfers": [
+      "jr",
+      "toei-asakusa",
+      "keisei",
+      "yurikamome"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:新橋交差点・JR新橋駅方面改札(出口1-8・B-E方面)",
+     "exits": [
+      "1–8"
+     ],
+     "transfers": [
+      "jr",
+      "toei-asakusa",
+      "keisei",
+      "yurikamome"
+     ],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:新橋交差点・JR新橋駅方面改札(出口1-8・B-E方面)",
+     "exits": [
+      "1–8"
+     ],
+     "transfers": [
+      "jr",
+      "toei-asakusa",
+      "keisei",
+      "yurikamome"
+     ],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 4,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:新橋交差点・JR新橋駅方面改札(出口1-8・B-E方面)",
+     "exits": [
+      "1–8"
+     ],
+     "transfers": [
+      "jr",
+      "toei-asakusa",
+      "keisei",
+      "yurikamome"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 4,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:新橋交差点・JR新橋駅方面改札(出口1-8・B-E方面)",
+     "exits": [
+      "1–8"
+     ],
+     "transfers": [
+      "jr",
+      "toei-asakusa",
+      "keisei",
+      "yurikamome"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 2,
+       "door": 1
+      },
+      {
+       "car": 1,
+       "door": 3
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "G",
+   "station": "G09",
+   "source": "https://wadattsu261.com/content/ginza-metroginzahome-info/",
+   "updated": "2026-04-26",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:銀座四丁目交差点改札(A1-A10・B1-B10・C1-C9出口方面)",
+     "exits": [
+      "A1–A10",
+      "B1–B10",
+      "C1–C9"
+     ],
+     "transfers": [
+      "hibiya",
+      "marunouchi"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 3,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:銀座四丁目交差点改札(A1-A10・B1-B10・C1-C9出口方面)",
+     "exits": [
+      "A1–A10",
+      "B1–B10",
+      "C1–C9"
+     ],
+     "transfers": [
+      "hibiya",
+      "marunouchi"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 3,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:銀座四丁目交差点改札(A1-A10・B1-B10・C1-C9出口方面)",
+     "exits": [
+      "A1–A10",
+      "B1–B10",
+      "C1–C9"
+     ],
+     "transfers": [
+      "hibiya",
+      "marunouchi"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 4,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:銀座四丁目交差点改札(A1-A10・B1-B10・C1-C9出口方面)",
+     "exits": [
+      "A1–A10",
+      "B1–B10",
+      "C1–C9"
+     ],
+     "transfers": [
+      "hibiya",
+      "marunouchi"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 4,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:銀座四丁目交差点改札(A1-A10・B1-B10・C1-C9出口方面)",
+     "exits": [
+      "A1–A10",
+      "B1–B10",
+      "C1–C9"
+     ],
+     "transfers": [
+      "hibiya",
+      "marunouchi"
+     ],
+     "kind": "上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 5,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:松屋方面改札(A11―A13出口方面)",
+     "exits": [
+      "A11–A13"
+     ],
+     "transfers": [
+      "yurakucho"
+     ],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:松屋方面改札(A11―A13出口方面)",
+     "exits": [
+      "A11–A13"
+     ],
+     "transfers": [
+      "yurakucho"
+     ],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:松屋方面改札(A11―A13出口方面)",
+     "exits": [
+      "A11–A13"
+     ],
+     "transfers": [
+      "yurakucho"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:松屋方面改札(A11―A13出口方面)",
+     "exits": [
+      "A11–A13"
+     ],
+     "transfers": [
+      "yurakucho"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "G",
+   "station": "G10",
+   "source": "https://wadattsu261.com/content/kyobashi-metroginzahome-info/",
+   "updated": "2026-03-01",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:銀座方面改札(1-5出口方面)",
+     "exits": [
+      "1–5"
+     ],
+     "transfers": [],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:銀座方面改札(1-5出口方面)",
+     "exits": [
+      "1–5"
+     ],
+     "transfers": [],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:銀座方面改札(1-5出口方面)",
+     "exits": [
+      "1–5"
+     ],
+     "transfers": [],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 2,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:銀座方面改札(1-5出口方面)",
+     "exits": [
+      "1–5"
+     ],
+     "transfers": [],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 2,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:エレベーター専用改札",
+     "exits": [],
+     "transfers": [
+      "jr"
+     ],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 3,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:明治屋方面改札(6-8出口方面)",
+     "exits": [
+      "6–8"
+     ],
+     "transfers": [
+      "shinkansen",
+      "jr"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 5,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:明治屋方面改札(6-8出口方面)",
+     "exits": [
+      "6–8"
+     ],
+     "transfers": [
+      "shinkansen",
+      "jr"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 5,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:明治屋方面改札(6-8出口方面)",
+     "exits": [
+      "6–8"
+     ],
+     "transfers": [
+      "shinkansen",
+      "jr"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:明治屋方面改札(6-8出口方面)",
+     "exits": [
+      "6–8"
+     ],
+     "transfers": [
+      "shinkansen",
+      "jr"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "G",
+   "station": "G11",
+   "source": "https://wadattsu261.com/content/nihonbashi-metroginzahome-info/",
+   "updated": "2026-03-02",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:高島屋方面改札(出口B0-B4方面)",
+     "exits": [
+      "B0–B4"
+     ],
+     "transfers": [],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:高島屋方面改札(出口B0-B4方面)",
+     "exits": [
+      "B0–B4"
+     ],
+     "transfers": [],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:日本橋交差点方面改札(出口B5-B12・出口A1-A7・出口C1-C5・出口D1-D4方面)",
+     "exits": [
+      "B5–B12",
+      "A1–A7",
+      "C1–C5",
+      "D1–D4"
+     ],
+     "transfers": [
+      "toei-asakusa",
+      "tozai"
+     ],
+     "kind": "上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 3,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:日本橋交差点方面改札(出口B5-B12・出口A1-A7・出口C1-C5・出口D1-D4方面)",
+     "exits": [
+      "B5–B12",
+      "A1–A7",
+      "C1–C5",
+      "D1–D4"
+     ],
+     "transfers": [
+      "toei-asakusa",
+      "tozai"
+     ],
+     "kind": "改札口方面上りエスカレーター・エレベーター・東西線乗り換え方面下り階段",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "日本橋交差点方面改札(出口B5-B12・A1-A7・C1-C5・D1-D4出口方面)",
+     "exits": [
+      "B5–B12",
+      "A1–A7",
+      "C1–C5",
+      "D1–D4"
+     ],
+     "transfers": [
+      "toei-asakusa",
+      "tozai"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "日本橋交差点方面改札(出口B5-B12・A1-A7・C1-C5・D1-D4出口方面)",
+     "exits": [
+      "B5–B12",
+      "A1–A7",
+      "C1–C5",
+      "D1–D4"
+     ],
+     "transfers": [
+      "toei-asakusa",
+      "tozai"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 5,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "日本橋交差点方面改札(出口B5-B12・A1-A7・C1-C5・D1-D4出口方面)",
+     "exits": [
+      "B5–B12",
+      "A1–A7",
+      "C1–C5",
+      "D1–D4"
+     ],
+     "transfers": [
+      "toei-asakusa",
+      "tozai"
+     ],
+     "kind": "上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 4,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "日本橋交差点方面改札(出口B5-B12・A1-A7・C1-C5・D1-D4出口方面)",
+     "exits": [
+      "B5–B12",
+      "A1–A7",
+      "C1–C5",
+      "D1–D4"
+     ],
+     "transfers": [
+      "toei-asakusa",
+      "tozai"
+     ],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 3,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "高島屋方面改札(出口B0-B4方面)",
+     "exits": [
+      "B0–B4"
+     ],
+     "transfers": [],
+     "kind": "上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "高島屋方面改札(出口B0-B4方面)",
+     "exits": [
+      "B0–B4"
+     ],
+     "transfers": [],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "G",
+   "station": "G12",
+   "source": "https://wadattsu261.com/content/mitsukoshimae-metroginzahome-info/",
+   "updated": "2026-02-16",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:三越方面改札(A1-A6出口・B1-B6出口方面)",
+     "exits": [
+      "A1–A6",
+      "B1–B6"
+     ],
+     "transfers": [
+      "hanzomon"
+     ],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:三越方面改札(A1-A6出口・B1-B6出口方面)",
+     "exits": [
+      "A1–A6",
+      "B1–B6"
+     ],
+     "transfers": [
+      "hanzomon"
+     ],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:中央改札(A8・A9出口方面)",
+     "exits": [
+      "A8",
+      "A9"
+     ],
+     "transfers": [],
+     "kind": "階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 2,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:中央改札(A8・A9出口方面)",
+     "exits": [
+      "A8",
+      "A9"
+     ],
+     "transfers": [],
+     "kind": "階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 3,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:室町三丁目方面改札(A10出口方面)",
+     "exits": [
+      "A10"
+     ],
+     "transfers": [
+      "jr"
+     ],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:室町三丁目方面改札(A10出口方面)",
+     "exits": [
+      "A10"
+     ],
+     "transfers": [
+      "jr"
+     ],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:室町三丁目方面改札(A10出口方面)",
+     "exits": [
+      "A10"
+     ],
+     "transfers": [
+      "jr"
+     ],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:室町三丁目方面改札(A10出口方面)",
+     "exits": [
+      "A10"
+     ],
+     "transfers": [
+      "jr"
+     ],
+     "kind": "上り階段・上りエスカレーター",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "G",
+   "station": "G13",
+   "source": "https://wadattsu261.com/content/kanda-metroginzahome-info/",
+   "updated": "2026-05-17",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B2F:内神田方面改札(1-4出口方面)",
+     "exits": [
+      "1–4"
+     ],
+     "transfers": [
+      "shinkansen",
+      "jr"
+     ],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B2F:内神田方面改札(1-4出口方面)",
+     "exits": [
+      "1–4"
+     ],
+     "transfers": [
+      "shinkansen",
+      "jr"
+     ],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:須田町方面改札(5・6出口方面)",
+     "exits": [
+      "5",
+      "6"
+     ],
+     "transfers": [],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:須田町方面改札(5・6出口方面)",
+     "exits": [
+      "5",
+      "6"
+     ],
+     "transfers": [],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "G",
+   "station": "G14",
+   "source": "https://wadattsu261.com/content/suehirocho-metroginzahome-info/",
+   "updated": "2026-03-02",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "(改札名なし)",
+     "exits": [],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 3,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "(改札名なし)",
+     "exits": [],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 3,
+       "door": 2
+      },
+      {
+       "car": 3,
+       "door": 1
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "G",
+   "station": "G15",
+   "source": "https://wadattsu261.com/content/uenohirokoji-metroginzahome-info/",
+   "updated": "2026-03-02",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:松坂屋方面改札(A1・A2・A5-A8・3・4出口方面)",
+     "exits": [
+      "A1",
+      "A2",
+      "A5–A8",
+      "3",
+      "4"
+     ],
+     "transfers": [
+      "jr",
+      "toei-oedo",
+      "hibiya"
+     ],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 2,
+       "door": 1
+      },
+      {
+       "car": 2,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:上野広小路交差点方面改札(A3・A4出口方面)",
+     "exits": [
+      "A3",
+      "A4"
+     ],
+     "transfers": [],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 3,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:上野広小路交差点方面改札(A3・A4出口方面)",
+     "exits": [
+      "A3",
+      "A4"
+     ],
+     "transfers": [
+      "jr",
+      "toei-oedo",
+      "hibiya"
+     ],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 5,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:松坂屋方面改札(A1・A2・A5-A8・3・4出口方面)",
+     "exits": [
+      "A1",
+      "A2",
+      "A5–A8",
+      "3",
+      "4"
+     ],
+     "transfers": [],
+     "kind": "下り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 5,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:地上ゆきエレベーター専用改札",
+     "exits": [],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 1,
+       "door": 2
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "G",
+   "station": "G16",
+   "source": "https://wadattsu261.com/content/ueno-metroginzahome-info/",
+   "updated": "2026-04-03",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:上野公園方面改札(3―8出口方面)",
+     "exits": [
+      "3–8"
+     ],
+     "transfers": [
+      "hibiya",
+      "keisei"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 2,
+       "door": 2
+      },
+      {
+       "car": 2,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:JR上野駅方面改札(1・2・9出口方面)",
+     "exits": [
+      "1",
+      "2",
+      "9"
+     ],
+     "transfers": [
+      "shinkansen",
+      "jr",
+      "hibiya"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "B1F:JR上野駅方面改札(1・2・9出口方面)",
+     "exits": [
+      "1",
+      "2",
+      "9"
+     ],
+     "transfers": [
+      "shinkansen",
+      "jr",
+      "hibiya"
+     ],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:JR上野駅方面改札(1・2・9出口方面)",
+     "exits": [
+      "1",
+      "2",
+      "9"
+     ],
+     "transfers": [
+      "shinkansen",
+      "jr",
+      "hibiya"
+     ],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:JR上野駅方面改札(1・2・9出口方面)",
+     "exits": [
+      "1",
+      "2",
+      "9"
+     ],
+     "transfers": [
+      "shinkansen",
+      "jr",
+      "hibiya"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      },
+      {
+       "car": 6,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:上野公園方面改札(3―8出口方面)",
+     "exits": [
+      "3–8"
+     ],
+     "transfers": [
+      "hibiya",
+      "keisei"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 3,
+       "door": 3
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "G",
+   "station": "G17",
+   "source": "https://wadattsu261.com/content/inaricho-metroginzahome-info/",
+   "updated": "2023-08-01",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "(改札名なし)",
+     "exits": [],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 4,
+       "door": 2
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "(改札名なし)",
+     "exits": [],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 4,
+       "door": 2
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "G",
+   "station": "G18",
+   "source": "https://wadattsu261.com/content/tawaramachi-metroginzahome-info/",
+   "updated": "2023-08-01",
+   "alternatingPlatforms": false,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "寿2丁目側地上ゆきエレベーター専用改札",
+     "exits": [],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "寿方面改札(出口1・2方面)",
+     "exits": [
+      "1",
+      "2"
+     ],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 4,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsFirst",
+     "gate": "西浅草方面改札(出口3方面)・西浅草1丁目側地上ゆきエレベーター専用改札",
+     "exits": [
+      "3"
+     ],
+     "transfers": [],
+     "kind": "階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 5,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "西浅草方面改札(出口3方面)",
+     "exits": [
+      "3"
+     ],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "寿方面改札(出口1・2方面)",
+     "exits": [
+      "1",
+      "2"
+     ],
+     "transfers": [],
+     "kind": "階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "西浅草1丁目側地上ゆきエレベーター専用改札",
+     "exits": [],
+     "transfers": [],
+     "kind": "エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 3,
+       "door": 1
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  },
+  {
+   "line": "G",
+   "station": "G19",
+   "source": "https://wadattsu261.com/content/asakusa-metroginzahome-info/",
+   "updated": "2026-03-02",
+   "alternatingPlatforms": true,
+   "points": [
+    {
+     "platform": 1,
+     "direction": "towardsLast",
+     "gate": "B1F:松屋 隅田公園方面改札(5―8番出口方面)",
+     "exits": [
+      "5–8"
+     ],
+     "transfers": [
+      "tobu"
+     ],
+     "kind": "階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsLast",
+     "gate": "B1F:浅草観音 吾妻橋方面改札(1―4番出口方面)・B2F:雷門方面改札",
+     "exits": [
+      "1–4"
+     ],
+     "transfers": [],
+     "kind": "上り階段・エレベーター",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 5,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 1,
+     "direction": "towardsLast",
+     "gate": "B3F:駒形橋方面改札(A3―A5番出口方面)",
+     "exits": [
+      "A3–A5"
+     ],
+     "transfers": [
+      "toei-asakusa"
+     ],
+     "kind": "(経路のみ)",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 1,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:松屋 隅田公園方面改札(5―8番出口方面)",
+     "exits": [
+      "5–8"
+     ],
+     "transfers": [
+      "tobu"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 6,
+       "door": 3
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B2F:雷門方面改札(1―3番出口方面)",
+     "exits": [
+      "1–3"
+     ],
+     "transfers": [],
+     "kind": "改札口",
+     "stepFree": true,
+     "doors": [
+      {
+       "car": 5,
+       "door": 1
+      }
+     ]
+    },
+    {
+     "platform": 2,
+     "direction": "towardsLast",
+     "gate": "B1F:浅草観音 吾妻橋方面改札(1―4番出口方面)・B3F:駒形橋方面改札(A3-A5番出口方面)",
+     "exits": [
+      "1–4",
+      "A3–A5"
+     ],
+     "transfers": [
+      "toei-asakusa"
+     ],
+     "kind": "上り階段",
+     "stepFree": false,
+     "doors": [
+      {
+       "car": 5,
+       "door": 1
+      }
+     ]
+    }
+   ],
+   "omitted": []
+  }
+ ]
+}

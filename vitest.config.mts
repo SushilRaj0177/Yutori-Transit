@@ -9,5 +9,5 @@ export default defineConfig({
       "server-only": fileURLToPath(new URL("./src/test/empty.ts", import.meta.url)),
     },
   },
-  test: { include: ["src/**/*.test.ts"], env: { REPORTS_DB_DIR: "memory" } },
+  test: { include: ["src/**/*.test.ts", "scripts/**/*.test.mts"], env: { REPORTS_DB_DIR: "memory" } },
 });

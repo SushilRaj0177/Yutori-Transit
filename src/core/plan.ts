@@ -2,16 +2,16 @@ import { estimateCarLoads, type DayType, type Hotspot } from "@/engine/crowding"
 import { buildCandidates } from "@/engine/geometry";
 import { breakpoints, ESTIMATE_TRUST, solve } from "@/engine/pareto";
 import { recommendationStability, type Stability } from "@/engine/stability";
-import type { DoorCandidate, Egress, Provenance, Solution } from "@/engine/types";
-import { stationEgress } from "@/data/layouts";
+import type { DoorCandidate, Provenance, Solution } from "@/engine/types";
+import { surveyStation, type Dir } from "@/data/survey";
 import { directionBetween, getLine, stationsAhead, type Direction, type Line, type Station } from "@/data/network";
-import { resolveEgress, toEgress, type CommunityBook, type EgressState, type PositionSource } from "./positions";
+import { resolveDestinations, surveyPoints, type CommunityBook, type DestinationState } from "./positions";
 
 export interface PlanQuery {
   line: string;
   from: string;
   to: string;
-  egressId?: string;
+  destId?: string;
   /** 0 = most space, 1 = fastest exit. */
   speedWeight: number;
   hour: number;
@@ -19,17 +19,15 @@ export interface PlanQuery {
   delayS?: number;
   /** Per-car load from a live source, if one exists. Overrides the estimate. */
   liveLoadsPct?: number[] | null;
-  /** Rider-verified positions; null when unavailable. */
+  /** Rider reports; used to flag possible changes, never to override the survey. */
   community: CommunityBook | null;
-  /** Use illustrative positions where nothing real is known. Off for real use. */
-  demo: boolean;
+  /** Only use elevator / same-level routes. */
+  stepFree: boolean;
 }
 
 export type CrowdLevel = "quieter" | "average" | "busier";
 
 export interface DoorPlan {
-  target: Egress;
-  positionSource: PositionSource;
   candidates: DoorCandidate[];
   solution: Solution;
   breakpoints: ReturnType<typeof breakpoints>;
@@ -41,20 +39,22 @@ export interface Plan {
   from: Station;
   to: Station;
   direction: Direction;
-  egress: EgressState[];
-  target: EgressState;
+  dir: Dir;
+  destinations: DestinationState[];
+  target: DestinationState;
+  source: { url: string; updated: string | null };
+  alternatingPlatforms: boolean;
+  /** Gates whose entries for this direction were dropped as self-contradictory. */
+  omitted: string[];
   loadsPct: number[];
   loadSource: Extract<Provenance, "odpt-live" | "estimate">;
-  meanLoadPct: number;
-  /** Each car relative to the train average. What the UI shows for estimates. */
   crowd: CrowdLevel[];
-  /** True when the time-of-day curve puts this in a peak period. */
   peak: boolean;
-  /** null when the target's position is not known: no door is recommended. */
+  /** null when the target has no usable access point (e.g. no step-free route listed). */
   door: DoorPlan | null;
 }
 
-export type PlanError = { kind: "unknown-line" } | { kind: "unknown-station" } | { kind: "same-station" } | { kind: "no-layout"; to: Station };
+export type PlanError = { kind: "unknown-line" } | { kind: "unknown-station" } | { kind: "same-station" } | { kind: "no-data"; to: Station };
 
 const ORIGIN_WEIGHT = 1;
 const AHEAD_WEIGHT = 0.6;
@@ -63,14 +63,15 @@ const FALLBACK_HOTSPOT_WEIGHT = 0.5;
 const CROWD_BAND = 0.07;
 
 /**
- * Where riders on this train are likely to bunch up: around the stairs at the
- * origin and at the stations ahead. Only positions the app actually knows
- * (surveyed, rider-verified, or demo in demo mode) are used.
+ * Where riders on this train bunch up: at the stairs where they boarded (origin
+ * platform) and near the stairs they will use at the stations ahead. Positions
+ * come from the survey for the direction of travel.
  */
-export function hotspotsFor(line: Line, from: Station, to: Station, community: CommunityBook | null, demo: boolean): Hotspot[] {
+export function hotspotsFor(line: Line, from: Station, to: Station, dir: Dir): Hotspot[] {
   const spots: Hotspot[] = [];
-  const add = (code: string, w: number) =>
-    resolveEgress(line, code, community, demo).forEach((s) => s.positionM !== null && spots.push({ positionM: s.positionM, weight: w }));
+  const add = (code: string, w: number) => {
+    for (const d of resolveDestinations(line, code, dir, null, false)) for (const p of surveyPoints(line.geometry, d.dest, false)) spots.push({ positionM: p.positionM, weight: w / Math.max(1, d.dest.points.length) });
+  };
   add(from.code, ORIGIN_WEIGHT);
   for (const s of stationsAhead(line, from.code, to.code)) add(s.code, AHEAD_WEIGHT);
   if (spots.length === 0) {
@@ -93,45 +94,39 @@ export function plan(q: PlanQuery): { ok: true; plan: Plan } | { ok: false; erro
   if (!from || !to) return { ok: false, error: { kind: "unknown-station" } };
   const direction = directionBetween(line, from.code, to.code);
   if (!direction) return { ok: false, error: { kind: "same-station" } };
-  if (!stationEgress(line.id, to.code)) return { ok: false, error: { kind: "no-layout", to } };
+  const dir: Dir = direction === line.towardsFirst ? "towardsFirst" : "towardsLast";
 
-  const egress = resolveEgress(line, to.code, q.community, q.demo);
-  const target = egress.find((s) => s.def.id === q.egressId) ?? egress[0];
+  const st = surveyStation(line.id, to.code);
+  const destinations = resolveDestinations(line, to.code, dir, q.community, q.stepFree);
+  if (!st || destinations.length === 0) return { ok: false, error: { kind: "no-data", to } };
+  const target = destinations.find((d) => d.dest.id === q.destId) ?? destinations[0];
   const g = line.geometry;
 
   const live = q.liveLoadsPct && q.liveLoadsPct.length === g.carCount ? q.liveLoadsPct : null;
-  const est = estimateCarLoads({
-    geometry: g,
-    hotspots: hotspotsFor(line, from, to, q.community, q.demo),
-    hour: q.hour,
-    dayType: q.dayType,
-    linePeakPct: line.peakLoadPct,
-    delayS: q.delayS,
-  });
+  const est = estimateCarLoads({ geometry: g, hotspots: hotspotsFor(line, from, to, dir), hour: q.hour, dayType: q.dayType, linePeakPct: line.peakLoadPct, delayS: q.delayS });
   const loadsPct = live ?? est.loadsPct;
-  const meanLoadPct = Math.round(loadsPct.reduce((a, b) => a + b, 0) / loadsPct.length);
 
   let door: DoorPlan | null = null;
-  const t = toEgress(target);
-  if (t && target.source) {
-    const candidates = buildCandidates(g, t, loadsPct);
+  if (target.points.length > 0) {
+    const candidates = buildCandidates(g, target.points, loadsPct);
     const trust = live ? 1 : ESTIMATE_TRUST;
     door = {
-      target: t,
-      positionSource: target.source,
       candidates,
       solution: solve(candidates, q.speedWeight, trust),
       breakpoints: breakpoints(candidates, 100, trust),
-      stability: recommendationStability(g, t, loadsPct, q.speedWeight, { sigma: live ? 0.1 : 0.2, crowdTrust: trust }),
+      stability: recommendationStability(g, target.points, loadsPct, q.speedWeight, { sigma: live ? 0.1 : 0.2, crowdTrust: trust }),
     };
   }
 
   return {
     ok: true,
     plan: {
-      line, from, to, direction, egress, target, loadsPct,
+      line, from, to, direction, dir, destinations, target,
+      source: { url: st.source, updated: st.updated },
+      alternatingPlatforms: st.alternatingPlatforms,
+      omitted: st.omitted.filter((o) => o.direction === dir).map((o) => o.gate.replace(/^B?\d+F:/, "")),
+      loadsPct,
       loadSource: live ? "odpt-live" : "estimate",
-      meanLoadPct,
       crowd: crowdLevels(loadsPct),
       peak: est.timeFactor >= 0.6,
       door,

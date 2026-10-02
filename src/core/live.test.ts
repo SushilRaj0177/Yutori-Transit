@@ -75,9 +75,8 @@ describe("live parsing", () => {
 });
 
 describe("explanations", () => {
-  // Demo positions are fine for testing the wording; real use never sees them unlabelled.
-  const fixture = { community: null, demo: true, dayType: "weekday" as const };
-  const p = plan({ ...fixture, line: "M", from: "M08", to: "M18", egressId: "m18-hanzomon", speedWeight: 0.5, hour: 8.3 });
+  const fixture = { community: null, stepFree: false, dayType: "weekday" as const };
+  const p = plan({ ...fixture, line: "M", from: "M08", to: "M18", speedWeight: 0.5, hour: 8.3 });
   if (!p.ok || !p.plan.door) throw new Error("fixture plan failed");
   const facts = factsOf(p.plan, p.plan.door);
 
@@ -86,7 +85,7 @@ describe("explanations", () => {
   });
 
   it("rejects a real model output that misread the robustness share (2026-10-01)", () => {
-    const g = plan({ ...fixture, line: "G", from: "G19", to: "G01", egressId: "g01-hanzomon", speedWeight: 0.3, hour: 18.5 });
+    const g = plan({ ...fixture, line: "G", from: "G19", to: "G01", speedWeight: 0.3, hour: 18.5 });
     if (!g.ok || !g.plan.door) throw new Error("fixture plan failed");
     const f = factsOf(g.plan, g.plan.door);
     const share = f.sameCarShare!;

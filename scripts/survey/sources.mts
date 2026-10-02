@@ -1,0 +1,53 @@
+/**
+ * Station pages of 「電車の停車位置」 (wadattsu261.com), an on-site survey of
+ * which car and door is nearest each staircase, escalator and elevator.
+ * Station code → page path. Branch-only Marunouchi stations are not modelled.
+ */
+export const SURVEY_ORIGIN = "https://wadattsu261.com";
+
+export const SURVEY_PAGES: Record<string, string> = {
+  M01: "/content/ogikubo-metromarunouchihome-info/",
+  M02: "/content/minamiasagaya-metromarunouchihome-info/",
+  M03: "/content/shinkoenji-metromarunouchihome-info/",
+  M04: "/content/higashikoenji-metromarunouchihome-info/",
+  M05: "/content/shinnakano-metromarunouchihome-info/",
+  M06: "/content/nakanosakaue-metromarunouchihome-info/",
+  M07: "/content/nishishinjuku-metromarunouchihome-info/",
+  M08: "/content/shinjuku-metromarunouchihome-info/",
+  M09: "/content/shinjukusanchome-metromarunouchihome-info/",
+  M10: "/content/shinjukugyoenmae-metromarunouchihome-info/",
+  M11: "/content/yotsuyasanchome-metromarunouchihome-info/",
+  M12: "/content/yotsuya-metromarunouchihome-info/",
+  M13: "/content/akasakamitsuke-metroginza-marunouchihome-info/",
+  M14: "/content/kokkaigijidomae-metromarunouchihome-info/",
+  M15: "/content/kasumigaseki-metromarunouchihome-info/",
+  M16: "/content/ginza-metromarunouchihome-info/",
+  M17: "/content/tokyo-metromarunouchihome-info/",
+  M18: "/content/otemachi-metromarunouchihome-info/",
+  M19: "/content/awajicho-metromarunouchihome-info/",
+  M20: "/content/ochanomizu-metromarunouchihome-info/",
+  M21: "/content/hongosanchome-metromarunouchihome-info/",
+  M22: "/content/korakuen-metromarunouchihome-info/",
+  M23: "/content/myogadani-metromarunouchihome-info/",
+  M24: "/content/shinotsuka-metromarunouchihome-info/",
+  M25: "/content/ikebukuro-metromarunouchihome-info/",
+  G01: "/content/shibuya-metroginzahome-info/",
+  G02: "/content/omotesando-metroginza-hanzomonhome-info/",
+  G03: "/content/gaienmae-metroginzahome-info/",
+  G04: "/content/aoyamaicchome-metroginzahome-info/",
+  G05: "/content/akasakamitsuke-metroginza-marunouchihome-info/",
+  G06: "/content/tameikesanno-metroginzahome-info/",
+  G07: "/content/toranomon-metroginzahome-info/",
+  G08: "/content/shinbashi-metroginzahome-info/",
+  G09: "/content/ginza-metroginzahome-info/",
+  G10: "/content/kyobashi-metroginzahome-info/",
+  G11: "/content/nihonbashi-metroginzahome-info/",
+  G12: "/content/mitsukoshimae-metroginzahome-info/",
+  G13: "/content/kanda-metroginzahome-info/",
+  G14: "/content/suehirocho-metroginzahome-info/",
+  G15: "/content/uenohirokoji-metroginzahome-info/",
+  G16: "/content/ueno-metroginzahome-info/",
+  G17: "/content/inaricho-metroginzahome-info/",
+  G18: "/content/tawaramachi-metroginzahome-info/",
+  G19: "/content/asakusa-metroginzahome-info/",
+};

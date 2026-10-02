@@ -1,6 +1,6 @@
 import type { Bilingual, EgressKind, ScoredCandidate } from "@/engine/types";
+import { destinationLabel } from "@/data/survey";
 import type { CrowdLevel, DoorPlan, Plan } from "./plan";
-import type { PositionSource } from "./positions";
 
 /**
  * Deterministic explanation of a plan. This is the source of truth: the
@@ -29,7 +29,6 @@ export interface Facts {
   fastest: Pick;
   roomiest: Pick;
   loadSource: "odpt-live" | "estimate";
-  positionSource: PositionSource;
   /** Share of perturbed re-solves that keep the same car. Omitted from LLM input. */
   sameCarShare?: number;
 }
@@ -57,13 +56,12 @@ export function factsOf(p: Plan, d: DoorPlan): Facts {
   const b = d.solution.best;
   return {
     destination: p.to.name,
-    egress: d.target.leadsTo,
-    egressKind: d.target.kind,
+    egress: destinationLabel(p.target.dest),
+    egressKind: b.via?.kind ?? "way",
     best: { ...pick(b), walkM: Math.round(b.walkM) },
     fastest: pick(d.solution.fastest),
     roomiest: pick(d.solution.roomiest),
     loadSource: p.loadSource,
-    positionSource: d.positionSource,
     sameCarShare: Math.round(d.stability.sameCar * 100),
   };
 }
@@ -71,7 +69,7 @@ export function factsOf(p: Plan, d: DoorPlan): Facts {
 const KIND: Record<EgressKind, Bilingual> = {
   stairs: { en: "stairs", ja: "階段" },
   escalator: { en: "escalator", ja: "エスカレーター" },
-  way: { en: "stairs/escalator", ja: "階段・エスカレーター" },
+  way: { en: "gate", ja: "改札" },
   elevator: { en: "elevator", ja: "エレベーター" },
 };
 
@@ -83,8 +81,13 @@ export function explain(f: Facts): Bilingual {
   const usually = est ? "usually " : "";
   const usuallyJa = est ? "普段は" : "";
 
-  en.push(`Door ${b.door} of car ${b.car} is ${b.walkM} m from the ${KIND[f.egressKind].en} to ${f.egress.en} (about ${b.egressS} s).`);
-  ja.push(`${b.car}号車${b.door}番ドアから${f.egress.ja}方面の${KIND[f.egressKind].ja}まで約${b.walkM}m（約${b.egressS}秒）です。`);
+  if (b.walkM <= 2) {
+    en.push(`Door ${b.door} of car ${b.car} opens right by the ${KIND[f.egressKind].en} for ${f.egress.en}.`);
+    ja.push(`${b.car}号車${b.door}番ドアのすぐ近くに${f.egress.ja}方面の${KIND[f.egressKind].ja}があります。`);
+  } else {
+    en.push(`Door ${b.door} of car ${b.car} is ${b.walkM} m from the ${KIND[f.egressKind].en} for ${f.egress.en} (about ${b.egressS} s).`);
+    ja.push(`${b.car}号車${b.door}番ドアから${f.egress.ja}方面の${KIND[f.egressKind].ja}まで約${b.walkM}m（約${b.egressS}秒）です。`);
+  }
 
   const pct = (c: Pick) => (c.loadPct !== undefined ? ` (${c.loadPct}%)` : "");
   if (b.crowd === "quieter") {
@@ -108,10 +111,6 @@ export function explain(f: Facts): Bilingual {
   if (est && f.sameCarShare !== undefined && f.sameCarShare < 70) {
     en.push(`It is a close call: crowding is estimated, and the same car wins in only ${f.sameCarShare}% of simulations.`);
     ja.push(`混雑は推定のため、シミュレーションで同じ号車が選ばれたのは${f.sameCarShare}%のみの僅差です。`);
-  }
-  if (f.positionSource === "demo") {
-    en.push("(Demo position: not real data.)");
-    ja.push("（デモ用の位置です。実データではありません。）");
   }
   return { en: en.join(" "), ja: ja.join("") };
 }

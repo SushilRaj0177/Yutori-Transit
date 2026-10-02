@@ -30,8 +30,7 @@ export type Provenance =
   | "odpt-live" // fetched from ODPT in this session
   | "odpt-timetable" // ODPT static timetable
   | "estimate" // produced by this project's crowding model
-  | "demo-layout" // platform positions not yet surveyed
-  | "surveyed"; // platform positions checked against an on-site or official source
+  | "surveyed"; // platform positions from an on-site survey
 
 export interface DoorCandidate {
   car: number; // 1-indexed
@@ -44,6 +43,8 @@ export interface DoorCandidate {
   egressS: number;
   /** Estimated or live load of this car in % of seated+standing capacity (100 = full). */
   loadPct: number;
+  /** The egress point this door is measured to (the nearest one of the target's points). */
+  via?: { id: string; kind: EgressKind };
 }
 
 export interface ScoredCandidate extends DoorCandidate {

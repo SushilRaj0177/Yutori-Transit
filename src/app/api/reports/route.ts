@@ -1,6 +1,6 @@
 import { clientIp } from "@/server/client-ip";
 import { consensus, isValidReport } from "@/core/consensus";
-import { findEgress } from "@/data/layouts";
+import { findDestination } from "@/data/survey";
 import { getLine } from "@/data/network";
 import { communityBook } from "@/server/community";
 import { hashId, recentReportsFromIp, saveLayoutReport } from "@/server/store";
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
   const door = Number(body.door);
   const deviceId = String(body.deviceId ?? "");
 
-  if (!line || !findEgress(line.id, station, egressId)) return Response.json({ error: "unknown egress point" }, { status: 400 });
+  if (!line || !findDestination(line.id, station, egressId)) return Response.json({ error: "unknown destination" }, { status: 400 });
   if (!isValidReport(line.geometry, { car, door })) return Response.json({ error: "car or door out of range" }, { status: 400 });
   if (!DEVICE_ID.test(deviceId)) return Response.json({ error: "invalid device id" }, { status: 400 });
 

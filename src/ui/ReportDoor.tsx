@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { MIN_REPORTS } from "@/core/consensus";
-import type { EgressState } from "@/core/positions";
+import type { DestinationState } from "@/core/positions";
+import { destinationLabel } from "@/data/survey";
 import type { Line } from "@/data/network";
 import { tr, type Lang } from "./i18n";
 import { deviceId } from "./useCommunity";
@@ -10,7 +11,7 @@ import { deviceId } from "./useCommunity";
 interface Props {
   line: Line;
   station: string;
-  target: EgressState;
+  target: DestinationState;
   lang: Lang;
   enabled: boolean;
   onDone: () => void;
@@ -35,7 +36,7 @@ export function ReportDoor(p: Props) {
       const res = await fetch("/api/reports", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ line: p.line.id, station: p.station, egressId: p.target.def.id, car: pick.car, door: pick.door, deviceId: deviceId() }),
+        body: JSON.stringify({ line: p.line.id, station: p.station, egressId: p.target.dest.id, car: pick.car, door: pick.door, deviceId: deviceId() }),
       });
       const body = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`);
@@ -49,7 +50,7 @@ export function ReportDoor(p: Props) {
   return (
     <div>
       <h3 className="text-[15px] font-semibold">{tr("helpTitle", p.lang)}</h3>
-      <p className="mt-1 text-[13px] leading-relaxed text-[var(--muted)]">{tr("helpBody", p.lang, { x: p.target.def.leadsTo[p.lang] })}</p>
+      <p className="mt-1 text-[13px] leading-relaxed text-[var(--muted)]">{tr("helpBody", p.lang, { x: destinationLabel(p.target.dest)[p.lang] })}</p>
       {c && c.status !== "none" && (
         <p className="mt-1 text-[12px] text-[var(--muted)]">
           {c.status === "disputed" ? tr("disputed", p.lang) : tr("pendingN", p.lang, { n: c.reports, m: MIN_REPORTS })}

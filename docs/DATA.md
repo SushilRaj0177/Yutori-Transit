@@ -10,9 +10,8 @@ Every number on screen comes from one of these sources, and the UI says which.
 | Next departures | ODPT `odpt:StationTimetable` | static timetable, cached 6 h |
 | Per-car load | ODPT, **only** if a field is configured via `ODPT_CAR_LOAD_FIELD` | not published by ODPT (verified); falls back to the estimate |
 | Car load estimate | `src/engine/crowding.ts` | model, labelled "estimate" |
-| Exits per station (which lines and exits a platform leads to) | `src/data/layouts.ts` | real connections; stairs-vs-escalator not yet confirmed (shown as "stairs/escalator") |
-| Exit positions on platforms | rider reports (`/api/reports`) → `src/core/consensus.ts`; maintainer surveys in `SURVEYED` | **only verified positions are used**; unverified exits get no door recommendation |
-| Demo positions | `DEMO_POSITIONS` in `src/data/layouts.ts` | **invented**; used only in the labelled demo mode |
+| Exits per station, and which car and door each staircase, escalator and elevator is next to | 「電車の停車位置」 (wadattsu261.com), on-site survey by わだっつ; extracted by `scripts/survey/` into `src/data/survey.json` | **261 positions across all 44 stations**, each with its source URL and the page's update date. 2 self-contradictory entries dropped and disclosed in the app |
+| Rider "changed?" reports | `/api/reports` → `src/core/consensus.ts` | flag a possible change; never override the survey |
 
 ## Verified against live ODPT (2026-10-01, ~13:30 JST weekday)
 
@@ -32,12 +31,9 @@ Raw output: [`docs/odpt-probe.md`](odpt-probe.md). Re-run with `npm run odpt:pro
 
 Still open:
 
-- [ ] Car numbering: which end car 1 is on. This only affects how the diagram is
-      drawn and the crowding estimate. Recommendations and reports both use the
-      platform's own car and door numbers, so the door answer does not depend on it.
-- [ ] Door numbering within a car (door 1 at the car-1 end is assumed). This affects
-      walking distances by at most one car length, never which car is recommended
-      for a verified exit.
+- [x] Car numbering: car 1 is at the Ogikubo end (Marunouchi) and the Shibuya end (Ginza),
+      as stated on every survey page.
+- [x] Door numbering: door 1 is at the car-1 end, confirmed by 261 consistent order/label pairs.
 - [ ] Rolling-stock lengths and door counts (see MODEL.md §1).
 
 **Implication.** On Tokyo Metro, live data can only adjust the plan through service
@@ -48,35 +44,38 @@ estimate.
 **Note for sandboxed development:** Node's built-in `fetch` ignores `HTTPS_PROXY`. Behind a proxy, run
 the server or the probe with `NODE_USE_ENV_PROXY=1` (Node ≥ 22.21). On Vercel this is not needed.
 
+## Platform survey extraction
+
+Source: one page per station on wadattsu261.com (index: `scripts/survey/sources.mts`).
+
+1. `scripts/survey/fetch.mts` downloads the pages with one request every 4 s and an
+   identifying User-Agent. Raw pages stay in `.cache/` and are not committed or redistributed.
+2. `scripts/survey/parse.mts` reads each page's detail section line by line. It tracks
+   the current platform, gate and kind of access (stairs, escalator, elevator, gate on
+   the platform), and emits one record per door sentence
+   (「○号車の進行方向○番目のドア(『○号車○番ドア』)付近にあります」).
+3. **Direction.** Each platform's direction comes from the page's own sentences ("1番線ホームには荻窪・方南町方面…"),
+   by comparing the named station's position on the line with this station. Terminals use their arrival direction.
+4. **Cross-check.** Each door is given both as an order in the direction of travel and as a
+   physical label. With door 1 at the car-1 end (car 1 is at the Ogikubo/Shibuya end, as every page states),
+   order *k* travelling towards car 1 is label *k*, and towards car 6 it is label 4 − *k*. Entries
+   where the two disagree are dropped. On shared stations, entries under the other line's
+   platform headings are excluded explicitly.
+5. Every record is written to `.cache/survey/review.md` next to the sentence it came from,
+   for manual review. Results on 2026-10-02: 261 accepted, 2 rejected (source contradictions at
+   Otemachi towards Ikebukuro and Omotesando towards Asakusa), 1 skipped (other line's platform).
+   A manual spot check of 14 random records against their source sentences found 2 gate-name
+   extraction faults, both fixed before release.
+
+The app labels door positions with the platform's own car and door numbers, which riders can
+check on the platform-door signs, so an answer never depends on internal coordinates.
+
 ## Rider reports
 
-A rider on the platform reports the car and door (as marked on the platform,
-e.g. `4-2`) nearest to an exit. `src/core/consensus.ts`:
-
-* keeps one vote per network address (latest wins) and one per device (a device can change its vote);
-* takes the median reported position;
-* calls it **verified** at ≥ 3 votes with ≥ 75 % within one door spacing of the median,
-  **pending** below 3 votes and **disputed** otherwise.
-
-Only verified positions (and maintainer surveys) are used for recommendations.
-The API rate-limits each network address to 20 reports per hour. Device ids and
-addresses are stored as salted hashes.
-
-## Surveying a station (turning a demo layout into a surveyed one)
-
-A layout is a list of egress points, each with a position in metres from the
-car-1 end of the stopped train. The goal is to record, for every staircase,
-escalator and elevator, which car and door it is closest to.
-
-1. On the platform, note the car-number signs or floor markings (号車表示 / 乗車位置) and the
-   nearest car and door for each staircase, escalator and elevator. The in-station
-   "のりかえ・出口案内" (transfer and exit guide) boards, where present, show the same thing.
-2. Convert to metres: `position = X_door(car, door)` from `docs/MODEL.md`.
-   This is exact enough, because the rider's choice is discrete anyway.
-3. Add the exit to `SURVEYED` in `src/data/layouts.ts` with the car, door and survey date.
-   Surveys take precedence over rider reports.
-
-No egress position should be added from guesswork and marked `surveyed`.
+A rider reports the car and door (as marked on the platform) nearest to a destination.
+Reports count one vote per network address, use the median position, and are **verified** at
+≥ 3 votes with ≥ 75 % agreement. A verified report more than one door away from every
+surveyed point shows "riders report this may have changed". It never replaces the survey.
 
 ## ODPT terms
 

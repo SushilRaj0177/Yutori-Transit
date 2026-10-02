@@ -37,18 +37,29 @@ export function egressTimeS(walkM: number, kind: EgressKind, loadPct: number): n
   return walkM / MODEL.walkSpeedMps + alight + MODEL.egressPenaltyS[kind];
 }
 
-/** Enumerate every (car, door) pair with its walking distance and load. */
-export function buildCandidates(g: TrainGeometry, target: Egress, loadsPct: number[]): DoorCandidate[] {
+/**
+ * Enumerate every (car, door) pair with its walking distance and load. A target
+ * can have several access points (e.g. a staircase at each end); each door is
+ * measured to whichever point gets the rider out fastest.
+ */
+export function buildCandidates(g: TrainGeometry, target: Egress | Egress[], loadsPct: number[]): DoorCandidate[] {
   if (loadsPct.length !== g.carCount) {
     throw new Error(`expected ${g.carCount} car loads, got ${loadsPct.length}`);
   }
+  const points = Array.isArray(target) ? target : [target];
+  if (points.length === 0) throw new Error("target has no access points");
   const out: DoorCandidate[] = [];
   for (let car = 1; car <= g.carCount; car++) {
     for (let door = 1; door <= g.doorOffsetsM.length; door++) {
       const xM = doorPositionM(g, car, door);
-      const walkM = Math.abs(xM - target.positionM);
       const loadPct = loadsPct[car - 1];
-      out.push({ car, door, xM, walkM, egressS: egressTimeS(walkM, target.kind, loadPct), loadPct });
+      let best: DoorCandidate | null = null;
+      for (const p of points) {
+        const walkM = Math.abs(xM - p.positionM);
+        const egressS = egressTimeS(walkM, p.kind, loadPct);
+        if (!best || egressS < best.egressS) best = { car, door, xM, walkM, egressS, loadPct, via: { id: p.id, kind: p.kind } };
+      }
+      out.push(best!);
     }
   }
   return out;

@@ -1,15 +1,22 @@
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { getLine } from "@/data/network";
+import { destinationsFor } from "@/data/survey";
 import { POST } from "@/app/api/reports/route";
 import { communityBook } from "./community";
+import { db } from "./store";
 
 const M = getLine("M")!;
 const report = (body: Record<string, unknown>, ip: string) =>
   POST(new Request("http://test/api/reports", { method: "POST", headers: { "x-forwarded-for": ip }, body: JSON.stringify(body) }));
-const valid = { line: "M", station: "M18", egressId: "m18-tozai", car: 2, door: 1 };
+const otemachi = destinationsFor("M", "M18", "towardsLast");
+const [tozai, kamakurabashi, other] = [otemachi.find((d) => d.transfers.includes("tozai"))!, otemachi.find((d) => d.exits.includes("A1"))!, otemachi[0]];
+const valid = { line: "M", station: "M18", egressId: tozai.id, car: 2, door: 1 };
 const device = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, "0")}`;
 
 describe("rider reports (embedded Postgres)", () => {
+  // Starting the embedded database takes a few seconds the first time.
+  beforeAll(async () => void (await db()), 30_000);
+
   it("rejects malformed reports", async () => {
     expect((await report({ ...valid, egressId: "nope", deviceId: device(1) }, "10.0.0.1")).status).toBe(400);
     expect((await report({ ...valid, car: 9, deviceId: device(1) }, "10.0.0.1")).status).toBe(400);
@@ -18,7 +25,7 @@ describe("rider reports (embedded Postgres)", () => {
 
   it("counts one person with many devices on one connection as one vote", async () => {
     for (let i = 0; i < 3; i++) expect((await report({ ...valid, deviceId: device(100 + i) }, "10.0.0.9")).status).toBe(200);
-    const c = (await communityBook(M)).book.M18["m18-tozai"];
+    const c = (await communityBook(M)).book.M18[tozai.id];
     expect(c).toMatchObject({ status: "pending", reports: 1 });
   });
 
@@ -30,14 +37,14 @@ describe("rider reports (embedded Postgres)", () => {
   });
 
   it("lets a device change its own vote instead of adding another", async () => {
-    await report({ ...valid, egressId: "m18-lift", car: 5, door: 1, deviceId: device(300) }, "10.0.2.1");
-    await report({ ...valid, egressId: "m18-lift", car: 3, door: 3, deviceId: device(300) }, "10.0.2.1");
-    expect((await communityBook(M)).book.M18["m18-lift"]).toMatchObject({ reports: 1, car: 3, door: 3 });
+    await report({ ...valid, egressId: kamakurabashi.id, car: 5, door: 1, deviceId: device(300) }, "10.0.2.1");
+    await report({ ...valid, egressId: kamakurabashi.id, car: 3, door: 3, deviceId: device(300) }, "10.0.2.1");
+    expect((await communityBook(M)).book.M18[kamakurabashi.id]).toMatchObject({ reports: 1, car: 3, door: 3 });
   });
 
   it("rate-limits a single connection", async () => {
     let last = 0;
-    for (let i = 0; i < 25; i++) last = (await report({ ...valid, egressId: "m18-chiyoda", deviceId: device(400 + i) }, "10.0.3.1")).status;
+    for (let i = 0; i < 25; i++) last = (await report({ ...valid, egressId: other.id, deviceId: device(400 + i) }, "10.0.3.1")).status;
     expect(last).toBe(429);
   });
 });

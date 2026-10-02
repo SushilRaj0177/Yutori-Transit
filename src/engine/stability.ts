@@ -35,7 +35,7 @@ export interface Stability {
  */
 export function recommendationStability(
   g: TrainGeometry,
-  target: Egress,
+  target: Egress | Egress[],
   loadsPct: number[],
   speedWeight: number,
   { sigma = 0.2, trials = 200, seed = 7, crowdTrust = 1 } = {},

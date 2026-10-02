@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { MIN_REPORTS } from "@/core/consensus";
 import { explain, factsOf } from "@/core/explain";
 import { plan as makePlan, type DoorPlan, type Plan } from "@/core/plan";
 import { jstClock, type JstClock } from "@/core/time";
 import type { DayType } from "@/engine/crowding";
 import type { Bilingual } from "@/engine/types";
-import { STATION_EGRESS } from "@/data/layouts";
+import { destinationLabel, SURVEY } from "@/data/survey";
 import { getLine, LINES } from "@/data/network";
 import { loadColor, loadWord } from "./colors";
 import { tr, type Lang } from "./i18n";
@@ -27,11 +26,11 @@ interface Prefs {
   to: string;
   egress: Record<string, string>; // chosen egress per destination
   weight: number;
-  /** Illustrative invented positions. Off by default; never on for real trips. */
-  demo: boolean;
+  /** Only routes with an elevator or a gate on the platform level. */
+  stepFree: boolean;
 }
 
-const DEFAULTS: Prefs = { lang: "en", line: "M", from: "M08", to: "M18", egress: {}, weight: 0.5, demo: false };
+const DEFAULTS: Prefs = { lang: "en", line: "M", from: "M08", to: "M18", egress: {}, weight: 0.5, stepFree: false };
 const STORE = "yutori:prefs:v1";
 const LINE_DEFAULTS = { M: { from: "M08", to: "M18" }, G: { from: "G01", to: "G16" } } as const;
 
@@ -79,7 +78,7 @@ export function Planner() {
   const [override, setOverride] = useState<Override>(null);
   const { lang } = prefs;
   const line = getLine(prefs.line)!;
-  const covered = useMemo(() => new Set(STATION_EGRESS.filter((l) => l.line === line.id).map((l) => l.station)), [line.id]);
+  const covered = useMemo(() => new Set(SURVEY.stations.filter((s) => s.line === line.id && s.points.length > 0).map((s) => s.station)), [line.id]);
   const community = useCommunity(line.id);
 
   const routeOk = prefs.from !== prefs.to;
@@ -97,16 +96,16 @@ export function Planner() {
         line: line.id,
         from: prefs.from,
         to: prefs.to,
-        egressId: prefs.egress[`${line.id}:${prefs.to}`],
+        destId: prefs.egress[`${line.id}:${prefs.to}`],
         speedWeight: prefs.weight,
         hour,
         dayType,
         delayS,
         liveLoadsPct: usingNow ? liveData?.carLoadsPct : null,
         community: community.book,
-        demo: prefs.demo,
+        stepFree: prefs.stepFree,
       }),
-    [line.id, prefs.from, prefs.to, prefs.egress, prefs.weight, prefs.demo, hour, dayType, delayS, usingNow, liveData?.carLoadsPct, community.book],
+    [line.id, prefs.from, prefs.to, prefs.egress, prefs.weight, prefs.stepFree, hour, dayType, delayS, usingNow, liveData?.carLoadsPct, community.book],
   );
 
   const switchLine = (id: "M" | "G") => set({ line: id, ...LINE_DEFAULTS[id] });
@@ -116,15 +115,6 @@ export function Planner() {
 
   return (
     <div className="mx-auto w-full max-w-[1120px] px-4 pb-16 pt-4 sm:px-6 sm:pt-8">
-      {prefs.demo && (
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-2xl border-2 border-dashed border-amber-500 bg-amber-500/10 px-4 py-3 text-[13px] font-medium text-amber-900 dark:text-amber-200" role="alert">
-          <span>⚠ {tr("demoBanner", lang)}</span>
-          <button onClick={() => set({ demo: false })} className="rounded-lg bg-amber-500 px-3 py-1 font-semibold text-white">
-            {tr("demoOff", lang)}
-          </button>
-        </div>
-      )}
-
       <header className="mb-5 flex items-center justify-between">
         <div className="flex items-baseline gap-2">
           <span className="text-[22px] font-bold tracking-tight">ゆとり</span>
@@ -171,16 +161,16 @@ export function Planner() {
 
           {result.ok ? (
             <>
-              <EgressChips p={result.plan} lang={lang} setEgress={setEgress} />
+              <DestinationChips p={result.plan} lang={lang} setDest={setEgress} stepFree={prefs.stepFree} setStepFree={(stepFree) => set({ stepFree })} />
               {result.plan.door ? (
-                <Answer p={result.plan} d={result.plan.door} lang={lang} weight={prefs.weight} setWeight={(weight) => set({ weight })} setEgress={setEgress} reportsEnabled={community.enabled} onReported={community.reload} />
+                <Answer p={result.plan} d={result.plan.door} lang={lang} weight={prefs.weight} setWeight={(weight) => set({ weight })} setDest={setEgress} reportsEnabled={community.enabled} onReported={community.reload} />
               ) : (
-                <Unconfirmed p={result.plan} lang={lang} reportsEnabled={community.enabled} onReported={community.reload} />
+                <NoStepFree p={result.plan} lang={lang} />
               )}
             </>
           ) : (
             <section className="card p-6 text-[15px] leading-relaxed text-[var(--muted)]">
-              {result.error.kind === "no-layout" ? tr("missingLayout", lang, { s: result.error.to.name[lang] }) : tr("sameStation", lang)}
+              {result.error.kind === "no-data" ? tr("missingLayout", lang, { s: result.error.to.name[lang] }) : tr("sameStation", lang)}
             </section>
           )}
         </main>
@@ -195,54 +185,77 @@ export function Planner() {
       </div>
 
       <footer className="mt-10 border-t border-[var(--line)] pt-5 text-[12px] leading-relaxed text-[var(--muted)]">
-        <p>{tr("odptCredit", lang)}</p>
+        <p>{tr("surveyCredit", lang)}</p>
+        <p className="mt-1">{tr("odptCredit", lang)}</p>
         <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
           <a className="underline underline-offset-2 hover:text-[var(--fg)]" href="https://github.com/SushilRaj0177/Yutori-Transit">Source &amp; method</a>
-          <button className="underline underline-offset-2 hover:text-[var(--fg)]" onClick={() => set({ demo: !prefs.demo })}>
-            {prefs.demo ? tr("demoOff", lang) : tr("demoOn", lang)}
-          </button>
         </p>
       </footer>
     </div>
   );
 }
 
-// ── destination exits ───────────────────────────────────────────────────────
+// ── where you are going at the destination ────────────────────────────────
 
-function EgressChips({ p, lang, setEgress }: { p: Plan; lang: Lang; setEgress: (id: string) => void }) {
+function DestinationChips({ p, lang, setDest, stepFree, setStepFree }: { p: Plan; lang: Lang; setDest: (id: string) => void; stepFree: boolean; setStepFree: (v: boolean) => void }) {
   return (
     <section aria-label={tr("headingFor", lang)}>
-      <h2 className="mb-2 px-1 text-[12px] font-medium uppercase tracking-wider text-[var(--muted)]">
-        {tr("headingFor", lang)} · {p.to.name[lang]}
-      </h2>
-      <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0 [scrollbar-width:none]">
-        {p.egress.map((e) => {
-          const on = e.def.id === p.target.def.id;
-          const known = e.source === "surveyed" || e.source === "community";
+      <div className="mb-2 flex items-center justify-between gap-3 px-1">
+        <h2 className="text-[12px] font-medium uppercase tracking-wider text-[var(--muted)]">
+          {tr("headingFor", lang)} · {p.to.name[lang]}
+        </h2>
+        <button
+          onClick={() => setStepFree(!stepFree)}
+          aria-pressed={stepFree}
+          className={`flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-semibold transition-colors ${stepFree ? "bg-[var(--fg)] text-[var(--bg)]" : "bg-[var(--surface-2)] text-[var(--muted)]"}`}
+        >
+          <EgressIcon kind="elevator" size={13} />
+          {tr("stepFreeToggle", lang)}
+        </button>
+      </div>
+      <div className="flex flex-col gap-2">
+        {p.destinations.map((d) => {
+          const on = d.dest.id === p.target.dest.id;
+          const label = destinationLabel(d.dest);
+          const unusable = d.points.length === 0;
           return (
             <button
-              key={e.def.id}
-              onClick={() => setEgress(e.def.id)}
+              key={d.dest.id}
+              onClick={() => setDest(d.dest.id)}
               aria-pressed={on}
-              className={`flex shrink-0 items-center gap-2 rounded-full border px-3.5 py-2 text-[14px] font-medium transition-all ${on ? "border-transparent text-white shadow-md" : "border-[var(--line)] bg-[var(--bg)] hover:border-[var(--muted)]"}`}
+              className={`flex items-center justify-between gap-3 rounded-2xl border px-4 py-2.5 text-left transition-all ${on ? "border-transparent text-white shadow-md" : "border-[var(--line)] bg-[var(--surface)] hover:border-[var(--muted)]"} ${unusable && !on ? "opacity-50" : ""}`}
               style={on ? { background: p.line.color } : undefined}
             >
-              <EgressIcon kind={e.def.kind} size={16} />
-              <span className="whitespace-nowrap">{e.def.leadsTo[lang]}</span>
-              <span className={`text-[11px] ${on ? "text-white/80" : "text-[var(--muted)]"}`} aria-label={known ? "confirmed" : "not confirmed"}>
-                {known ? "✓" : e.source === "demo" ? "demo" : "?"}
+              <span className="min-w-0">
+                <span className="block text-[15px] font-semibold leading-snug">{label[lang]}</span>
+                {d.dest.gate && (
+                  <span className={`block truncate text-[12px] ${on ? "text-white/80" : "text-[var(--muted)]"}`}>
+                    {d.dest.gateName}
+                    {d.dest.platform !== null && ` · ${tr("platformArrival", lang, { n: d.dest.platform })}`}
+                  </span>
+                )}
               </span>
+              {d.dest.hasStepFree && <EgressIcon kind="elevator" size={16} className={on ? "text-white/90" : "text-[var(--muted)]"} />}
             </button>
           );
         })}
       </div>
+      {p.alternatingPlatforms && <p className="mt-2 px-1 text-[12px] text-[var(--muted)]">{tr("alternating", lang)}</p>}
+      {p.omitted.length > 0 && (
+        <p className="mt-2 px-1 text-[12px] leading-relaxed text-[var(--muted)]">
+          {tr("omitted", lang, { g: [...new Set(p.omitted)].join(" / ") })}{" "}
+          <a className="underline underline-offset-2" href={p.source.url} target="_blank" rel="noreferrer">
+            {tr("viewSource", lang)}
+          </a>
+        </p>
+      )}
     </section>
   );
 }
 
 // ── confirmed position: the door answer ─────────────────────────────────────
 
-function Answer(props: { p: Plan; d: DoorPlan; lang: Lang; weight: number; setWeight: (w: number) => void; setEgress: (id: string) => void; reportsEnabled: boolean; onReported: () => void }) {
+function Answer(props: { p: Plan; d: DoorPlan; lang: Lang; weight: number; setWeight: (w: number) => void; setDest: (id: string) => void; reportsEnabled: boolean; onReported: () => void }) {
   const { p, d, lang } = props;
   const b = d.solution.best;
   const live = p.loadSource === "odpt-live";
@@ -250,8 +263,8 @@ function Answer(props: { p: Plan; d: DoorPlan; lang: Lang; weight: number; setWe
   const car1Front = p.direction === p.line.towardsFirst;
   const frontLabel = tr("bound", lang, { x: p.direction.terminus[lang] });
   const [reporting, setReporting] = useState(false);
-  const known = p.egress.flatMap((e) => (e.positionM === null ? [] : [{ ...e.def, positionM: e.positionM }]));
-  const c = p.target.consensus;
+  // Every known access point on this platform, so riders see the whole picture.
+  const known = p.destinations.flatMap((x) => x.points);
 
   return (
     <section className="card overflow-hidden" aria-live="polite">
@@ -271,8 +284,8 @@ function Answer(props: { p: Plan; d: DoorPlan; lang: Lang; weight: number; setWe
         </div>
         <div className="flex flex-wrap gap-2 text-[13px]">
           <Pill>
-            <EgressIcon kind={d.target.kind} size={14} />
-            {Math.round(b.egressS)}s · {Math.round(b.walkM)}m
+            <EgressIcon kind={b.via?.kind ?? "way"} size={14} />
+            {b.walkM < 2 ? tr("rightThere", lang) : `${Math.round(b.egressS)}s · ${Math.round(b.walkM)}m`}
           </Pill>
           {live ? (
             <Pill style={{ background: loadColor(b.loadPct), color: "#1b1b1b" }}>{b.loadPct}% · {loadWord(b.loadPct, lang)}</Pill>
@@ -297,13 +310,13 @@ function Answer(props: { p: Plan; d: DoorPlan; lang: Lang; weight: number; setWe
             crowd={p.crowd}
             liveLoadsPct={live ? p.loadsPct : null}
             egress={known}
-            targetId={d.target.id}
+            targetId={b.via?.id}
             pick={b}
             car1Front={car1Front}
             lineColor={p.line.color}
             frontLabel={frontLabel}
             lang={lang}
-            onPickEgress={props.setEgress}
+            onPickEgress={(pointId) => props.setDest(pointId.split("#")[0])}
           />
         )}
       </div>
@@ -313,13 +326,17 @@ function Answer(props: { p: Plan; d: DoorPlan; lang: Lang; weight: number; setWe
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 bg-[var(--surface-2)] px-5 py-2.5 text-[12px] text-[var(--muted)] sm:px-6">
-        <span>
-          {d.positionSource === "community" && `✓ ${tr("confirmedBy", lang, { n: c?.reports ?? MIN_REPORTS })}`}
-          {d.positionSource === "surveyed" && `✓ ${tr("surveyedPos", lang)}`}
-          {d.positionSource === "demo" && <strong className="text-amber-700 dark:text-amber-300">⚠ {tr("demoPos", lang)}</strong>}
-          {!live && <span className="ml-3">◇ {tr("estimateNote", lang)}</span>}
+        <span className="space-x-3">
+          <span>
+            ✓ {tr("surveySrc", lang, { d: p.source.updated ?? "?" })}{" "}
+            <a className="underline underline-offset-2" href={p.source.url} target="_blank" rel="noreferrer">
+              {tr("viewSource", lang)}
+            </a>
+          </span>
+          {p.target.ridersDisagree && <strong className="text-amber-700 dark:text-amber-300">⚠ {tr("ridersDisagree", lang)}</strong>}
+          {!live && <span>◇ {tr("estimateNote", lang)}</span>}
         </span>
-        {d.positionSource !== "demo" && !reporting && (
+        {!reporting && (
           <button className="underline underline-offset-2" onClick={() => setReporting(true)}>
             {tr("wrongPos", lang)}
           </button>
@@ -329,31 +346,21 @@ function Answer(props: { p: Plan; d: DoorPlan; lang: Lang; weight: number; setWe
   );
 }
 
-// ── unknown position: no door, honest alternatives ──────────────────────────
+// ── no usable route (e.g. step-free requested but none listed) ──────────────
 
-function Unconfirmed({ p, lang, reportsEnabled, onReported }: { p: Plan; lang: Lang; reportsEnabled: boolean; onReported: () => void }) {
-  const live = p.loadSource === "odpt-live";
-  const min = Math.min(...p.loadsPct);
-  const quietest = p.loadsPct.flatMap((l, i) => (l === min ? [i + 1] : []));
-  const showQuiet = live || p.crowd.some((c) => c !== "average");
-
+function NoStepFree({ p, lang }: { p: Plan; lang: Lang }) {
+  const alternatives = p.destinations.filter((x) => x.points.length > 0);
   return (
-    <section className="card overflow-hidden">
-      <div className="p-5 sm:p-6">
-        <div className="text-[13px] font-medium text-[var(--muted)]">{tr("board", lang)}</div>
-        <div className="mt-1 text-[26px] font-bold leading-tight">{tr("unknownTitle", lang)}</div>
-        <p className="mt-2 text-[15px] leading-relaxed text-[var(--muted)]">{tr("unknownBody", lang, { x: p.target.def.leadsTo[lang] })}</p>
-        {showQuiet && (
-          <p className="mt-3 rounded-xl bg-[var(--surface-2)] px-3 py-2.5 text-[14px] leading-relaxed">
-            {tr(live ? "crowdOnlyLive" : "crowdOnly", lang, { cars: quietest.join(lang === "ja" ? "・" : " / ") })}
-            {!live && <span className="mt-1 block text-[12px] text-[var(--muted)]">{tr("estimateNote", lang)}</span>}
-          </p>
-        )}
-        {p.peak && !live && <p className="mt-2 text-[13px] text-[var(--muted)]">{tr("peakNote", lang)}</p>}
-      </div>
-      <div className="border-t border-[var(--line)] p-5 sm:p-6">
-        <ReportDoor line={p.line} station={p.to.code} target={p.target} lang={lang} enabled={reportsEnabled} onDone={onReported} />
-      </div>
+    <section className="card p-5 sm:p-6">
+      <div className="text-[13px] font-medium text-[var(--muted)]">{tr("board", lang)}</div>
+      <div className="mt-1 text-[22px] font-bold leading-tight">{tr("noStepFreeTitle", lang)}</div>
+      <p className="mt-2 text-[15px] leading-relaxed text-[var(--muted)]">
+        {tr("noStepFreeBody", lang, { x: destinationLabel(p.target.dest)[lang] })}
+        {alternatives.length > 0 && ` ${tr("noStepFreeAlt", lang, { list: alternatives.map((a) => destinationLabel(a.dest)[lang]).join(" / ") })}`}
+      </p>
+      <a className="mt-3 inline-block text-[13px] underline underline-offset-2" href={p.source.url} target="_blank" rel="noreferrer">
+        {tr("viewSource", lang)}
+      </a>
     </section>
   );
 }
@@ -445,9 +452,8 @@ function Why({ p, d, lang, live, hour, dayType, delayS }: { p: Plan; d: DoorPlan
   const facts = useMemo(() => factsOf(p, d), [p, d]);
   const template = useMemo(() => explain(facts), [facts]);
   const [ai, setAi] = useState<{ key: string; text: Bilingual } | null>(null);
-  // Demo positions are never sent for LLM narration.
-  const narratable = d.positionSource !== "demo";
-  const key = `${p.line.id}|${p.from.code}|${p.to.code}|${d.target.id}|${facts.best.car}-${facts.best.door}|${Math.round(hour * 4)}|${dayType}|${delayS ?? 0}`;
+  const narratable = true;
+  const key = `${p.line.id}|${p.from.code}|${p.to.code}|${p.target.dest.id}|${p.target.points.length}|${facts.best.car}-${facts.best.door}|${Math.round(hour * 4)}|${dayType}|${delayS ?? 0}`;
 
   useEffect(() => {
     if (!narratable) return;
@@ -458,7 +464,7 @@ function Why({ p, d, lang, live, hour, dayType, delayS }: { p: Plan; d: DoorPlan
           method: "POST",
           headers: { "Content-Type": "application/json" },
           signal: ctrl.signal,
-          body: JSON.stringify({ line: p.line.id, from: p.from.code, to: p.to.code, egressId: d.target.id, speedWeight: weightFor(d), hour, dayType, delayS }),
+          body: JSON.stringify({ line: p.line.id, from: p.from.code, to: p.to.code, destId: p.target.dest.id, stepFree: p.target.points.every((x) => x.stepFree), speedWeight: weightFor(d), hour, dayType, delayS }),
         });
         if (!res.ok) return;
         const n = await res.json();
@@ -497,7 +503,12 @@ function Why({ p, d, lang, live, hour, dayType, delayS }: { p: Plan; d: DoorPlan
             <h3 className="mb-1.5 text-[12px] font-semibold">{tr("sources", lang)}</h3>
             <ul className="space-y-1.5 text-[12px] leading-relaxed text-[var(--muted)]">
               <li>• {isLive ? tr("srcCrowdLive", lang) : tr("srcCrowdEst", lang)}</li>
-              <li>• {d.positionSource === "demo" ? tr("demoPos", lang) : d.positionSource === "surveyed" ? tr("surveyedPos", lang) : tr("confirmedBy", lang, { n: p.target.consensus?.reports ?? MIN_REPORTS })}</li>
+              <li>
+                • {tr("srcSurvey", lang, { d: p.source.updated ?? "?" })}{" "}
+                <a className="underline underline-offset-2" href={p.source.url} target="_blank" rel="noreferrer">
+                  {tr("viewSource", lang)}
+                </a>
+              </li>
               <li>• {live ? tr("srcLive", lang, { t: new Date(live).toLocaleTimeString(lang === "ja" ? "ja-JP" : "en-GB", { timeZone: "Asia/Tokyo" }) }) : tr("srcNoLive", lang)}</li>
               <li>• {tr("stableHint", lang, { n: Math.round(d.stability.sameCar * 100) })}</li>
             </ul>
